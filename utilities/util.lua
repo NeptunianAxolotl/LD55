@@ -9,6 +9,17 @@ local sin = math.sin
 -- Vector funcs
 --------------------------------------------------
 
+function util.LineGradient(l)
+	if l[1][1] == l[2][1] then
+		return false
+	end
+	return (l[2][2] - l[1][2]) / (l[2][1] - l[1][1])
+end
+
+function util.ApproxEqNumber(n1, n2)
+	return n1 - n2 < 0.00000001 and n2 - n1 < 0.00000001
+end
+
 function util.Eq(u, v)
 	return u and v and u[1] - v[1] < 0.000001 and v[1] - u[1] < 0.000001 and u[2] - v[2] < 0.000001 and v[2] - u[2] < 0.000001
 end
@@ -22,7 +33,21 @@ function util.EqLine(l, m)
 			(util.Eq(l[1], m[2]) and util.Eq(l[1], m[2])) then
 		return true
 	end
-	return false -- Not really correct, maybe more expensive checks not required?
+	-- Now begins the pain
+	local gradL = util.LineGradient(l)
+	local gradM = util.LineGradient(m)
+	if (not gradL) or (not gradM) then
+		if not (gradL or gradM) then
+			return l[1][1] == m[1][1]
+		end
+		return false
+	end
+	if not util.ApproxEqNumber(gradL, gradM) then
+		return false
+	end
+	local intL = l[1][2] - gradL * l[1][1]
+	local intM = m[1][2] - gradM * m[1][1]
+	return util.ApproxEqNumber(intL, intM)
 end
 
 function util.DistSqVectors(u, v)
@@ -436,7 +461,7 @@ function util.IntersectingRectangles(x1, y1, w1, h1, x2, y2, w2, h2)
 end
 
 function util.PosInRectangle(pos, x1, y1, w1, h1)
-	return (x1 + w1 > pos[1] and x1 <= pos[1]) and (y1 + h1 > pos[2] and y1 <= pos[2])
+	return (x1 + w1 >= pos[1] and x1 <= pos[1]) and (y1 + h1 >= pos[2] and y1 <= pos[2])
 end
 
 --------------------------------------------------

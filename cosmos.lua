@@ -4,6 +4,7 @@ SoundHandler = require("soundHandler")
 MusicHandler = require("musicHandler")
 
 local LevelDefs = util.LoadDefDirectory("defs/levels")
+local LevelOrder = require("defs/levelList")
 
 local self = {}
 local api = {}
@@ -31,32 +32,18 @@ end
 --------------------------------------------------
 
 function api.RestartWorld()
-	World.Initialize(api, self.curLevelData)
+	World.Initialize(api, self.curLevelData, self.difficultySetting)
 end
 
 function api.LoadLevelByTable(levelTable)
 	self.curLevelData = levelTable
-	World.Initialize(api, self.curLevelData)
+	World.Initialize(api, self.curLevelData, self.difficultySetting)
 end
 
 function api.SwitchLevel(goNext)
-	local nameKey = (goNext and "nextLevel") or "prevLevel"
-	local newLevelName = LevelDefs[self.inbuiltLevelName][nameKey]
-	if not newLevelName then
-		return
-	end
-	self.inbuiltLevelName = newLevelName
-	self.curLevelData = LevelDefs[self.inbuiltLevelName]
-	World.Initialize(api, self.curLevelData)
-end
-
-function api.TestSwitchLevel(goNext)
-	local nameKey = (goNext and "nextLevel") or "prevLevel"
-	local newLevelName = LevelDefs[self.inbuiltLevelName][nameKey]
-	if not newLevelName then
-		return false
-	end
-	return true
+	self.inbuiltLevelIndex = math.max(1, math.min(#LevelOrder, self.inbuiltLevelIndex + (goNext and 1 or -1)))
+	self.curLevelData = LevelDefs[LevelOrder[self.inbuiltLevelIndex]]
+	World.Initialize(api, self.curLevelData, self.difficultySetting)
 end
 
 --------------------------------------------------
@@ -87,7 +74,7 @@ end
 --------------------------------------------------
 
 function api.KeyPressed(key, scancode, isRepeat)
-	if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
+	if key == "r" then
 		api.RestartWorld()
 		return true
 	end
@@ -99,11 +86,11 @@ function api.KeyPressed(key, scancode, isRepeat)
 		api.TakeScreenshot()
 		return true
 	end
-	if key == "n" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
+	if key == "n" then
 		api.SwitchLevel(true)
 		return true
 	end
-	if key == "p" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
+	if key == "p" then
 		api.SwitchLevel(false)
 		return true
 	end
@@ -136,13 +123,14 @@ end
 function api.Initialize()
 	self = {
 		realTime = 0,
-		inbuiltLevelName = Global.INIT_LEVEL,
+		inbuiltLevelIndex = Global.DEBUG_MODE_START_LEVEL or 1,
 		musicEnabled = true,
+		difficultySetting = {},
 	}
-	self.curLevelData = LevelDefs[self.inbuiltLevelName]
+	self.curLevelData = LevelDefs[LevelOrder[self.inbuiltLevelIndex]]
 	MusicHandler.Initialize(api)
 	SoundHandler.Initialize(api)
-	World.Initialize(api, self.curLevelData)
+	World.Initialize(api, self.curLevelData, self.difficultySetting)
 end
 
 return api

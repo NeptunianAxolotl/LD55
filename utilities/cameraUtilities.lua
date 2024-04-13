@@ -77,10 +77,9 @@ local function PushCamera(dt, vector, moveSmooth)
 end
 
 local function UpdateTransform(cameraTransform, cameraX, cameraY, cameraScale)
-	local windowX, windowY = love.window.getMode()
-	
-	windowX = windowX * (1 - self.windowPadding.left - self.windowPadding.right)
-	windowY = windowY * (1 - self.windowPadding.top - self.windowPadding.bot)
+	local fullX, fullY = love.window.getMode()
+	local windowX = fullX * (1 - self.windowPadding.left - self.windowPadding.right)
+	local windowY = fullY * (1 - self.windowPadding.top - self.windowPadding.bot)
 	
 	local boundLimit = math.min(windowX, windowY)
 	self.scaleMult = {boundLimit/windowX, boundLimit/windowY}
@@ -92,9 +91,13 @@ local function UpdateTransform(cameraTransform, cameraX, cameraY, cameraScale)
 			end
 		end
 	end
+	--print("boundLimit", boundLimit)
+	--print("cameraScale", cameraScale)
 	--print("Camera Scale", boundLimit/cameraScale, boundLimit/cameraScale)
 	cameraTransform:setTransformation(
-		windowX/2, windowY/2, 0,
+		windowX/2 + fullX * self.windowPadding.left,
+		windowY/2 + fullY * self.windowPadding.top,
+		0,
 		boundLimit/cameraScale, boundLimit/cameraScale,
 		cameraX, cameraY)
 end

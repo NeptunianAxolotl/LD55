@@ -3,13 +3,17 @@ local Resources = require("resourceHandler")
 local Font = require("include/font")
 
 local function GetPointAt(self, world, pos)
+	local bestDistSq = false
+	local bestPoint = false
 	for i = 1, #self.points do
 		local point = self.points[i]
-		if world.MouseNearWorldPos(point, 20) then
-			return point
+		local distSq = world.MouseNearWorldPos(point, 20)
+		if distSq and ((not bestDistSq) or distSq < bestDistSq) then
+			bestDistSq = distSq
+			bestPoint = point
 		end
 	end
-	return false
+	return bestPoint
 end
 
 local function GetNewElement(u, v, elementType)
@@ -38,6 +42,9 @@ local function ElementAlreadyExists(self, newElement, elementType)
 end
 
 local function AddPoint(self, point)
+	if not DiagramHandler.InBounds(point) then
+		return
+	end
 	for i = 1, #self.points do
 		if util.Eq(point, self.points[i]) then
 			return
@@ -47,6 +54,9 @@ local function AddPoint(self, point)
 end
 
 local function AddLine(self, newLine)
+	if Global.DEBUG_PRINT_CLICK_POS then
+		print("line {{" .. newLine[1][1] .. ", " .. newLine[1][2] .. "}, {" .. newLine[2][1] .. ", " .. newLine[2][2] .. "}},")
+	end
 	newLine = util.ExtendLine(newLine, Global.LINE_LENGTH)
 	for i = 1, #self.circles do
 		local intersect = util.GetCircleLineIntersectionPoints(self.circles[i], newLine)
@@ -65,6 +75,9 @@ local function AddLine(self, newLine)
 end
 
 local function AddCircle(self, newCircle)
+	if Global.DEBUG_PRINT_CLICK_POS then
+		print("circle {" .. newCircle[1] .. ", " .. newCircle[2] .. ", " .. newCircle[3] .. "},")
+	end
 	for i = 1, #self.circles do
 		local intersect = util.GetCircleIntersectionPoints(self.circles[i], newCircle)
 		if intersect then
@@ -82,20 +95,20 @@ local function AddCircle(self, newCircle)
 	self.circles[#self.circles + 1] = newCircle
 end
 
-
 local function AddElement(self, u, v, elementType)
 	local newElement = GetNewElement(u, v, elementType)
 	if not newElement then
-		return
+		return false
 	end
 	if ElementAlreadyExists(self, newElement, elementType) then
-		return
+		return false
 	end
 	if elementType == Global.LINE then
 		AddLine(self, newElement)
 	elseif elementType == Global.CIRCLE then
 		AddCircle(self, newElement)
 	end
+	return true
 end
 
 local function NewDiagram(def, world)
@@ -113,11 +126,29 @@ local function NewDiagram(def, world)
 		return AddElement(self, u, v, elementType)
 	end
 	
+	function self.ContainsLine(line)
+		for i = 1, #self.lines do
+			if util.EqLine(line, self.lines[i]) then
+				return true
+			end
+		end
+		return false
+	end
+	
+	function self.ContainsCircle(circle)
+		for i = 1, #self.circles do
+			if util.EqCircle(circle, self.circles[i]) then
+				return true
+			end
+		end
+		return false
+	end
+	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
 		drawQueue:push({y=10; f=function()
 			love.graphics.setLineWidth(4)
 			
-			love.graphics.setColor(1, 1, 1, 0.9)
+			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
 			for i = 1, #self.lines do
 				local line = self.lines[i]
 				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
@@ -129,7 +160,7 @@ local function NewDiagram(def, world)
 			end
 			
 			if selectedPoint then
-				love.graphics.setColor(1, 1, 1, 0.3)
+				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.3)
 				local target = hoveredPoint or world.GetMousePosition()
 				if elementType == Global.LINE then
 					local line = util.ExtendLine({selectedPoint, target}, Global.LINE_LENGTH)
@@ -140,9 +171,8 @@ local function NewDiagram(def, world)
 				end
 			end
 			
-			
-			love.graphics.setColor(1, 1, 1, 1)
-			love.graphics.setLineWidth(2)
+			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
+			love.graphics.setLineWidth(0)
 			for i = 1, #self.points do
 				local point = self.points[i]
 				if util.Eq(point, selectedPoint) then

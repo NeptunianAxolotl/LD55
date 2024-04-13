@@ -1,53 +1,44 @@
 
-
 local self = {}
 local api = {}
-
-local function UpdateCamera(dt, vector)
-	local cameraX, cameraY, cameraScale = Camera.PushCamera(dt, vector, 0.55)
-	Camera.UpdateTransform(self.cameraTransform, cameraX, cameraY, cameraScale)
-	self.cameraPos[1] = cameraX
-	self.cameraPos[2] = cameraY
-end
 
 function api.GetCameraTransform()
 	return self.cameraTransform
 end
 
 function api.Update(dt)
-	dt = math.min(0.2, dt)
-	local cameraVector = {0, 0}
-	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) then
-		cameraVector = util.Add(cameraVector, {-Global.CAMERA_SPEED, 0})
-	end
-	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) then
-		cameraVector = util.Add(cameraVector, {Global.CAMERA_SPEED, 0})
-	end
-	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) then
-		cameraVector = util.Add(cameraVector, {0, -Global.CAMERA_SPEED})
-	end
-	if (love.keyboard.isDown("s") or love.keyboard.isDown("down"))then
-		cameraVector = util.Add(cameraVector, {0, Global.CAMERA_SPEED})
-	end
-	UpdateCamera(dt, cameraVector)
+	local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(false, 
+		{
+			{pos = self.levelData.bounds[1], xOff = 20, yOff = 20},
+			{pos = self.levelData.bounds[2], xOff = 20, yOff = 20},
+		}
+	)
+	self.cameraPos[1] = cameraX
+	self.cameraPos[2] = cameraY
+	self.cameraScale = cameraScale
+	Camera.UpdateTransform(self.cameraTransform, self.cameraPos[1], self.cameraPos[2], self.cameraScale)
 end
 
-function api.Initialize(world)
+function api.Initialize(world, levelData)
 	self = {
 		world = world,
+		levelData = levelData,
 	}
 	
 	self.cameraTransform = love.math.newTransform()
 	self.cameraPos = {0, 0}
-	
 	Camera.Initialize({
-		windowPadding = {left = 0, right = 0, top = 0, bot = 0},
+		windowPadding = {left = 0.16, right = 0, top = 0, bot = 0},
 	})
-	local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(dt, 
+	local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(false, 
 		{
-			{pos = self.cameraPos, xOff = 800, yOff = 800},
-		},
-		0.45, 0.45)
+			{pos = levelData.bounds[1], xOff = 20, yOff = 20},
+			{pos = levelData.bounds[2], xOff = 20, yOff = 20},
+		}
+	)
+	self.cameraPos[1] = cameraX
+	self.cameraPos[2] = cameraY
+	self.cameraScale = cameraScale
 	Camera.UpdateTransform(self.cameraTransform, cameraX, cameraY, cameraScale)
 end
 

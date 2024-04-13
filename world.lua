@@ -62,6 +62,10 @@ function api.SetGameOver(hasWon, overType)
 	end
 end
 
+function api.GetLevelData()
+	return self.levelData
+end
+
 --------------------------------------------------
 -- Input
 --------------------------------------------------
@@ -75,6 +79,9 @@ function api.KeyPressed(key, scancode, isRepeat)
 	end
 	if api.GetGameOver() then
 		return -- No doing actions
+	end
+	if DiagramHandler.KeyPressed(key, scancode, isRepeat) then
+		return
 	end
 	if GameHandler.KeyPressed and GameHandler.KeyPressed(key, scancode, isRepeat) then
 		return
@@ -102,16 +109,16 @@ function api.MousePressed(x, y, button)
 		return
 	end
 	
-	if Global.DEBUG_PRINT_CLICK_POS and button == 2 then
-		print("{")
-		print([[    name = "BLA",]])
-		print("    pos = {" .. (math.floor(x/10)*10) .. ", " .. (math.floor(y/10)*10) .. "},")
-		print("},")
+	if Global.DEBUG_PRINT_CLICK_POS and button == 1 then
+		print("{" .. (math.floor(x/10)*10) .. ", " .. (math.floor(y/10)*10) .. "},")
 		return true
 	end
 end
 
 function api.MouseReleased(x, y, button)
+	if api.GetGameOver() then
+		return -- No doing actions
+	end
 	-- Send event to game components
 	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
 	if DiagramHandler.MouseReleased(x, y, button) then
@@ -162,7 +169,8 @@ function api.GetOrderMult()
 end
 
 function api.MouseNearWorldPos(pos, radius)
-	return (util.DistSqVectors(pos, api.GetMousePosition()) < radius*radius)
+	local distSq = util.DistSqVectors(pos, api.GetMousePosition())
+	return (distSq < radius*radius) and distSq
 end
 
 function api.GetCameraExtents(buffer)
@@ -255,7 +263,9 @@ function api.Draw()
 end
 
 function api.Initialize(cosmos, levelData)
-	self = {}
+	self = {
+		levelData = levelData,
+	}
 	self.cosmos = cosmos
 	self.cameraTransform = love.math.newTransform()
 	self.interfaceTransform = love.math.newTransform()
@@ -270,13 +280,13 @@ function api.Initialize(cosmos, levelData)
 	ChatHandler.Initialize(api)
 	DialogueHandler.Initialize(api)
 	
-	DiagramHandler.Initialize(api)
+	DiagramHandler.Initialize(api, levelData)
 	--ShadowHandler.Initialize(api)
 	
 	DeckHandler.Initialize(api)
 	GameHandler.Initialize(api)
 	
-	CameraHandler.Initialize(api)
+	CameraHandler.Initialize(api, levelData)
 end
 
 return api
