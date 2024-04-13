@@ -84,6 +84,11 @@ function util.Unit(v)
 	end
 end
 
+function util.UnitTowards(from, to)
+	local v, mag = util.Unit(util.Subtract(to, from))
+	return v, mag
+end
+
 function util.UnitTowardsWithWrap(from, to, wrapX, wrapY)
 	local smallestDistSq = false
 	local si, sj = 0, 0
@@ -242,6 +247,19 @@ function util.CardinalToDirection(cardinal, start, segments)
 	return cardinal * 2 * math.pi/segments + start 
 end
 
+function util.CardinalToVector(cardinal, length)
+	length = length or 1
+	if cardinal == 0 then
+		return {length, 0}
+	elseif cardinal == 1 then
+		return {0, length}
+	elseif cardinal == 2 then
+		return {-length, 0}
+	elseif cardinal == 3 then
+		return {0, -length}
+	end
+end
+
 function util.AngleToCardinal(angle, cardinal, start, segments)
 	start = start or 0
 	segments = segments or 4
@@ -249,9 +267,10 @@ function util.AngleToCardinal(angle, cardinal, start, segments)
 	return cardinalAngle - angle
 end
 
-function util.InverseBasis(a, b, c, d)
+function util.InverseBasis(basis)
+	local a, b, c, d = basis[1], basis[2], basis[3], basis[4]
 	local det = a*d - b*c
-	return d/det, -b/det, -c/det, a/det
+	return {d/det, -b/det, -c/det, a/det}
 end
 
 function util.ChangeBasis(v, a, b, c, d)
@@ -607,42 +626,88 @@ function util.TableKeysToList(keyTable, indexToKey)
 	return list
 end
 
-local function TableToStringHelper(data, indent, tableChecked, lineFunc)
-	indent = indent or ""
-	local newIndent = indent .. "	"
-	for nameRaw, v in pairs(data) do
-		local name = tostring(nameRaw)
-		if type(nameRaw) == "number" then
-			name = "[" .. name .. "]"
-		end
-		local ty = type(v)
-		if ty == "userdata" then
-			lineFunc("warning, userdata")
-		end
-		if ty == "table" then
-			lineFunc(newIndent .. name .. " = {")
-			TableToStringHelper(v, newIndent, true, lineFunc)
-			lineFunc(newIndent .. "},")
-		elseif ty == "boolean" then
-			lineFunc(newIndent .. name .. " = " .. (v and "true," or "false,"))
-		elseif ty == "string" then
-			lineFunc(newIndent .. name .. [[ = "]] .. v .. [[",]])
-		elseif ty == "number" then
-			lineFunc(newIndent .. name .. " = " .. v .. ",")
+local TableToStringHelper
+local function AddTableLine(nameRaw, value, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+	local name = nameRaw and tostring(nameRaw)
+	if name and type(nameRaw) == "number" then
+		name = "[" .. name .. "]"
+	end
+	local name = name and (name .. " = ") or ""
+	
+	local ty = type(value)
+	if ty == "userdata" then
+		lineFunc("warning, userdata")
+	end
+	
+	if ty == "table" then
+		if inlineConf and nameRaw and inlineConf[nameRaw] then
+			lineFunc(newIndent .. name .. "{")
+			local retStr = ""
+			local function AddLine(str)
+				retStr = retStr .. str
+			end
+			TableToStringHelper(value, true, "", "", " ", AddLine, orderPreference, inlineConf)
+			lineFunc(string.sub(retStr, 0, -3))
+			lineFunc("},\n")
 		else
-			lineFunc(newIndent .. name .. " = ", v)
+			lineFunc(newIndent .. name .. "{\n")
+			TableToStringHelper(value, true, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+			lineFunc(newIndent .. "},\n")
 		end
+	elseif ty == "boolean" then
+		lineFunc(newIndent .. name .. (value and "true," or "false,") .. delimiter)
+	elseif ty == "string" then
+		lineFunc(newIndent .. name .. [["]] .. string.gsub(string.gsub(value, "\n", "\\n"), "\t", "\\t") .. [[",]] .. delimiter)
+	elseif ty == "number" then
+		lineFunc(newIndent .. name .. value .. ",".. delimiter)
+	else
+		lineFunc(newIndent .. name , value .. delimiter)
 	end
 end
 
-function util.TableToString(data)
+function TableToStringHelper(data, tableChecked, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+	newIndent = (newIndent or "") .. indentAdd
+	local alreadyAdded = {}
+	for i = 1, #data do
+		if not data[i] then
+			break
+		end
+		AddTableLine(false, data[i], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+		alreadyAdded[i] = true
+	end
+	
+	if orderPreference then
+		for i = 1, #orderPreference do
+			local nameRaw = orderPreference[i]
+			if data[nameRaw] then
+				AddTableLine(nameRaw, data[nameRaw], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+				alreadyAdded[nameRaw] = true
+			end
+		end
+	end
+	
+	local remainingKeys = {}
+	for nameRaw, value in pairs(data) do
+		if not (alreadyAdded and alreadyAdded[nameRaw]) then
+			remainingKeys[#remainingKeys + 1] = nameRaw
+		end
+	end
+	
+	table.sort(remainingKeys)
+	for i = 1, #remainingKeys do
+		local nameRaw = remainingKeys[i]
+		AddTableLine(nameRaw, data[nameRaw], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+	end
+end
+
+function util.TableToString(data, orderPreference, inlineConf)
 	local str = ""
 	local function Append(newLine)
-		str = str .. newLine .. "\n"
+		str = str .. newLine
 	end
-	Append("{")
-	TableToStringHelper(data, indent, tableChecked, Append)
-	Append("}")
+	Append("{\n")
+	TableToStringHelper(data, false, false, "\t", "\n", Append, orderPreference, inlineConf)
+	Append("}\n")
 	return str
 end
 
@@ -651,7 +716,7 @@ function util.PrintTable(data, indent, tableChecked)
 		print(data)
 		return
 	end
-	TableToStringHelper(data, indent, tableChecked, print)
+	TableToStringHelper(data, tableChecked, indent"\t", "\n", print, orderPreference, inlineConf)
 end
 
 function util.CopyTable(tableToCopy, deep, appendTo)
@@ -666,6 +731,21 @@ function util.CopyTable(tableToCopy, deep, appendTo)
 		end
 	end
 	return copy
+end
+
+function util.ListToMask(listTable)
+	local mapTable = {}
+	for i = 1, #listTable do
+		mapTable[listTable[i]] = true
+	end
+	return mapTable
+end
+
+function util.AddKeyNameToMaps(mapOfMaps, keyName)
+	for k, v in pairs(mapOfMaps) do
+		v[keyName] = k
+	end
+	return mapOfMaps
 end
 
 --------------------------------------------------
@@ -683,17 +763,19 @@ end
 --------------------------------------------------
 --------------------------------------------------
 
-function util.GetDefDirList(dir)
+function util.GetDefDirList(dir, ext)
 	local files = love.filesystem.getDirectoryItems(dir)
 	local defList = {}
 	for i = 1, #files do
-		local name = string.sub(files[i], 0, -5)
-		defList[i] = name
+		if (not ext) or ext == string.sub(files[i], -3, -1) then
+			local name = string.sub(files[i], 0, -5)
+			defList[#defList + 1] = name
+		end
 	end
 	return defList
 end
 
-function util.LoadDefDirectory(dir)
+function util.LoadDefDirectory(dir, nameByKey)
 	local files = love.filesystem.getDirectoryItems(dir)
 	local defTable = {}
 	local nameList = {}
@@ -715,6 +797,9 @@ function util.LoadDefDirectory(dir)
 				done = false
 			end
 		end
+	end
+	if nameByKey then
+		defTable = util.AddKeyNameToMaps(defTable, nameByKey)
 	end
 	return defTable, nameList
 end

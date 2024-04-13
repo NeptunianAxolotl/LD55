@@ -4,9 +4,14 @@ DialogueHandler = require("dialogueHandler")
 TerrainHandler = require("terrainHandler")
 ShadowHandler = require("shadowHandler")
 
-Camera = require("utilities/cameraUtilities")
+LevelHandler = require("levelHandler")
+
+
 InterfaceUtil = require("utilities/interfaceUtilities")
 Delay = require("utilities/delay")
+
+CameraHandler = require("cameraHandler")
+Camera = require("utilities/cameraUtilities")
 
 ChatHandler = require("chatHandler")
 DeckHandler = require("deckHandler")
@@ -95,7 +100,7 @@ function api.MousePressed(x, y, button)
 	if DialogueHandler.MousePressedInterface(uiX, uiY, button) then
 		return
 	end
-	x, y = self.cameraTransform:inverse():transformPoint(x, y)
+	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
 	
 	-- Send event to game components
 	if Global.DEBUG_PRINT_CLICK_POS and button == 2 then
@@ -108,7 +113,7 @@ function api.MousePressed(x, y, button)
 end
 
 function api.MouseReleased(x, y, button)
-	x, y = self.cameraTransform:inverse():transformPoint(x, y)
+	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
 	-- Send event to game components
 end
 
@@ -121,12 +126,12 @@ end
 --------------------------------------------------
 
 function api.WorldToScreen(pos)
-	local x, y = self.cameraTransform:transformPoint(pos[1], pos[2])
+	local x, y = CameraHandler.GetCameraTransform():transformPoint(pos[1], pos[2])
 	return {x, y}
 end
 
 function api.ScreenToWorld(pos)
-	local x, y = self.cameraTransform:inverse():transformPoint(pos[1], pos[2])
+	local x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(pos[1], pos[2])
 	return {x, y}
 end
 
@@ -146,7 +151,7 @@ function api.GetMousePosition()
 end
 
 function api.WorldScaleToScreenScale()
-	local m11 = self.cameraTransform:getMatrix()
+	local m11 = CameraHandler.GetCameraTransform():getMatrix()
 	return m11
 end
 
@@ -205,9 +210,7 @@ function api.Draw()
 	local drawQueue = PriorityQueue.new(function(l, r) return l.y < r.y end)
 
 	-- Draw world
-	love.graphics.replaceTransform(self.cameraTransform)
-	
-	love.graphics.replaceTransform(self.cameraTransform)
+	love.graphics.replaceTransform(CameraHandler.GetCameraTransform())
 	while true do
 		local d = preShadowQueue:pop()
 		if not d then break end
@@ -218,13 +221,13 @@ function api.Draw()
 	EffectsHandler.Draw(drawQueue)
 	TerrainHandler.Draw(drawQueue)
 	
-	love.graphics.replaceTransform(self.cameraTransform)
+	love.graphics.replaceTransform(CameraHandler.GetCameraTransform())
 	while true do
 		local d = drawQueue:pop()
 		if not d then break end
 		d.f()
 	end
-	--ShadowHandler.DrawVisionShadow(self.cameraTransform)
+	--ShadowHandler.DrawVisionShadow(CameraHandler.GetCameraTransform())
 	
 	--local windowX, windowY = love.window.getMode()
 	--if windowX/windowY > 16/9 then
@@ -265,13 +268,7 @@ function api.Initialize(cosmos, levelData)
 	DeckHandler.Initialize(api)
 	GameHandler.Initialize(api)
 	
-	-- Note that the camera pins only function for these particular second entries.
-	Camera.Initialize({
-		minScale = 1000,
-		initPos = {0, 0},
-		initScale = 900
-	})
-	UpdateCamera()
+	CameraHandler.Initialize(api)
 end
 
 return api

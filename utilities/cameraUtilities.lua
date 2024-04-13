@@ -21,8 +21,8 @@ local function UpdateCameraToViewPoints(dt, pointList, moveSmooth, scaleSmooth)
 		for i = 2, #pointList do
 			left = math.min(left, pointList[i].pos[1] - (pointList[i].radius or pointList[i].xOff))
 			right = math.max(right, pointList[i].pos[1] + (pointList[i].radius or pointList[i].xOff))
-			top = math.min(top, pointList[i].pos[1] - (pointList[i].radius or pointList[i].yOff))
-			bottom = math.max(bottom, pointList[i].pos[1] + (pointList[i].radius or pointList[i].yOff))
+			top = math.min(top, pointList[i].pos[2] - (pointList[i].radius or pointList[i].yOff))
+			bottom = math.max(bottom, pointList[i].pos[2] + (pointList[i].radius or pointList[i].yOff))
 		end
 	else
 		left, right, top, bottom = self.oldLeft, self.oldRight, self.oldTop, self.oldBottom
@@ -52,7 +52,7 @@ local function UpdateCameraToViewPoints(dt, pointList, moveSmooth, scaleSmooth)
 	local wantedScale = math.max((right - left)*self.scaleMult[1], (bottom - top)*self.scaleMult[2])
 	local wantedPos = {(left + right)/2, (top + bottom)/2}
 	
-	if moveSmooth == 0 and scaleSmooth == 0 then
+	if (not dt) or moveSmooth == 0 and scaleSmooth == 0 then
 		self.cameraPos = wantedPos
 		self.cameraScale = wantedScale
 		return self.cameraPos[1], self.cameraPos[2], self.cameraScale
@@ -68,8 +68,20 @@ local function UpdateCameraToViewPoints(dt, pointList, moveSmooth, scaleSmooth)
 	return self.cameraPos[1], self.cameraPos[2], self.cameraScale
 end
 
+local function PushCamera(dt, vector, moveSmooth)
+	self.cameraVelocity = util.Average(self.cameraVelocity, vector, (1 - moveSmooth))
+	local newPos = util.Add(util.Mult(dt, self.cameraVelocity), self.cameraPos)
+	self.cameraPos = newPos
+	
+	return self.cameraPos[1], self.cameraPos[2], self.cameraScale
+end
+
 local function UpdateTransform(cameraTransform, cameraX, cameraY, cameraScale)
 	local windowX, windowY = love.window.getMode()
+	
+	windowX = windowX * (1 - self.windowPadding.left - self.windowPadding.right)
+	windowY = windowY * (1 - self.windowPadding.top - self.windowPadding.bot)
+	
 	local boundLimit = math.min(windowX, windowY)
 	self.scaleMult = {boundLimit/windowX, boundLimit/windowY}
 	
@@ -91,12 +103,18 @@ local function GetCameraScale()
 	return self.cameraScale
 end
 
+local function GetCameraPos()
+	return self.cameraPos
+end
+
 local function Initialize(data)
+	data = data or {}
 	self = {
 		cameraPos = data.initPos or {0, 0},
 		cameraVelocity = {0, 0},
 		posVelocity = {0, 0},
 		cameraScale = data.initScale or 1080,
+		windowPadding = data.windowPadding or {left = 0, right = 0, top = 0, bot = 0},
 		pinX = data.pinX,
 		pinY = data.pinY,
 		minScale = data.minScale,
@@ -111,6 +129,8 @@ return {
 	UpdateCameraToPlayer = UpdateCameraToPlayer,
 	UpdateCameraToViewPoints = UpdateCameraToViewPoints,
 	UpdateTransform = UpdateTransform,
+	PushCamera = PushCamera,
 	Initialize = Initialize,
 	GetCameraScale = GetCameraScale,
+	GetCameraPos = GetCameraPos,
 }
