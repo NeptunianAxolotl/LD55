@@ -1,11 +1,10 @@
 
 EffectsHandler = require("effectsHandler")
 DialogueHandler = require("dialogueHandler")
-TerrainHandler = require("terrainHandler")
+DiagramHandler = require("diagramHandler")
 ShadowHandler = require("shadowHandler")
 
 LevelHandler = require("levelHandler")
-
 
 InterfaceUtil = require("utilities/interfaceUtilities")
 Delay = require("utilities/delay")
@@ -51,7 +50,7 @@ function api.GetCosmos()
 end
 
 function api.SetGameOver(hasWon, overType)
-	if self.gameWon or self.gameLost or TerrainHandler.InEditMode() then
+	if self.gameWon or self.gameLost then
 		return
 	end
 	
@@ -68,9 +67,6 @@ end
 --------------------------------------------------
 
 function api.KeyPressed(key, scancode, isRepeat)
-	if TerrainHandler.KeyPressed and TerrainHandler.KeyPressed(key, scancode, isRepeat) then
-		return
-	end
 	if key == "escape" then
 		api.ToggleMenu()
 	end
@@ -100,9 +96,12 @@ function api.MousePressed(x, y, button)
 	if DialogueHandler.MousePressedInterface(uiX, uiY, button) then
 		return
 	end
-	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
-	
 	-- Send event to game components
+	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
+	if DiagramHandler.MousePressed(x, y, button) then
+		return
+	end
+	
 	if Global.DEBUG_PRINT_CLICK_POS and button == 2 then
 		print("{")
 		print([[    name = "BLA",]])
@@ -113,8 +112,11 @@ function api.MousePressed(x, y, button)
 end
 
 function api.MouseReleased(x, y, button)
-	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
 	-- Send event to game components
+	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
+	if DiagramHandler.MouseReleased(x, y, button) then
+		return
+	end
 end
 
 function api.MouseMoved(x, y, dx, dy)
@@ -159,6 +161,10 @@ function api.GetOrderMult()
 	return self.orderMult
 end
 
+function api.MouseNearWorldPos(pos, radius)
+	return (util.DistSqVectors(pos, api.GetMousePosition()) < radius*radius)
+end
+
 function api.GetCameraExtents(buffer)
 	local screenWidth, screenHeight = love.window.getMode()
 	local topLeftPos = api.ScreenToWorld({0, 0})
@@ -171,14 +177,15 @@ function api.GetPhysicsWorld()
 	return PhysicsHandler.GetPhysicsWorld()
 end
 
-local function UpdateCamera()
-	local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(dt, 
-		{
-			{pos = {Global.WORLD_WIDTH/2, Global.WORLD_HEIGHT/2}, xOff = Global.WORLD_WIDTH/2 + 80, yOff = Global.WORLD_HEIGHT/2 + 80},
-		}
-		, 0, 0
-	)
-	Camera.UpdateTransform(self.cameraTransform, cameraX, cameraY, cameraScale)
+local function UpdateCamera(dt)
+	CameraHandler.Update(dt)
+	--local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(dt, 
+	--	{
+	--		{pos = {Global.WORLD_WIDTH/2, Global.WORLD_HEIGHT/2}, xOff = Global.WORLD_WIDTH/2 + 80, yOff = Global.WORLD_HEIGHT/2 + 80},
+	--	}
+	--	, 0, 0
+	--)
+	--Camera.UpdateTransform(self.cameraTransform, cameraX, cameraY, cameraScale)
 end
 
 --------------------------------------------------
@@ -191,7 +198,7 @@ end
 function api.Update(dt)
 	GameHandler.Update(dt)
 	if api.GetPaused() then
-		UpdateCamera()
+		UpdateCamera(dt)
 		return
 	end
 	
@@ -200,9 +207,10 @@ function api.Update(dt)
 	InterfaceUtil.Update(dt)
 	--ShadowHandler.Update(api)
 
+	DiagramHandler.Update(dt)
 	ChatHandler.Update(dt)
 	EffectsHandler.Update(dt)
-	UpdateCamera()
+	UpdateCamera(dt)
 end
 
 function api.Draw()
@@ -219,7 +227,7 @@ function api.Draw()
 	
 	--ShadowHandler.DrawGroundShadow(self.cameraTransform)
 	EffectsHandler.Draw(drawQueue)
-	TerrainHandler.Draw(drawQueue)
+	DiagramHandler.Draw(drawQueue)
 	
 	love.graphics.replaceTransform(CameraHandler.GetCameraTransform())
 	while true do
@@ -262,7 +270,7 @@ function api.Initialize(cosmos, levelData)
 	ChatHandler.Initialize(api)
 	DialogueHandler.Initialize(api)
 	
-	TerrainHandler.Initialize(api, levelData)
+	DiagramHandler.Initialize(api)
 	--ShadowHandler.Initialize(api)
 	
 	DeckHandler.Initialize(api)

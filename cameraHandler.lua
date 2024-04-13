@@ -17,17 +17,16 @@ end
 function api.Update(dt)
 	dt = math.min(0.2, dt)
 	local cameraVector = {0, 0}
-	local cameraGridPos = TerrainHandler.WorldToContinuousGrid(self.cameraPos)
-	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and cameraGridPos[1] > 3 and cameraGridPos[2] > 3 then
+	if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) then
 		cameraVector = util.Add(cameraVector, {-Global.CAMERA_SPEED, 0})
 	end
-	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and cameraGridPos[1] < LevelHandler.Width() and cameraGridPos[2] < LevelHandler.Height() then
+	if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) then
 		cameraVector = util.Add(cameraVector, {Global.CAMERA_SPEED, 0})
 	end
-	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and cameraGridPos[1] > 3 and cameraGridPos[2] < LevelHandler.Height() then
+	if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) then
 		cameraVector = util.Add(cameraVector, {0, -Global.CAMERA_SPEED})
 	end
-	if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and cameraGridPos[1] < LevelHandler.Width() and cameraGridPos[2] > 3 then
+	if (love.keyboard.isDown("s") or love.keyboard.isDown("down"))then
 		cameraVector = util.Add(cameraVector, {0, Global.CAMERA_SPEED})
 	end
 	UpdateCamera(dt, cameraVector)
@@ -46,7 +45,7 @@ function api.Initialize(world)
 	})
 	local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(dt, 
 		{
-			{pos = self.cameraPos, xOff = 1200, yOff = 1200},
+			{pos = self.cameraPos, xOff = 800, yOff = 800},
 		},
 		0.45, 0.45)
 	Camera.UpdateTransform(self.cameraTransform, cameraX, cameraY, cameraScale)

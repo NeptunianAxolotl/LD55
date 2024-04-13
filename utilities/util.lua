@@ -9,6 +9,22 @@ local sin = math.sin
 -- Vector funcs
 --------------------------------------------------
 
+function util.Eq(u, v)
+	return u and v and u[1] - v[1] < 0.000001 and v[1] - u[1] < 0.000001 and u[2] - v[2] < 0.000001 and v[2] - u[2] < 0.000001
+end
+
+function util.EqCircle(c, d)
+	return util.Eq(c, d) and c[3] - d[3] < 0.000001 and c[3] - d[3] < 0.000001
+end
+
+function util.EqLine(l, m)
+	if (util.Eq(l[1], m[1]) and util.Eq(l[2], m[2])) or
+			(util.Eq(l[1], m[2]) and util.Eq(l[1], m[2])) then
+		return true
+	end
+	return false -- Not really correct, maybe more expensive checks not required?
+end
+
 function util.DistSqVectors(u, v)
 	return util.DistSq(u[1], u[2], v[1], v[2])
 end
@@ -63,16 +79,21 @@ function util.Mult(b, v)
 	return {b*v[1], b*v[2]}
 end
 
-function util.AbsVal(x, y, z)
+function util.AbsValSq(x, y, z)
 	if z then
-		return sqrt(x*x + y*y + z*z)
+		return x*x + y*y + z*z
 	elseif y then
-		return sqrt(x*x + y*y)
+		return x*x + y*y
 	elseif x[3] then
-		return sqrt(x[1]*x[1] + x[2]*x[2] + x[3]*x[3])
+		return x[1]*x[1] + x[2]*x[2] + x[3]*x[3]
 	else
-		return sqrt(x[1]*x[1] + x[2]*x[2])
+		return x[1]*x[1] + x[2]*x[2]
 	end
+end
+
+function util.AbsVal(x, y, z)
+	local value = util.AbsValSq(x, y, z)
+	return value and sqrt(value)
 end
 
 function util.Unit(v)
@@ -205,6 +226,15 @@ function util.SignPreserveMax(val, mag)
 		return -mag
 	end
 	return val
+end
+
+function util.ExtendLine(line, length)
+	local m = util.Average(line[1], line[2])
+	local unit = util.UnitTowards(line[1], line[2])
+	return {
+		util.Add(m, util.Mult(-0.5 * length, unit)),
+		util.Add(m, util.Mult(0.5 * length, unit)),
+	}
 end
 
 --------------------------------------------------
@@ -345,6 +375,27 @@ function util.DistanceToLineSq(point, line)
 	local startToEnd = util.Subtract(line[2], line[1])
 	local normal, projection = util.Normal(startToPos, startToEnd)
 	return util.AbsValSq(normal)
+end
+
+function util.GetCircleLineIntersectionPoints(circle, line)
+	local startToPos = util.Subtract(circle, line[1])
+	local startToEnd = util.Subtract(line[2], line[1])
+	local normal, projection = util.Normal(startToPos, startToEnd)
+	local distSq = util.AbsValSq(normal)
+	local radiusSq = circle[3] * circle[3]
+	if distSq > radiusSq then
+		return false
+	end
+	-- We now do pythagoras on half the isosceles triangle formed by
+	-- the centre of the circle and its intersections with the line.
+	-- We also ignore the issue of degeneracy.
+	local innerProjLength = sqrt(radiusSq - distSq)
+	local innerProj = util.SetLength(innerProjLength, projection)
+	local closestPoint = util.Add(line[1], projection)
+	return {
+		util.Add(closestPoint, innerProj),
+		util.Subtract(closestPoint, innerProj),
+	}
 end
 
 --------------------------------------------------
