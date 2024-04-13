@@ -16,7 +16,7 @@ local function GetNewElement(u, v, elementType)
 	if elementType == Global.LINE then
 		return {u, v}
 	elseif elementType == Global.CIRCLE then
-		return {u, util.DistVectors(u, v)}
+		return {u[1], u[2], util.DistVectors(u, v)}
 	end
 end
 
@@ -63,6 +63,25 @@ local function AddLine(self, newLine)
 	end
 	self.lines[#self.lines + 1] = newLine
 end
+
+local function AddCircle(self, newCircle)
+	for i = 1, #self.circles do
+		local intersect = util.GetCircleIntersectionPoints(self.circles[i], newCircle)
+		if intersect then
+			AddPoint(self, intersect[1])
+			AddPoint(self, intersect[2])
+		end
+	end
+	for i = 1, #self.lines do
+		local intersect = util.GetCircleLineIntersectionPoints(newCircle, self.lines[i])
+		if intersect then
+			AddPoint(self, intersect[1])
+			AddPoint(self, intersect[2])
+		end
+	end
+	self.circles[#self.circles + 1] = newCircle
+end
+
 
 local function AddElement(self, u, v, elementType)
 	local newElement = GetNewElement(u, v, elementType)

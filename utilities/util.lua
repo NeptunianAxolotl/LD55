@@ -14,7 +14,7 @@ function util.Eq(u, v)
 end
 
 function util.EqCircle(c, d)
-	return util.Eq(c, d) and c[3] - d[3] < 0.000001 and c[3] - d[3] < 0.000001
+	return util.Eq(c, d) and c[3] - d[3] < 0.000001 and d[3] - c[3] < 0.000001
 end
 
 function util.EqLine(l, m)
@@ -395,6 +395,35 @@ function util.GetCircleLineIntersectionPoints(circle, line)
 	return {
 		util.Add(closestPoint, innerProj),
 		util.Subtract(closestPoint, innerProj),
+	}
+end
+
+function util.GetCircleIntersectionPoints(c, d)
+	local midToMid = util.Subtract(d, c)
+	local distSq = util.AbsValSq(midToMid)
+	if distSq > (c[3] + d[3])*(c[3] + d[3]) or distSq == 0 then
+		return
+	end
+	
+	local rSubFactor = (c[3]*c[3] - d[3]*d[3]) / distSq
+	local rAddFactor = (c[3]*c[3] + d[3]*d[3]) / distSq
+	local determinantSq = 2 * rAddFactor - rSubFactor*rSubFactor - 1
+	if determinantSq < 0 then
+		return
+	end
+	local perpFactor = 0.5 * sqrt(determinantSq)
+	
+	local mid = {
+		0.5*(c[1] + d[1]) + 0.5 * rSubFactor * (d[1] - c[1]),
+		0.5*(c[2] + d[2]) + 0.5 * rSubFactor * (d[2] - c[2]),
+	}
+	local perp = {
+		(d[2] - c[2]) * perpFactor,
+		(c[1] - d[1]) * perpFactor,
+	}
+	return {
+		util.Add(mid, perp),
+		util.Subtract(mid, perp),
 	}
 end
 

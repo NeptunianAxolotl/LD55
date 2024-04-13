@@ -33,7 +33,7 @@ end
 function api.Initialize(world)
 	self = {
 		world = world,
-		elementType = Global.LINE
+		elementType = Global.CIRCLE
 	}
 	
 	local def = {
