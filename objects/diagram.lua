@@ -122,7 +122,7 @@ end
 
 local function SetAgeAppropriateColor(self, age)
 	if age then
-		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], math.max(0.2, math.pow(0.9, self.presentAge - age)))
+		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], math.max(0.18,  math.min(0.7, 0.9*math.pow(0.89, self.presentAge - age))))
 	else
 		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
 	end
