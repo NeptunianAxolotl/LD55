@@ -1,8 +1,4 @@
 
-local Font = require("include/font")
-
-local EffectsHandler = require("effectsHandler")
-local Resources = require("resourceHandler")
 MusicHandler = require("musicHandler")
 
 local self = {}
@@ -50,18 +46,21 @@ local function DrawLeftInterface()
 	local offset = 30
 	local xOffset = 0
 	offset = PrintLine(levelData.humanName, 3, xOffset, offset, "center", 280)
-	offset = PrintLine(levelData.description or "missing description", 4, xOffset + 20, offset, "left", 250)
+	offset = PrintLine(levelData.description or "missing description", 4, xOffset + 20, offset, "left", 280)
 	
 	if self.world.GetGameOver() then
-		offset = PrintLine(levelData.winMessage or "Win?!?!?", 4, 400, 120, "center", 250)
+		offset = PrintLine([[You Win!
+	
+	Press N for the next level.
+	]], 4, 400, 120, "center", 250)
 	end
 	
 	local chalkRemaining = (self.world.GetLevelData().chalkLimit - DiagramHandler.GetMoves())
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Tool: " .. tool, 4, xOffset + 20, windowY - 250, "left", 250)
-	PrintLine("Chalk: " .. chalkRemaining, 4, xOffset + 20, windowY - 215, "left", 250)
+	PrintLine("Tool: " .. tool, 4, xOffset + 20, windowY - 250, "left", 280)
+	PrintLine("Chalk: " .. chalkRemaining, 4, xOffset + 20, windowY - 215, "left", 280)
 end
 
 --------------------------------------------------

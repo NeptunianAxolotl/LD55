@@ -6,11 +6,10 @@ local data = {
 Click the point that makes sense and then click the other point.
 
 Nothing bad will happen]],
-	winMessage = [[You Win!
-	
-	Press N for the next level.
-	]],
+	background = "level1",
 	defaultElement = Global.LINE,
+	chalkLimit = 1,
+	lockTool = true,
 	points = {
 		{770, 630},
 		{1110, 670},
@@ -22,8 +21,6 @@ Nothing bad will happen]],
 	},
 	circles = {
 	},
-	chalkLimit = 1,
-	lockTool = true,
 	bounds = {{0,0}, {Global.PLAY_WIDTH, Global.PLAY_HEIGHT}},
 	win = {
 		lines = {

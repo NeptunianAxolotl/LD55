@@ -59,6 +59,9 @@ function api.InBounds(pos)
 end
 
 function api.CheckVictory()
+	if #self.levelData.win.lines == 0 and #self.levelData.win.circles == 0 then
+		return
+	end
 	if LinesSatisfied() and CirclesSatisfied() then
 		self.world.SetGameOver(true, "Made Shape")
 	end
@@ -109,18 +112,23 @@ function api.Update(dt)
 	end
 end
 
+function api.GetInitialPointCount()
+	return self.initialPoints
+end
+
 function api.Initialize(world, levelData)
 	self = {
 		world = world,
 		elementType = levelData.defaultElement or Global.LINE,
 		levelData = levelData,
 		moves = 0,
+		initialPoints = #levelData.points,
 	}
 	
 	local def = {
-		points = levelData.points,
+		points = util.CopyTable(levelData.points),
 		lines = ProcessLines(levelData.lines),
-		circles = levelData.circles,
+		circles = util.CopyTable(levelData.circles),
 	}
 	
 	self.currentDiagram = NewDiagram(def, self.world)
@@ -134,6 +142,10 @@ function api.Draw(drawQueue)
 		local bounds = self.levelData.bounds
 		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 		love.graphics.rectangle("line", bounds[1][1], bounds[1][2], bounds[2][1] - bounds[1][1], bounds[2][2] - bounds[1][2])
+		
+		if self.levelData.background then
+			Resources.DrawImage(self.levelData.background, bounds[1][1], bounds[1][2])
+		end
 	end})
 end
 

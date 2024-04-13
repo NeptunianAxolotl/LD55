@@ -77,7 +77,7 @@ function api.KeyPressed(key, scancode, isRepeat)
 	if key == "p" then
 		api.ToggleMenu()
 	end
-	if api.GetGameOver() then
+	if api.GetGameOver() and not Global.ACT_IN_GAME_OVER then
 		return -- No doing actions
 	end
 	if DiagramHandler.KeyPressed(key, scancode, isRepeat) then
@@ -97,7 +97,7 @@ function api.MousePressed(x, y, button)
 	end
 	local uiX, uiY = self.interfaceTransform:inverse():transformPoint(x, y)
 	
-	if api.GetGameOver() then
+	if api.GetGameOver() and not Global.ACT_IN_GAME_OVER then
 		return -- No doing actions
 	end
 	if DialogueHandler.MousePressedInterface(uiX, uiY, button) then
@@ -110,13 +110,13 @@ function api.MousePressed(x, y, button)
 	end
 	
 	if Global.DEBUG_PRINT_CLICK_POS and button == 1 then
-		print("{" .. (math.floor(x/10)*10) .. ", " .. (math.floor(y/10)*10) .. "},")
+		print("{" .. (math.floor(x)) .. ", " .. (math.floor(y)) .. "},")
 		return true
 	end
 end
 
 function api.MouseReleased(x, y, button)
-	if api.GetGameOver() then
+	if api.GetGameOver() and not Global.ACT_IN_GAME_OVER then
 		return -- No doing actions
 	end
 	-- Send event to game components

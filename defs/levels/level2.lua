@@ -1,24 +1,22 @@
 
 local data = {
-	humanName = "Make a Triangle 2",
-	description = [[Do it.
+	humanName = "CIRCLE ME UP!!!",
+	description = [[Please make me a circle.
 
-Click the point that makes sense and then click the other point.
+We need it to summon demons.
 
-Nothing bad will happen]],
-	winMessage = [[You Win!
-	
-	Press N for the next level.
-	]],
-	defaultElement = Global.LINE,
+I have EXTREMELY PARTICULAR feelings about WHERE THE CIRCLE IS PLACED.
+
+Do not disappoint me.]],
+	background = "level2",
+	defaultElement = Global.CIRCLE,
+	chalkLimit = 1,
+	lockTool = true,
 	points = {
-		{770, 630},
-		{1110, 670},
-		{1030, 400},
+		{830, 540},
+		{1150, 540},
 	},
 	lines = {
-		{{770, 630}, {1110, 670}},
-		{{1110, 670}, {1030, 400}},
 	},
 	circles = {
 	},
@@ -26,11 +24,9 @@ Nothing bad will happen]],
 	bounds = {{0,0}, {Global.PLAY_WIDTH, Global.PLAY_HEIGHT}},
 	win = {
 		lines = {
-			{{770, 630}, {1110, 670}},
-			{{1110, 670}, {1030, 400}},
-			{{770, 630}, {1030, 400}},
 		},
 		circles = {
+			{830, 540, 320},
 		},
 	},
 }

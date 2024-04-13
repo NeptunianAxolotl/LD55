@@ -1,7 +1,4 @@
 
-local Resources = require("resourceHandler")
-local Font = require("include/font")
-
 local function GetPointAt(self, world, pos)
 	local bestDistSq = false
 	local bestPoint = false
@@ -173,6 +170,7 @@ local function NewDiagram(def, world)
 			
 			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 			love.graphics.setLineWidth(0)
+			local initialPoints = DiagramHandler.GetInitialPointCount()
 			for i = 1, #self.points do
 				local point = self.points[i]
 				if util.Eq(point, selectedPoint) then
@@ -180,7 +178,7 @@ local function NewDiagram(def, world)
 				elseif util.Eq(point, hoveredPoint) then
 					love.graphics.circle('fill', point[1], point[2], 16)
 				else
-					love.graphics.circle('fill', point[1], point[2], 10)
+					love.graphics.circle('fill', point[1], point[2], (i <= initialPoints) and 6 or 2)
 				end
 			end
 		end})

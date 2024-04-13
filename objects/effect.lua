@@ -1,7 +1,4 @@
 
-local Resources = require("resourceHandler")
-local Font = require("include/font")
-
 local DRAW_DEBUG = false
 
 local function NewEffect(self, def)

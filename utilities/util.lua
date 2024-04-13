@@ -17,15 +17,15 @@ function util.LineGradient(l)
 end
 
 function util.ApproxEqNumber(n1, n2)
-	return n1 - n2 < 0.00000001 and n2 - n1 < 0.00000001
+	return n1 - n2 < 0.001 and n2 - n1 < 0.001
 end
 
 function util.Eq(u, v)
-	return u and v and u[1] - v[1] < 0.000001 and v[1] - u[1] < 0.000001 and u[2] - v[2] < 0.000001 and v[2] - u[2] < 0.000001
+	return u and v and u[1] - v[1] < 0.001 and v[1] - u[1] < 0.001 and u[2] - v[2] < 0.001 and v[2] - u[2] < 0.001
 end
 
 function util.EqCircle(c, d)
-	return util.Eq(c, d) and c[3] - d[3] < 0.000001 and d[3] - c[3] < 0.000001
+	return util.Eq(c, d) and c[3] - d[3] < 0.001 and d[3] - c[3] < 0.001
 end
 
 function util.EqLine(l, m)
