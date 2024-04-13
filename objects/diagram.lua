@@ -200,7 +200,7 @@ local function NewDiagram(def, world)
 				elseif util.Eq(point, hoveredPoint) then
 					love.graphics.circle('fill', point[1], point[2], 16)
 				else
-					love.graphics.circle('fill', point[1], point[2], (i <= initialPoints) and 6 or 3)
+					love.graphics.circle('fill', point[1], point[2], 6)
 				end
 			end
 		end})
