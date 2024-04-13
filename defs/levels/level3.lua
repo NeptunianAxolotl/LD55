@@ -22,6 +22,7 @@ Press X or Space to toggle your tools, because you'll need both for this one.]],
 	bounds = {{0,0}, {Global.PLAY_WIDTH, Global.PLAY_HEIGHT}},
 	win = {
 		lines = {
+			{{686, 737}, {1109, 739}},
 		},
 		circles = {
 			{897.5, 738, 211.50236405298},

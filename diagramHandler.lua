@@ -53,6 +53,14 @@ local function TryToPlaceElement(u, v)
 	api.CheckVictory()
 end
 
+function api.IsLineRequired(line)
+	return util.ListContains(self.levelData.win.lines, line, util.EqLine)
+end
+
+function api.IsCircleRequired(circle)
+	return util.ListContains(self.levelData.win.circles, circle, util.EqCircle)
+end
+
 function api.InBounds(pos)
 	local bounds = self.levelData.bounds
 	return util.PosInRectangle(pos, bounds[1][1], bounds[1][2], bounds[2][1] - bounds[1][1], bounds[2][2] - bounds[1][2])

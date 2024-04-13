@@ -38,6 +38,14 @@ local function ElementAlreadyExists(self, newElement, elementType)
 	return false
 end
 
+
+local function AgeElement(self, element, ReqFunction)
+	if ReqFunction(element) then
+		return false
+	end
+	return self.presentAge
+end
+
 local function AddPoint(self, point)
 	if not DiagramHandler.InBounds(point) then
 		return
@@ -69,6 +77,8 @@ local function AddLine(self, newLine)
 		end
 	end
 	self.lines[#self.lines + 1] = newLine
+	self.presentAge = self.presentAge + 1
+	self.lineAge[#self.lineAge + 1] = AgeElement(self, newLine, DiagramHandler.IsLineRequired)
 end
 
 local function AddCircle(self, newCircle)
@@ -90,6 +100,8 @@ local function AddCircle(self, newCircle)
 		end
 	end
 	self.circles[#self.circles + 1] = newCircle
+	self.presentAge = self.presentAge + 1
+	self.circleAge[#self.circleAge + 1] = AgeElement(self, newCircle, DiagramHandler.IsCircleRequired)
 end
 
 local function AddElement(self, u, v, elementType)
@@ -108,12 +120,30 @@ local function AddElement(self, u, v, elementType)
 	return true
 end
 
+local function SetAgeAppropriateColor(self, age)
+	if age then
+		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], math.max(0.2, math.pow(0.9, self.presentAge - age)))
+	else
+		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
+	end
+end
+
 local function NewDiagram(def, world)
 	local self = {}
 	
 	self.points = def.points
 	self.lines = def.lines
 	self.circles = def.circles
+	self.lineAge = {}
+	self.circleAge = {}
+	self.presentAge = 0
+	
+	for i = 1, #self.lines do
+		self.lineAge[#self.lineAge + 1] = AgeElement(self, self.lines[i], DiagramHandler.IsLineRequired)
+	end
+	for i = 1, #self.circles do
+		self.circleAge[#self.circleAge + 1] = AgeElement(self, self.circles[i], DiagramHandler.IsCircleRequired)
+	end
 	
 	function self.GetPointAt(pos)
 		return GetPointAt(self, world, pos)
@@ -124,21 +154,11 @@ local function NewDiagram(def, world)
 	end
 	
 	function self.ContainsLine(line)
-		for i = 1, #self.lines do
-			if util.EqLine(line, self.lines[i]) then
-				return true
-			end
-		end
-		return false
+		return util.ListContains(self.lines, line, util.EqLine)
 	end
 	
 	function self.ContainsCircle(circle)
-		for i = 1, #self.circles do
-			if util.EqCircle(circle, self.circles[i]) then
-				return true
-			end
-		end
-		return false
+		return util.ListContains(self.circles, circle, util.EqCircle)
 	end
 	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
@@ -148,11 +168,13 @@ local function NewDiagram(def, world)
 			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
 			for i = 1, #self.lines do
 				local line = self.lines[i]
+				SetAgeAppropriateColor(self, self.lineAge[i])
 				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
 			end
 			
 			for i = 1, #self.circles do
 				local circle = self.circles[i]
+				SetAgeAppropriateColor(self, self.circleAge[i])
 				love.graphics.circle('line', circle[1], circle[2], circle[3], math.floor(math.max(32, math.min(160, circle[3]*0.8))))
 			end
 			
@@ -178,7 +200,7 @@ local function NewDiagram(def, world)
 				elseif util.Eq(point, hoveredPoint) then
 					love.graphics.circle('fill', point[1], point[2], 16)
 				else
-					love.graphics.circle('fill', point[1], point[2], (i <= initialPoints) and 6 or 2)
+					love.graphics.circle('fill', point[1], point[2], (i <= initialPoints) and 6 or 3)
 				end
 			end
 		end})

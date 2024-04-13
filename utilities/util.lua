@@ -853,6 +853,15 @@ function util.AddKeyNameToMaps(mapOfMaps, keyName)
 	return mapOfMaps
 end
 
+function util.ListContains(list, element, EqualityCheck)
+	for i = 1, #list do
+		if EqualityCheck(element, list[i]) then
+			return true
+		end
+	end
+	return false
+end
+
 --------------------------------------------------
 --------------------------------------------------
 -- Array Utilities
