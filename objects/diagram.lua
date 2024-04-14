@@ -433,6 +433,21 @@ local function GetElementOpacity(element, fadeTime)
 	return prop * 0.35 + (1 - prop) * 0.85
 end
 
+local function RespondToRemovedShape(self, edges, shapeID)
+	for i = 1, #edges do
+		local line = ElementAlreadyExists(self, edges[i], Global.LINE, true)
+		if line then
+			for j = 1, #line.inShapes do
+				if line.inShapes[j] == shapeID then
+					line.inShapes[j] = line.inShapes[#line.inShapes]
+					line.inShapes[#line.inShapes] = nil
+					break
+				end
+			end
+		end
+	end
+end
+
 local function NewDiagram(levelData, world)
 	local self = {}
 	
@@ -455,6 +470,10 @@ local function NewDiagram(levelData, world)
 	
 	function self.AddElement(u, v, elementType)
 		return AddElement(self, u, v, elementType)
+	end
+	
+	function self.RespondToRemovedShape(edges, shapeId)
+		RespondToRemovedShape(self, edges, shapeId)
 	end
 	
 	function self.Update(dt)
