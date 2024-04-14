@@ -67,6 +67,20 @@ function api.Update(dt)
 	if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) then
 		cameraVector = util.Add(cameraVector, {0, Global.CAMERA_SPEED*keyScroll})
 	end
+	
+	if self.cameraPos[1] < -Global.CAMERA_BOUND then
+		cameraVector[1] = math.max(0, cameraVector[1])
+	end
+	if self.cameraPos[1] > Global.CAMERA_BOUND then
+		cameraVector[1] = math.min(0, cameraVector[1])
+	end
+	if self.cameraPos[2] < -Global.CAMERA_BOUND then
+		cameraVector[2] = math.max(0, cameraVector[2])
+	end
+	if self.cameraPos[2] > Global.CAMERA_BOUND then
+		cameraVector[2] = math.min(0, cameraVector[2])
+	end
+	
 	UpdateCamera(dt, cameraVector)
 end
 

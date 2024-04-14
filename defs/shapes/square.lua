@@ -13,6 +13,7 @@ local data = {
 	powerMult = 3,
 	drainCost = 1,
 	drainForce = 2,
+	idleDischargeMult = 0.15,
 	init = function (self)
 		self.effectRange = self.radius*2
 		self.effectRangeSq = self.effectRange*self.effectRange

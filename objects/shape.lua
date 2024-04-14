@@ -35,7 +35,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	function self.Update(dt)
-		self.power = self.power - dt*0.2
+		self.power = self.power - dt*self.def.idleDischargeMult
 		self.animateSpeed = ((math.random()*dt*0.1 + self.animateSpeed))%1
 		self.animate = (self.animate + (0.6 + math.random()*0.1 + self.animateSpeed)*dt)%1
 		

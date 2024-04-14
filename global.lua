@@ -6,6 +6,7 @@ local globals = {
 	RED_COL  = {0.95,0.2,0.2},
 	
 	WORLD_RADIUS = 2000,
+	CAMERA_BOUND = 1800,
 	PLAYER_SPEED = 30,
 	
 	SHAPE_FADE_MULT = 0.2,

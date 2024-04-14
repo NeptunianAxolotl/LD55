@@ -29,6 +29,7 @@ local data = {
 	powerMult = 1,
 	drainCost = 2,
 	drainForce = 0.4,
+	idleDischargeMult = 0.2,
 	pullForce = 150,
 	color = {0.2, 0.4, 0.8},
 	init = function (self)
