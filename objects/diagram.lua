@@ -164,6 +164,21 @@ local function IsAngleInteresting(angle)
 	return false
 end
 
+local function IsInElements(elements, id)
+	if #elements <= 0 then
+		return false
+	end
+	if elements[#elements].id == id then
+		return true
+	end
+	for i = 1, #elements do
+		if elements[i].id == id then
+			return true
+		end
+	end
+	return false
+end
+
 local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	local inBounds, alreadyExists, point = AddPoint(self, pointPos)
 	if not inBounds then
@@ -172,16 +187,14 @@ local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	if Global.DEBUG_PRINT_POINT then
 		print("point {" .. pointPos[1] .. ", " .. pointPos[2] .. "}, ")
 	end
-	if alreadyExists then
-		if #point.elements > 0 and point.elements[#point.elements].id == newElement.id then
-			return -- Already added to this element.
-		end
-	else
+	if not alreadyExists then
 		otherElement.points[#otherElement.points + 1] = point
 		point.elements[#point.elements + 1] = otherElement
 	end
-	newElement.points[#newElement.points + 1] = point
-	point.elements[#point.elements + 1] = newElement
+	if (not alreadyExists) or (not IsInElements(point.elements, newElement.id)) then
+		newElement.points[#newElement.points + 1] = point
+		point.elements[#point.elements + 1] = newElement
+	end
 	if newElement.isLine and otherElement.isLine then
 		local angle = util.GetAngleBetweenLines(newElement.geo, otherElement.geo)
 		local angleType = IsAngleInteresting(angle)
@@ -303,6 +316,7 @@ end
 local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 	local reqLengthSq = util.DistSqVectors(mainCorner.point.geo, mainPoint.geo)
 	local otherLine = GetOtherLine(mainLine, mainCorner.lines)
+	print("CheckForShapeFromSegment")
 	for i = 1, #otherLine.notableAngles do
 		local otherCorner = otherLine.notableAngles[i]
 		if otherCorner.angleType == mainCorner.angleType and otherCorner.id ~= mainCorner.id then
@@ -314,6 +328,7 @@ local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 end
 
 local function CheckNewLineForShapes(self, mainLine)
+	print("CheckNewLineForShapes", #mainLine.notableAngles)
 	for i = 1, #mainLine.notableAngles do
 		local primary = mainLine.notableAngles[i]
 		for j = 1, #mainLine.notableAngles do
@@ -377,13 +392,13 @@ end
 
 local function GetElementOpacity(element, fadeTime)
 	if element.destroyTimer then
-		return element.destroyTimer * 0.85
+		return element.destroyTimer * 0.35
 	end
 	if not element.fade then
 		return 0.85
 	end
 	local prop = element.fade / fadeTime
-	return math.max(0.18,  math.min(0.85, 0.9*math.pow(0.89, 1 - prop)))
+	return prop * 0.35 + (1 - prop) * 0.85
 end
 
 local function NewDiagram(levelData, world)
@@ -448,7 +463,9 @@ local function NewDiagram(levelData, world)
 			love.graphics.setLineWidth(0)
 			for i = 1, #self.points do
 				local point = self.points[i].geo
-				love.graphics.printf(#self.points[i].elements, point[1], point[2], 30, "right")
+				if Global.DEBUG_POINT_INTERSECT then
+					love.graphics.printf(#self.points[i].elements, point[1], point[2], 30, "right")
+				end
 				if util.Eq(point, selectedPoint) then
 					love.graphics.circle('fill', point[1], point[2], 15)
 				elseif util.Eq(point, hoveredPoint) then

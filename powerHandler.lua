@@ -11,13 +11,11 @@ local world
 --------------------------------------------------
 
 function api.GetSafeLineCapacity()
-	return 2
-	--return self.powers.safeLines*2 + 6
+	return self.powers.safeLines*2 + 6
 end
 
 function api.GetLineFadeTime()
-	return 4
-	--return self.powers.fadeTime*3 + 10
+	return self.powers.fadeTime*3 + 10
 end
 
 --------------------------------------------------
