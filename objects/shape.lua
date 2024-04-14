@@ -51,7 +51,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
 		drawQueue:push({y=8; f=function()
-			love.graphics.setLineWidth(13 + math.sin(self.animate*math.pi*2))
+			love.graphics.setLineWidth((13 + math.sin(self.animate*math.pi*2))*self.def.glowSizeMult)
 			
 			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.1 + 0.8*self.power/self.maxPower)
 			for i = 1, #self.edges do

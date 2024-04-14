@@ -14,6 +14,7 @@ local data = {
 	drainCost = 1,
 	drainForce = 2,
 	idleDischargeMult = 0.15,
+	glowSizeMult = 1.3,
 	init = function (self)
 		self.effectRange = self.radius*2
 		self.effectRangeSq = self.effectRange*self.effectRange

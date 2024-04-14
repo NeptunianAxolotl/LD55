@@ -381,7 +381,7 @@ local function AddElement(self, u, v, elementType)
 	end
 	local existingElement = ElementAlreadyExists(self, newElement, elementType)
 	if existingElement then
-		if existingElement.fade then
+		if existingElement.fade and Global.CAN_REFRESH_ELEMENT then
 			-- Refresh fade
 			existingElement.fade = nil
 			self.newestElementCounter = self.newestElementCounter + 1

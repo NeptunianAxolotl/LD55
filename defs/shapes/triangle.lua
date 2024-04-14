@@ -30,6 +30,7 @@ local data = {
 	drainForce = 0.4,
 	idleDischargeMult = 0.2,
 	pullForce = 150,
+	glowSizeMult = 1,
 	color = {0.2, 0.4, 0.8},
 	init = function (self)
 		self.effectRange = self.radius*2
