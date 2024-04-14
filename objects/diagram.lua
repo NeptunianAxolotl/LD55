@@ -401,16 +401,13 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 	while i < #elements do
 		local element = elements[i]
 		local fadeMult = 1
-		if self.isLine then
-			-- Why are some circles in shapes?
-			if element.inShapes and #element.inShapes > 0 then
-				fadeMult = Global.SHAPE_FADE_MULT
-				self.maxInShapes = math.max((self.maxInShapes or 0), #element.inShapes)
-			elseif (self.maxInShapes or 0) > 0 then
-				if (not element.isPermanent) and (not element.destroyed) then
-					DestroyElement(self, element)
-					destroyed = true
-				end
+		if element.inShapes and #element.inShapes > 0 then
+			fadeMult = Global.SHAPE_FADE_MULT
+			element.maxInShapes = math.max((element.maxInShapes or 0), #element.inShapes)
+		elseif (element.maxInShapes or 0) > 0 then
+			if (not element.isPermanent) and (not element.destroyed) then
+				DestroyElement(self, element)
+				destroyed = true
 			end
 		end
 		if (not element.isPermanent) and (not element.destroyed) and (element.elementCount < recentSafety or fadeMult > 1) and fadeMult > 0 then
@@ -437,13 +434,13 @@ end
 
 local function GetElementOpacity(element, fadeTime)
 	if element.destroyTimer then
-		return element.destroyTimer * 0.35
+		return element.destroyTimer * 0.25
 	end
 	if not element.fade then
 		return 0.85
 	end
-	local prop = element.fade / fadeTime
-	return prop * 0.35 + (1 - prop) * 0.85
+	local prop = 1 - math.pow(1 - (element.fade / fadeTime), 1.8)
+	return prop * 0.25 + (1 - prop) * 0.9
 end
 
 local function RespondToRemovedShape(self, edges, shapeID)
