@@ -497,17 +497,22 @@ local function NewDiagram(levelData, world)
 				end
 			end
 			
-			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 			love.graphics.setLineWidth(0)
 			for i = 1, #self.points do
 				local point = self.points[i].geo
+				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 				if Global.DEBUG_POINT_INTERSECT then
 					love.graphics.printf(#self.points[i].elements, point[1], point[2], 30, "right")
 				end
 				if util.Eq(point, selectedPoint) then
 					love.graphics.circle('fill', point[1], point[2], 15)
 				elseif util.Eq(point, hoveredPoint) then
-					love.graphics.circle('fill', point[1], point[2], 16)
+					if PlayerHandler.InSelectRange(point) then
+						love.graphics.circle('fill', point[1], point[2], 16)
+					else
+						love.graphics.setColor(Global.RED_COL[1], Global.RED_COL[2], Global.RED_COL[3], 1)
+						love.graphics.circle('fill', point[1], point[2], 8)
+					end
 				else
 					love.graphics.circle('fill', point[1], point[2], 6)
 				end

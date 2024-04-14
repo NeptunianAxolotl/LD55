@@ -44,6 +44,9 @@ function api.MousePressed(x, y, button)
 		self.selectedPoint = false
 		return
 	end
+	if not PlayerHandler.InSelectRange(self.hoveredPoint) then
+		return
+	end
 	if self.selectedPoint and self.hoveredPoint then
 		TryToPlaceElement(self.selectedPoint, self.hoveredPoint)
 		self.selectedPoint = false
@@ -53,7 +56,7 @@ function api.MousePressed(x, y, button)
 end
 
 function api.MouseReleased(x, y, button)
-	if self.selectedPoint and self.hoveredPoint then
+	if self.selectedPoint and self.hoveredPoint and PlayerHandler.InSelectRange(self.hoveredPoint) then
 		TryToPlaceElement(self.selectedPoint, self.hoveredPoint)
 		self.selectedPoint = false
 	end
@@ -67,6 +70,10 @@ function api.KeyPressed(key, scancode, isRepeat)
 			self.elementType = Global.LINE
 		end
 	end
+end
+
+function api.GetHoveredPoint()
+	return self.hoveredPoint
 end
 
 function api.Update(dt)

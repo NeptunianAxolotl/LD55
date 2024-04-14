@@ -3,9 +3,10 @@ local globals = {
 	BACK_COL = {78/255, 70/255, 90/255},
 	LINE_COL = {0.95,0.95,0.9},
 	TEXT_COL = {0.73, 0.73, 0.75},
+	RED_COL  = {0.95,0.2,0.2},
 	
 	WORLD_RADIUS = 2000,
-	PLAYER_SPEED = 75,
+	PLAYER_SPEED = 30,
 	
 	MASTER_VOLUME = 0.05,
 	MUSIC_VOLUME = 0.02,

@@ -22,6 +22,10 @@ function api.GetPlayerSpeed()
 	return (self.powers.speed*1.5 + 10) * Global.PLAYER_SPEED
 end
 
+function api.GetDrawRange()
+	return 430
+end
+
 --------------------------------------------------
 -- Updating
 --------------------------------------------------

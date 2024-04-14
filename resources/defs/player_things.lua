@@ -7,8 +7,8 @@ for i = 1, #names do
 		name = names[i],
 		file = "resources/images/player/" .. names[i] .. ".png",
 		form = "image",
-		xScale = 1,
-		yScale = 1,
+		xScale = 0.1,
+		yScale = 0.1,
 		xOffset = 0.5,
 		yOffset = 55/80,
 	}
