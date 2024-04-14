@@ -4,6 +4,7 @@ local globals = {
 	LINE_COL = {0.95,0.95,0.9},
 	TEXT_COL = {0.73, 0.73, 0.75},
 	
+	WORLD_RADIUS = 2000,
 	PLAY_WIDTH = 2000,
 	PLAY_HEIGHT = 1200,
 	
@@ -26,7 +27,7 @@ local globals = {
 	SPEED_LIMIT = 1800,
 	TURN_MULT = 175,
 	
-	LINE_LENGTH = 6000,
+	LINE_LENGTH = 12000,
 	
 	-- Enums
 	LINE = 1,

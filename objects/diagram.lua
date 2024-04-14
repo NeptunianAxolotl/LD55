@@ -24,26 +24,18 @@ end
 local function ElementAlreadyExists(self, newElement, elementType)
 	if elementType == Global.LINE then
 		for i = 1, #self.lines do
-			if util.EqLine(newElement, self.lines[i]) then
+			if util.EqLine(newElement, self.lines[i].geo) then
 				return true
 			end
 		end
 	elseif elementType == Global.CIRCLE then
 		for i = 1, #self.circles do
-			if util.EqCircle(newElement, self.circles[i]) then
+			if util.EqCircle(newElement, self.circles[i].geo) then
 				return true
 			end
 		end
 	end
 	return false
-end
-
-
-local function AgeElement(self, element, ReqFunction)
-	if ReqFunction(element) then
-		return false
-	end
-	return self.presentAge
 end
 
 local function AddPoint(self, point)
@@ -58,50 +50,50 @@ local function AddPoint(self, point)
 	self.points[#self.points + 1] = point
 end
 
-local function AddLine(self, newLine)
+local function AddLine(self, newLine, isPermanent)
 	if Global.DEBUG_PRINT_CLICK_POS then
 		print("line {{" .. newLine[1][1] .. ", " .. newLine[1][2] .. "}, {" .. newLine[2][1] .. ", " .. newLine[2][2] .. "}},")
 	end
 	newLine = util.ExtendLine(newLine, Global.LINE_LENGTH)
 	for i = 1, #self.circles do
-		local intersect = util.GetCircleLineIntersectionPoints(self.circles[i], newLine)
+		local intersect = util.GetCircleLineIntersectionPoints(self.circles[i].geo, newLine)
 		if intersect then
 			AddPoint(self, intersect[1])
 			AddPoint(self, intersect[2])
 		end
 	end
 	for i = 1, #self.lines do
-		local intersect = util.GetBoundedLineIntersection(self.lines[i], newLine)
+		local intersect = util.GetBoundedLineIntersection(self.lines[i].geo, newLine)
 		if intersect then
 			AddPoint(self, intersect)
 		end
 	end
-	self.lines[#self.lines + 1] = newLine
-	self.presentAge = self.presentAge + 1
-	self.lineAge[#self.lineAge + 1] = AgeElement(self, newLine, DiagramHandler.IsLineRequired)
+	self.lines[#self.lines + 1] = {
+		geo = newLine,
+	}
 end
 
-local function AddCircle(self, newCircle)
+local function AddCircle(self, newCircle, isPermanent)
 	if Global.DEBUG_PRINT_CLICK_POS then
 		print("circle {" .. newCircle[1] .. ", " .. newCircle[2] .. ", " .. newCircle[3] .. "},")
 	end
 	for i = 1, #self.circles do
-		local intersect = util.GetCircleIntersectionPoints(self.circles[i], newCircle)
+		local intersect = util.GetCircleIntersectionPoints(self.circles[i].geo, newCircle)
 		if intersect then
 			AddPoint(self, intersect[1])
 			AddPoint(self, intersect[2])
 		end
 	end
 	for i = 1, #self.lines do
-		local intersect = util.GetCircleLineIntersectionPoints(newCircle, self.lines[i])
+		local intersect = util.GetCircleLineIntersectionPoints(newCircle, self.lines[i].geo)
 		if intersect then
 			AddPoint(self, intersect[1])
 			AddPoint(self, intersect[2])
 		end
 	end
-	self.circles[#self.circles + 1] = newCircle
-	self.presentAge = self.presentAge + 1
-	self.circleAge[#self.circleAge + 1] = AgeElement(self, newCircle, DiagramHandler.IsCircleRequired)
+	self.circles[#self.circles + 1] = {
+		geo = newCircle,
+	}
 end
 
 local function AddElement(self, u, v, elementType)
@@ -128,21 +120,19 @@ local function SetAgeAppropriateColor(self, age)
 	end
 end
 
-local function NewDiagram(def, world)
+local function NewDiagram(levelData, world)
 	local self = {}
 	
-	self.points = def.points
-	self.lines = def.lines
-	self.circles = def.circles
-	self.lineAge = {}
-	self.circleAge = {}
+	self.points = {}
+	self.lines = {}
+	self.circles = {}
 	self.presentAge = 0
 	
-	for i = 1, #self.lines do
-		self.lineAge[#self.lineAge + 1] = AgeElement(self, self.lines[i], DiagramHandler.IsLineRequired)
+	for i = 1, #levelData.lines do
+		AddLine(self, levelData.lines[i], levelData.permanentLines[i])
 	end
-	for i = 1, #self.circles do
-		self.circleAge[#self.circleAge + 1] = AgeElement(self, self.circles[i], DiagramHandler.IsCircleRequired)
+	for i = 1, #levelData.circles do
+		AddCircle(self, levelData.circles[i], levelData.permanentCircles[i])
 	end
 	
 	function self.GetPointAt(pos)
@@ -153,28 +143,18 @@ local function NewDiagram(def, world)
 		return AddElement(self, u, v, elementType)
 	end
 	
-	function self.ContainsLine(line)
-		return util.ListContains(self.lines, line, util.EqLine)
-	end
-	
-	function self.ContainsCircle(circle)
-		return util.ListContains(self.circles, circle, util.EqCircle)
-	end
-	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
 		drawQueue:push({y=10; f=function()
 			love.graphics.setLineWidth(4)
 			
 			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
 			for i = 1, #self.lines do
-				local line = self.lines[i]
-				SetAgeAppropriateColor(self, self.lineAge[i])
+				local line = self.lines[i].geo
 				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
 			end
 			
 			for i = 1, #self.circles do
-				local circle = self.circles[i]
-				SetAgeAppropriateColor(self, self.circleAge[i])
+				local circle = self.circles[i].geo
 				love.graphics.circle('line', circle[1], circle[2], circle[3], math.floor(math.max(32, math.min(160, circle[3]*0.8))))
 			end
 			
@@ -192,7 +172,6 @@ local function NewDiagram(def, world)
 			
 			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 			love.graphics.setLineWidth(0)
-			local initialPoints = DiagramHandler.GetInitialPointCount()
 			for i = 1, #self.points do
 				local point = self.points[i]
 				if util.Eq(point, selectedPoint) then

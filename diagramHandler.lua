@@ -12,38 +12,6 @@ local function ProcessLines(lines)
 	return newLines
 end
 
-local function LinesSatisfied()
-	if not self.currentDiagram then
-		return false
-	end
-	local reqLines = self.levelData.win.lines
-	if not reqLines then
-		return true
-	end
-	for i = 1, #reqLines do
-		if not self.currentDiagram.ContainsLine(reqLines[i]) then
-			return false
-		end
-	end
-	return true
-end
-
-local function CirclesSatisfied()
-	if not self.currentDiagram then
-		return false
-	end
-	local reqCircles = self.levelData.win.circles
-	if not reqCircles then
-		return true
-	end
-	for i = 1, #reqCircles do
-		if not self.currentDiagram.ContainsCircle(reqCircles[i]) then
-			return false
-		end
-	end
-	return true
-end
-
 local function TryToPlaceElement(u, v)
 	local success = self.currentDiagram.AddElement(u, v, self.elementType)
 	if not success then
@@ -53,25 +21,13 @@ local function TryToPlaceElement(u, v)
 	api.CheckVictory()
 end
 
-function api.IsLineRequired(line)
-	return util.ListContains(self.levelData.win.lines, line, util.EqLine)
-end
-
-function api.IsCircleRequired(circle)
-	return util.ListContains(self.levelData.win.circles, circle, util.EqCircle)
-end
-
 function api.InBounds(pos)
-	local bounds = self.levelData.bounds
-	return util.PosInRectangle(pos, bounds[1][1], bounds[1][2], bounds[2][1] - bounds[1][1], bounds[2][2] - bounds[1][2])
+	return util.DistSq(0, 0, pos[1], pos[2]) < Global.WORLD_RADIUS * Global.WORLD_RADIUS
 end
 
 function api.CheckVictory()
 	if #self.levelData.win.lines == 0 and #self.levelData.win.circles == 0 then
 		return
-	end
-	if LinesSatisfied() and CirclesSatisfied() then
-		self.world.SetGameOver(true, "Made Shape")
 	end
 end
 
@@ -120,26 +76,15 @@ function api.Update(dt)
 	end
 end
 
-function api.GetInitialPointCount()
-	return self.initialPoints
-end
-
 function api.Initialize(world, levelData)
 	self = {
 		world = world,
 		elementType = levelData.defaultElement or Global.LINE,
 		levelData = levelData,
 		moves = 0,
-		initialPoints = #levelData.points,
 	}
 	
-	local def = {
-		points = util.CopyTable(levelData.points),
-		lines = ProcessLines(levelData.lines),
-		circles = util.CopyTable(levelData.circles),
-	}
-	
-	self.currentDiagram = NewDiagram(def, self.world)
+	self.currentDiagram = NewDiagram(levelData, self.world)
 end
 
 function api.Draw(drawQueue)
@@ -149,10 +94,10 @@ function api.Draw(drawQueue)
 	drawQueue:push({y=0; f=function()
 		local bounds = self.levelData.bounds
 		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
-		love.graphics.rectangle("line", bounds[1][1], bounds[1][2], bounds[2][1] - bounds[1][1], bounds[2][2] - bounds[1][2])
+		love.graphics.circle("line", 0, 0, Global.WORLD_RADIUS, 500)
 		
 		if self.levelData.background then
-			Resources.DrawImage(self.levelData.background, bounds[1][1], bounds[1][2])
+			Resources.DrawImage(self.levelData.background, 0, 0)
 		end
 	end})
 end
