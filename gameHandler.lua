@@ -76,7 +76,7 @@ end
 
 function api.Initialize(world)
 	self = {
-		world = world
+		world = world,
 	}
 end
 

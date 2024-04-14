@@ -13,6 +13,8 @@ Nothing bad will happen]],
 	background = "mainlevel",
 	defaultElement = Global.LINE,
 	chalkLimit = 1,
+	playerPos = {1020, 550},
+	cameraPos = {950, 550},
 	permanentLines = {
 		true,
 		true,
@@ -24,10 +26,14 @@ Nothing bad will happen]],
 	lines = {
 		util.RotateLineAroundOrigin(baseLine, -0.5),
 		util.RotateLineAroundOrigin(baseLine, -4.45),
+		{{-1610.1577296428, 586.71673754537}, {-1096.1841611021, 598.84813653741}},
+		{{536.67993474294, 637.38888465937}, {726.36188876842, 326.05510249559}},
 	},
 	circles = {
 		util.RotateCircleAroundOrigin(baseCircle, -0.5),
 		util.RotateCircleAroundOrigin(baseCircle, -4.45),
+		{536.67993474294, 637.38888465937, 364.5654503643},
+		{901.1438761658, 645.99138440302, 364.5654503643},
 	},
 	chalkLimit = 1,
 	win = {

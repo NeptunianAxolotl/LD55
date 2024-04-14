@@ -54,7 +54,7 @@ end
 
 function api.Initialize(world)
 	self = {
-		playerPos = {0, 0},
+		playerPos = world.GetLevelData().playerPos,
 		playerSpeed = {0, 0},
 		playerRotation = 0,
 		animationTimer = 0,

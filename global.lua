@@ -12,7 +12,10 @@ local globals = {
 	MUSIC_VOLUME = 0.02,
 	DEFAULT_MUSIC_DURATION = 174.69,
 	CROSSFADE_TIME = 0,
-	CAMERA_SPEED = 1000,
+	
+	MOUSE_EDGE = 8,
+	MOUSE_SCROLL = 1200,
+	CAMERA_SPEED = 800,
 	
 	PHYSICS_SCALE = 300,
 	LINE_SPACING = 36,
@@ -31,8 +34,8 @@ local globals = {
 	
 	DEBUG_PRINT_CLICK_POS = false,
 	DEBUG_PRINT_POINT     = false,
-	DEBUG_PRINT_LINE      = false,
-	DEBUG_PRINT_CIRCLE    = false,
+	DEBUG_PRINT_LINE      = true,
+	DEBUG_PRINT_CIRCLE    = true,
 	DEBUG_POINT_INTERSECT = false,
 	PRINT_SHAPE_FOUND     = false,
 	DEBUG_SPECIAL_ANGLES  = false,

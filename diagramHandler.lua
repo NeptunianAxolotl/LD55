@@ -44,7 +44,7 @@ function api.MousePressed(x, y, button)
 		self.selectedPoint = false
 		return
 	end
-	if not PlayerHandler.InSelectRange(self.hoveredPoint) then
+	if self.hoveredPoint and not PlayerHandler.InSelectRange(self.hoveredPoint) then
 		return
 	end
 	if self.selectedPoint and self.hoveredPoint then
