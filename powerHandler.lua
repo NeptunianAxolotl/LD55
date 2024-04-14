@@ -11,15 +11,15 @@ local world
 --------------------------------------------------
 
 function api.GetSafeLineCapacity()
-	return self.powers.safeLines*2 + 6
+	return self.power.safeLines*2 + 6
 end
 
 function api.GetLineFadeTime()
-	return self.powers.fadeTime*3 + 10
+	return self.power.fadeTime*3 + 10
 end
 
 function api.GetPlayerSpeed()
-	return (self.powers.speed*1.5 + 10) * Global.PLAYER_SPEED
+	return (self.power.speed*1.5 + 10) * Global.PLAYER_SPEED
 end
 
 function api.GetDrawRange()
@@ -27,7 +27,19 @@ function api.GetDrawRange()
 end
 
 function api.GetShapePower()
-	return 10 + self.powers.shapePower
+	return 10 + self.power.shapePower
+end
+
+function api.GetPlayerMaxHealth()
+	return 100 + 10*self.power.health
+end
+
+function api.GetPlayerHealthRegen()
+	return 2 + self.power.regen
+end
+
+function api.GetPlayerHitLeeway()
+	return 0.3
 end
 
 --------------------------------------------------
@@ -41,7 +53,7 @@ end
 function api.Initialize(world)
 	self = {
 		world = world,
-		powers = {
+		power = {
 			safeLines = 0,
 			fadeTime = 0,
 			chalkMax = 0,

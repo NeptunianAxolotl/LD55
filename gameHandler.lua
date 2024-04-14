@@ -9,6 +9,10 @@ local world
 -- Updating
 --------------------------------------------------
 
+function api.AddScore(score)
+	self.score = self.score + score
+end
+
 --------------------------------------------------
 -- API
 --------------------------------------------------
@@ -45,22 +49,37 @@ local function DrawLeftInterface()
 	local levelData = self.world.GetLevelData()
 	local offset = 30
 	local xOffset = 0
-	offset = PrintLine(levelData.humanName, 3, xOffset, offset, "center", 280)
-	offset = PrintLine(levelData.description or "missing description", 4, xOffset + 20, offset, "left", 280)
+	--offset = PrintLine(levelData.humanName, 3, xOffset, offset, "center", 280)
+	--offset = PrintLine(levelData.description or "missing description", 4, xOffset + 20, offset, "left", 280)
+	--
+	--if self.world.GetGameOver() then
+	--	offset = PrintLine([[You Win!
+	--
+	--Press N for the next level.
+	--]], 4, 400, 120, "center", 250)
+	--end
+	--
 	
-	if self.world.GetGameOver() then
-		offset = PrintLine([[You Win!
-	
-	Press N for the next level.
-	]], 4, 400, 120, "center", 250)
-	end
-	
+				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.95)
 	local chalkRemaining = (self.world.GetLevelData().chalkLimit - DiagramHandler.GetMoves())
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Tool: " .. tool, 4, xOffset + 20, windowY - 250, "left", 280)
-	PrintLine("Chalk: " .. chalkRemaining, 4, xOffset + 20, windowY - 215, "left", 280)
+	PrintLine("Score: " .. self.score, 2, xOffset + 20, 80, "left", 280)
+	PrintLine("Tool: " .. tool, 2, xOffset + 20, 120, "left", 280)
+	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 160, "left", 280)
+	
+	local over, _, _, overType = self.world.GetGameOver()
+	if over then
+		PrintLine(overType, 1, 400, 120, "center", 250)
+	end
+end
+
+local function DrawHealth()
+	if PlayerHandler.GetHealthProp() >= 1 then
+		return
+	end
+	InterfaceUtil.DrawBar({0.3, 1, 0.3}, {0.3, 0.3, 0.3}, PlayerHandler.GetHealthProp(), false, false, {600, 1020}, {800, 60})
 end
 
 --------------------------------------------------
@@ -72,11 +91,13 @@ end
 
 function api.DrawInterface()
 	DrawLeftInterface()
+	DrawHealth()
 end
 
 function api.Initialize(world)
 	self = {
 		world = world,
+		score = 0,
 	}
 end
 

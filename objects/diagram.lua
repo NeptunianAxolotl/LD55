@@ -326,6 +326,7 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 			return false
 		end
 		foundLines[#foundLines + 1] = line
+		print("Found foundLines", line, line.isLine)
 	end
 	if Global.PRINT_SHAPE_FOUND then
 		print("Found foundLines")
@@ -399,9 +400,21 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 	local i = 1
 	while i < #elements do
 		local element = elements[i]
-		if (not element.isPermanent) and (not element.destroyed) and element.elementCount < recentSafety and
-				((not Global.SHAPE_PREVENTS_FADE) or (not element.inShapes) or #element.inShapes == 0) then
-			element.fade = (element.fade or 0) + dt
+		local fadeMult = 1
+		if self.isLine then
+			-- Why are some circles in shapes?
+			if element.inShapes and #element.inShapes > 0 then
+				fadeMult = Global.SHAPE_FADE_MULT
+				self.maxInShapes = math.max((self.maxInShapes or 0), #element.inShapes)
+			elseif (self.maxInShapes or 0) > 0 then
+				if (not element.isPermanent) and (not element.destroyed) then
+					DestroyElement(self, element)
+					destroyed = true
+				end
+			end
+		end
+		if (not element.isPermanent) and (not element.destroyed) and (element.elementCount < recentSafety or fadeMult > 1) and fadeMult > 0 then
+			element.fade = (element.fade or 0) + dt*fadeMult
 			if element.fade > fadeTime then
 				DestroyElement(self, element)
 				destroyed = true

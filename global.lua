@@ -8,6 +8,8 @@ local globals = {
 	WORLD_RADIUS = 2000,
 	PLAYER_SPEED = 30,
 	
+	SHAPE_FADE_MULT = 0.2,
+	
 	MASTER_VOLUME = 0.05,
 	MUSIC_VOLUME = 0.02,
 	DEFAULT_MUSIC_DURATION = 174.69,
@@ -29,8 +31,8 @@ local globals = {
 	TURN_MULT = 175,
 	
 	LINE_LENGTH = 12000,
-	SHAPE_PREVENTS_FADE = true,
 	
+	ACT_IN_GAME_OVER = false,
 	
 	DEBUG_PRINT_CLICK_POS = false,
 	DEBUG_PRINT_POINT     = false,

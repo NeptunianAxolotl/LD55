@@ -105,8 +105,9 @@ end
 
 function api.DrawBar(col, backCol, prop, text, textPos, barPos, barSize)
 	prop = math.max(0, math.min(1, prop))
-	textPos = util.Add(textPos, barPos)
-	
+	if text then
+		textPos = util.Add(textPos, barPos)
+	end
 	love.graphics.setColor(backCol[1], backCol[2], backCol[3], 1)
 	love.graphics.rectangle("fill", barPos[1], barPos[2], barSize[1], barSize[2])
 	
@@ -115,12 +116,16 @@ function api.DrawBar(col, backCol, prop, text, textPos, barPos, barSize)
 		love.graphics.rectangle("fill", barPos[1], barPos[2], barSize[1]*prop, barSize[2])
 		Font.SetSize(2)
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.printf(text, barPos[1], textPos[2], barSize[1], "center")
+		if text then
+			love.graphics.printf(text, barPos[1], textPos[2], barSize[1], "center")
+		end
 	else
 		love.graphics.rectangle("fill", barPos[1], barPos[2] + barSize[2]*(1 - prop), barSize[1], barSize[2]*prop)
 		Font.SetSize(2)
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.printf(text, textPos[1], barPos[2] + barSize[2], barSize[2], "center", -math.pi/2)
+		if text then
+			love.graphics.printf(text, textPos[1], barPos[2] + barSize[2], barSize[2], "center", -math.pi/2)
+		end
 	end
 end
 
