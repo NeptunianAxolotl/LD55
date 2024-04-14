@@ -379,7 +379,15 @@ local function AddElement(self, u, v, elementType)
 	if not newElement then
 		return false
 	end
-	if ElementAlreadyExists(self, newElement, elementType) then
+	local existingElement = ElementAlreadyExists(self, newElement, elementType)
+	if existingElement then
+		if existingElement.fade then
+			-- Refresh fade
+			existingElement.fade = nil
+			self.newestElementCounter = self.newestElementCounter + 1
+			existingElement.elementCount = self.newestElementCounter
+			return true
+		end
 		return false
 	end
 	if elementType == Global.LINE then
@@ -401,12 +409,14 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 	while i < #elements do
 		local element = elements[i]
 		local fadeMult = 1
-		if element.inShapes and #element.inShapes > 0 then
-			fadeMult = Global.SHAPE_FADE_MULT
-			element.maxInShapes = math.max((element.maxInShapes or 0), #element.inShapes)
-		elseif (element.maxInShapes or 0) > 0 then
-			if (not element.isPermanent) and (not element.destroyed) then
-				fadeMult = Global.SHAPE_BEFORE_FADE_MULT
+		if element.isLine then
+			if element.inShapes and #element.inShapes > 0 then
+				fadeMult = Global.SHAPE_FADE_MULT
+				element.maxInShapes = math.max((element.maxInShapes or 0), #element.inShapes)
+			elseif (element.maxInShapes or 0) > 0 then
+				if (not element.isPermanent) and (not element.destroyed) then
+					fadeMult = Global.SHAPE_BEFORE_FADE_MULT
+				end
 			end
 		end
 		if (not element.isPermanent) and (not element.destroyed) and (element.elementCount < recentSafety or fadeMult > 1) and fadeMult > 0 then

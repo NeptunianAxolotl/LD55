@@ -127,18 +127,20 @@ end
 function api.Initialize(newCosmos)
 	self = {}
 	cosmos = newCosmos
+	
+	volumeEct = cosmos.GetMusicVolume()
 	loadSounds()
-  cueTrack("A")
+	cueTrack("A")
 end
 
 
 -- DEBUGGING - DO NOT FOR THE LOVE OF GOD LEAVE THIS IN
 function love.keyreleased( key )
-   if key == "j" then
-      bgmTension = bgmTension + 1
-  elseif key == "k" then
-      bgmTension = bgmTension - 1
-   end
+	if key == "j" then
+		bgmTension = bgmTension + 1
+	elseif key == "k" then
+		bgmTension = bgmTension - 1
+	end
 end
 
 return api

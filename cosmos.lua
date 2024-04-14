@@ -27,6 +27,10 @@ function api.MusicEnabled()
 	return self.musicEnabled
 end
 
+function api.GetMusicVolume()
+	return self.musicVolume
+end
+
 --------------------------------------------------
 -- Resets etc
 --------------------------------------------------
@@ -129,6 +133,7 @@ function api.Initialize()
 		realTime = 0,
 		inbuiltLevelIndex = Global.DEBUG_MODE_START_LEVEL or 1,
 		musicEnabled = true,
+		musicVolume = 1,
 		mouseScrollSpeed = Global.MOUSE_SCROLL_MULT,
 		keyScrollSpeed = Global.KEYBOARD_SCROLL_MULT,
 		grabInput = Global.MOUSE_SCROLL_MULT > 0,
