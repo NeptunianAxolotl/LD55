@@ -70,7 +70,7 @@ function api.KeyPressed(key, scancode, isRepeat)
 end
 
 function api.Update(dt)
-	self.hoveredPoint = self.currentDiagram and self.currentDiagram.GetPointAt(x, y)
+	self.hoveredPoint = self.currentDiagram and self.currentDiagram.GetPointAtMouse(x, y)
 	if util.Eq(self.selectedPoint, self.hoveredPoint) then
 		self.hoveredPoint = false
 	end

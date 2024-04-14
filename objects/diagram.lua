@@ -1,7 +1,7 @@
 
 local ShapeDefs = require("defs/shapeDefs")
 
-local function GetPointAt(self, world, pos)
+local function GetPointAtMouse(self, world, pos)
 	local bestDistSq = false
 	local bestPoint = false
 	for i = 1, #self.points do
@@ -35,6 +35,15 @@ local function ElementAlreadyExists(self, newElement, elementType)
 			if util.EqCircle(newElement, self.circles[i].geo) then
 				return true
 			end
+		end
+	end
+	return false
+end
+
+local function PointExists(self, pos)
+	for i = 1, #self.points do
+		if util.Eq(pos, self.points[i].geo) then
+			return true
 		end
 	end
 	return false
@@ -170,11 +179,40 @@ local function AddCircle(self, newCircle, isPermanent)
 	self.circles[#self.circles + 1] = newElement
 end
 
+local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
+	print("Maybe found", shape.name)
+	local verticies = shape.ExpectedLines(corner, mainVector, otherVector)
+	for i = 1, #verticies do
+		if not PointExists(self, verticies[i]) then
+			return false
+		end
+	end
+	local edges = {}
+	for i = 1, #verticies do
+		local prev = i - 1
+		if prev == 0 then
+			prev = #verticies
+		end
+		edges[#edges + 1] = {verticies[prev], verticies[i]}
+	end
+	for i = 1, #edges do
+		if not ElementAlreadyExists(self, edges[i], Global.LINE) then
+			return false
+		end
+	end
+	
+	local midPoint = util.AverageMulti(verticies)
+	local radiusSq = util.DistSqVectors(verticies[1], midPoint)
+	
+	print("Actually found", shape.name)
+end
+
 local function FindShape(self, angleType, corner, mainEdge, otherEdge)
-	print("Maybe found")
-	local potentialShapes = ShapeDefs.shapesWithAngleIndex
+	local potentialShapes = ShapeDefs.shapesWithAngleIndex[angleType]
+	local mainVector = util.Subtract(mainEdge, corner)
+	local otherVector = util.Subtract(otherEdge, corner)
 	for i = 1, #potentialShapes do
-		
+		MatchPotentialShape(self, potentialShapes[i], corner, mainVector, otherVector)
 	end
 end
 
@@ -246,8 +284,8 @@ local function NewDiagram(levelData, world)
 		AddCircle(self, levelData.circles[i], levelData.permanentCircles[i])
 	end
 	
-	function self.GetPointAt(pos)
-		return GetPointAt(self, world, pos)
+	function self.GetPointAtMouse(pos)
+		return GetPointAtMouse(self, world, pos)
 	end
 	
 	function self.AddElement(u, v, elementType)

@@ -27,7 +27,7 @@ local globals = {
 	
 	
 	DEBUG_PRINT_CLICK_POS = false,
-	DEBUG_PRINT_POINT     = true,
+	DEBUG_PRINT_POINT     = false,
 	DEBUG_PRINT_LINE      = false,
 	DEBUG_PRINT_CIRCLE    = false,
 	
