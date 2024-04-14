@@ -3,7 +3,7 @@ local function GetPointAt(self, world, pos)
 	local bestDistSq = false
 	local bestPoint = false
 	for i = 1, #self.points do
-		local point = self.points[i]
+		local point = self.points[i].geo
 		local distSq = world.MouseNearWorldPos(point, 20)
 		if distSq and ((not bestDistSq) or distSq < bestDistSq) then
 			bestDistSq = distSq
@@ -38,16 +38,45 @@ local function ElementAlreadyExists(self, newElement, elementType)
 	return false
 end
 
+local function InitObject(self, data)
+	data.circles = {}
+	data.lines = {}
+	data.points = {}
+	data.id = self.newID
+	self.newID = self.newID + 1
+	return data
+end
+
 local function AddPoint(self, point)
 	if not DiagramHandler.InBounds(point) then
-		return
+		return false
 	end
 	for i = 1, #self.points do
-		if util.Eq(point, self.points[i]) then
-			return
+		if util.Eq(point, self.points[i].geo) then
+			return true, true, self.points[i]
 		end
 	end
-	self.points[#self.points + 1] = point
+	local newPoint = {
+		geo = point,
+		elements = {},
+		id = self.newID,
+	}
+	self.newID = self.newID + 1
+	self.points[#self.points + 1] = newPoint
+	return true, false, newPoint
+end
+
+local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
+	local inBounds, alreadyExists, point = AddPoint(self, pointPos)
+	if not inBounds then
+		return
+	end
+	if not alreadyExists then
+		otherElement.points[#otherElement.points + 1] = point
+		point.elements[#point.elements + 1] = otherElement
+	end
+	newElement.points[#newElement.points + 1] = point
+	point.elements[#point.elements + 1] = newElement
 end
 
 local function AddLine(self, newLine, isPermanent)
@@ -55,45 +84,49 @@ local function AddLine(self, newLine, isPermanent)
 		print("line {{" .. newLine[1][1] .. ", " .. newLine[1][2] .. "}, {" .. newLine[2][1] .. ", " .. newLine[2][2] .. "}},")
 	end
 	newLine = util.ExtendLine(newLine, Global.LINE_LENGTH)
+	local newElement = InitObject(self, {
+		geo = newLine,
+		isLine = true,
+	})
 	for i = 1, #self.circles do
 		local intersect = util.GetCircleLineIntersectionPoints(self.circles[i].geo, newLine)
 		if intersect then
-			AddPoint(self, intersect[1])
-			AddPoint(self, intersect[2])
+			AddIntersectionPoint(self, newElement, self.circles[i], intersect[1])
+			AddIntersectionPoint(self, newElement, self.circles[i], intersect[2])
 		end
 	end
 	for i = 1, #self.lines do
 		local intersect = util.GetBoundedLineIntersection(self.lines[i].geo, newLine)
 		if intersect then
-			AddPoint(self, intersect)
+			AddIntersectionPoint(self, newElement, self.lines[i], intersect)
 		end
 	end
-	self.lines[#self.lines + 1] = {
-		geo = newLine,
-	}
+	self.lines[#self.lines + 1] = newElement
 end
 
 local function AddCircle(self, newCircle, isPermanent)
 	if Global.DEBUG_PRINT_CLICK_POS then
 		print("circle {" .. newCircle[1] .. ", " .. newCircle[2] .. ", " .. newCircle[3] .. "},")
 	end
+	local newElement = InitObject(self, {
+		geo = newCircle,
+		isCircle = true,
+	})
 	for i = 1, #self.circles do
 		local intersect = util.GetCircleIntersectionPoints(self.circles[i].geo, newCircle)
 		if intersect then
-			AddPoint(self, intersect[1])
-			AddPoint(self, intersect[2])
+			AddIntersectionPoint(self, newElement, self.circles[i],intersect[1])
+			AddIntersectionPoint(self, newElement, self.circles[i],intersect[2])
 		end
 	end
 	for i = 1, #self.lines do
 		local intersect = util.GetCircleLineIntersectionPoints(newCircle, self.lines[i].geo)
 		if intersect then
-			AddPoint(self, intersect[1])
-			AddPoint(self, intersect[2])
+			AddIntersectionPoint(self, newElement, self.lines[i],intersect[1])
+			AddIntersectionPoint(self, newElement, self.lines[i],intersect[2])
 		end
 	end
-	self.circles[#self.circles + 1] = {
-		geo = newCircle,
-	}
+	self.circles[#self.circles + 1] = newElement
 end
 
 local function AddElement(self, u, v, elementType)
@@ -127,6 +160,7 @@ local function NewDiagram(levelData, world)
 	self.lines = {}
 	self.circles = {}
 	self.presentAge = 0
+	self.newID = 0
 	
 	for i = 1, #levelData.lines do
 		AddLine(self, levelData.lines[i], levelData.permanentLines[i])
@@ -173,7 +207,7 @@ local function NewDiagram(levelData, world)
 			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 			love.graphics.setLineWidth(0)
 			for i = 1, #self.points do
-				local point = self.points[i]
+				local point = self.points[i].geo
 				if util.Eq(point, selectedPoint) then
 					love.graphics.circle('fill', point[1], point[2], 15)
 				elseif util.Eq(point, hoveredPoint) then
