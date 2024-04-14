@@ -910,6 +910,17 @@ function util.ListContains(list, element, EqualityCheck)
 	return false
 end
 
+function util.ListRemoveMutable(list, id)
+	for i = 1, #list do
+		if list[i].id == id then
+			list[i] = list[#list]
+			list[#list] = nil
+			return true
+		end
+	end
+	return false
+end
+
 --------------------------------------------------
 --------------------------------------------------
 -- Array Utilities

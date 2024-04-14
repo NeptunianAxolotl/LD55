@@ -3,6 +3,7 @@ EffectsHandler = require("effectsHandler")
 DialogueHandler = require("dialogueHandler")
 DiagramHandler = require("diagramHandler")
 ShadowHandler = require("shadowHandler")
+ShapeHandler = require("shapeHandler")
 
 LevelHandler = require("levelHandler")
 
@@ -209,6 +210,7 @@ function api.Update(dt)
 	--ShadowHandler.Update(api)
 
 	DiagramHandler.Update(dt)
+	ShapeHandler.Update(dt)
 	ChatHandler.Update(dt)
 	EffectsHandler.Update(dt)
 	UpdateCamera(dt)
@@ -229,6 +231,7 @@ function api.Draw()
 	--ShadowHandler.DrawGroundShadow(self.cameraTransform)
 	EffectsHandler.Draw(drawQueue)
 	DiagramHandler.Draw(drawQueue)
+	ShapeHandler.Draw(drawQueue)
 	
 	love.graphics.replaceTransform(CameraHandler.GetCameraTransform())
 	while true do
@@ -274,6 +277,7 @@ function api.Initialize(cosmos, levelData)
 	DialogueHandler.Initialize(api)
 	
 	DiagramHandler.Initialize(api, levelData)
+	ShapeHandler.Initialize(api)
 	--ShadowHandler.Initialize(api)
 	
 	DeckHandler.Initialize(api)
