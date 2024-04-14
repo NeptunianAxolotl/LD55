@@ -225,7 +225,7 @@ local function PossiblyMerge(intersect)
 	if not intersect[2] then
 		return intersect
 	end
-	if util.DistSqVectors(intersect[1], intersect[2]) < 10 then
+	if util.DistSqVectors(intersect[1], intersect[2]) < 25 then
 		return {
 			util.Average(intersect[1], intersect[2])
 		}
@@ -301,23 +301,23 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 	if Global.PRINT_SHAPE_FOUND then
 		print("Maybe found", shape.name)
 	end
-	local verticies = shape.ExpectedLines(corner, mainVector, otherVector)
-	for i = 1, #verticies do
-		print("GetPointAtPos", GetPointAtPos(self, verticies[i]))
-		if not GetPointAtPos(self, verticies[i]) then
+	local vertices = shape.ExpectedLines(corner, mainVector, otherVector)
+	for i = 1, #vertices do
+		print("GetPointAtPos", GetPointAtPos(self, vertices[i]))
+		if not GetPointAtPos(self, vertices[i]) then
 			return false
 		end
 	end
 	if Global.PRINT_SHAPE_FOUND then
-		print("Found verticies")
+		print("Found vertices")
 	end
 	local edges = {}
-	for i = 1, #verticies do
+	for i = 1, #vertices do
 		local prev = i - 1
 		if prev == 0 then
-			prev = #verticies
+			prev = #vertices
 		end
-		edges[#edges + 1] = {verticies[prev], verticies[i]}
+		edges[#edges + 1] = {vertices[prev], vertices[i]}
 	end
 	local foundLines = {}
 	for i = 1, #edges do
@@ -333,7 +333,7 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 	if Global.PRINT_SHAPE_FOUND then
 		print("Actually found", shape.name)
 	end
-	ShapeHandler.AddShape(shape, verticies, edges, foundLines)
+	ShapeHandler.AddShape(shape, vertices, edges, foundLines)
 end
 
 local function FindShape(self, angleType, corner, mainEdge, otherEdge)

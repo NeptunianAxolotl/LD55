@@ -18,6 +18,10 @@ function api.GetLineFadeTime()
 	return self.powers.fadeTime*3 + 10
 end
 
+function api.GetPlayerSpeed()
+	return (self.powers.speed*1.5 + 10) * Global.PLAYER_SPEED
+end
+
 --------------------------------------------------
 -- Updating
 --------------------------------------------------

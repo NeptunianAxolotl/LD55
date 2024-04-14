@@ -5,6 +5,7 @@ local globals = {
 	TEXT_COL = {0.73, 0.73, 0.75},
 	
 	WORLD_RADIUS = 2000,
+	PLAYER_SPEED = 75,
 	
 	MASTER_VOLUME = 0.05,
 	MUSIC_VOLUME = 0.02,
