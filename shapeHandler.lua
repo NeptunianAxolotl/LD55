@@ -5,8 +5,8 @@ local NewShape = require("objects/shape")
 local self = {}
 local api = {}
 
-function api.AddShape(shapeDef, verticies, edges, definingLines)
-	local new = NewShape(self.world, self.nextShapeID, shapeDef, verticies, edges, definingLines)
+function api.AddShape(shapeDef, vertices, edges, definingLines)
+	local new = NewShape(self.world, self.nextShapeID, shapeDef, vertices, edges, definingLines)
 	IterableMap.Add(self.shapes, self.nextShapeID, new)
 	self.nextShapeID = self.nextShapeID + 1
 end

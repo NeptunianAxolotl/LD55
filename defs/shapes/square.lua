@@ -4,13 +4,13 @@ local data = {
 }
 
 function data.ExpectedLines(origin, u, v)
-	local verticies = {
+	local vertices = {
 		origin,
 		util.Add(origin, u),
 		util.Add(util.Add(origin, v), u),
 		util.Add(origin, v),
 	}
-	return verticies
+	return vertices
 end
 
 

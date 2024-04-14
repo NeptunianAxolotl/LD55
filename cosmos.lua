@@ -46,6 +46,10 @@ function api.SwitchLevel(goNext)
 	World.Initialize(api, self.curLevelData, self.difficultySetting)
 end
 
+function api.GetScrollSpeeds()
+	return self.mouseScrollSpeed, self.keyScrollSpeed
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -125,8 +129,12 @@ function api.Initialize()
 		realTime = 0,
 		inbuiltLevelIndex = Global.DEBUG_MODE_START_LEVEL or 1,
 		musicEnabled = true,
+		mouseScrollSpeed = 0,
+		keyScrollSpeed = 1,
+		grabInput = false,
 		difficultySetting = {},
 	}
+	love.mouse.setGrabbed(self.grabInput)
 	self.curLevelData = LevelDefs[LevelOrder[self.inbuiltLevelIndex]]
 	MusicHandler.Initialize(api)
 	SoundHandler.Initialize(api)

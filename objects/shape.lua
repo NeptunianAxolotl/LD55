@@ -1,12 +1,12 @@
 
 
 
-local function NewShape(world, shapeID, shapeDef, verticies, edges, definingLines)
+local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines)
 	local self = {}
 	
-	self.midPoint = util.AverageMulti(verticies)
-	self.radiusSq = util.DistSqVectors(verticies[1], self.midPoint)
-	self.verticies = verticies
+	self.midPoint = util.AverageMulti(vertices)
+	self.radiusSq = util.DistSqVectors(vertices[1], self.midPoint)
+	self.vertices = vertices
 	self.edges = edges
 	self.id = shapeID
 	
