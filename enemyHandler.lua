@@ -19,7 +19,7 @@ local function SpawnEnemiesUpdate(dt)
 	local size = GetSpawnSize()
 	
 	self.spawnTimer = self.spawnTimer - self.spawnRate
-	local pos = util.RandomPointInAnnulus(Global.WORLD_RADIUS + 700, Global.WORLD_RADIUS + 900)
+	local pos = util.RandomPointInAnnulus(Global.ENEMY_SPAWN_RADIUS, Global.ENEMY_SPAWN_RADIUS + 200)
 	local new = NewEnemy(self.world, EnemyDefs['water'], pos, size)
 	
 	IterableMap.Add(self.enemies, new)
@@ -70,7 +70,7 @@ function api.Initialize(world, levelIndex, mapDataOverride)
 	self = {
 		world = world,
 		enemies = IterableMap.New(),
-		spawnRate = 7,
+		spawnRate = 8,
 		spawnSize = 0.3,
 		spawnTimer = 0,
 	}
