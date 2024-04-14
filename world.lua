@@ -4,6 +4,7 @@ DialogueHandler = require("dialogueHandler")
 DiagramHandler = require("diagramHandler")
 ShadowHandler = require("shadowHandler")
 ShapeHandler = require("shapeHandler")
+PowerHandler = require("powerHandler")
 
 LevelHandler = require("levelHandler")
 
@@ -209,6 +210,7 @@ function api.Update(dt)
 	InterfaceUtil.Update(dt)
 	--ShadowHandler.Update(api)
 
+	PowerHandler.Update(api)
 	DiagramHandler.Update(dt)
 	ShapeHandler.Update(dt)
 	ChatHandler.Update(dt)
@@ -276,6 +278,7 @@ function api.Initialize(cosmos, levelData)
 	ChatHandler.Initialize(api)
 	DialogueHandler.Initialize(api)
 	
+	PowerHandler.Initialize(api)
 	DiagramHandler.Initialize(api, levelData)
 	ShapeHandler.Initialize(api)
 	--ShadowHandler.Initialize(api)

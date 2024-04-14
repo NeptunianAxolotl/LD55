@@ -74,6 +74,7 @@ function api.Update(dt)
 	if util.Eq(self.selectedPoint, self.hoveredPoint) then
 		self.hoveredPoint = false
 	end
+	self.currentDiagram.Update(dt)
 end
 
 function api.Initialize(world, levelData)

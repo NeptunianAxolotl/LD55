@@ -60,7 +60,8 @@ local function CleanUpOrphanedPoints(self)
 	local i = 1
 	while i <= #self.points do
 		if #self.points[i].elements < 2 then
-			self.points[#self.points] = self.points[i]
+			DestroyPoint(self, self.points[i])
+			self.points[i] = self.points[#self.points]
 			self.points[#self.points] = nil
 		else
 			i = i + 1
@@ -85,8 +86,13 @@ local function InitElement(self, data)
 		data.notableAngles = {}
 		data.inShapes = {}
 	end
+	
+	self.newestElementCounter = self.newestElementCounter + 1
+	data.elementCount = self.newestElementCounter
+	
 	data.id = self.newID
 	self.newID = self.newID + 1
+	
 	return data
 end
 
@@ -95,7 +101,7 @@ local function DestroyElement(self, element, doPointDestroy)
 	element.destroyed = true -- Element will fade out, so is not fully removed.
 	local elementType = (self.isLine and "lines") or "circles"
 	for i = 1, #element.points do
-		if not util.ListRemoveMutable(element.circles[i].elements, myID) then
+		if not util.ListRemoveMutable(element.points[i].elements, myID) then
 			print("List remove could not find in points", myID)
 		end
 	end
@@ -109,10 +115,10 @@ local function DestroyElement(self, element, doPointDestroy)
 			print("List remove could not find in circles", myID)
 		end
 	end
-	if data.notableAngles then
-		for i = 1, #data.notableAngles do
-			local angleID = data.notableAngles[i].id
-			local other = GetOtherLine(element, data.notableAngles.lines)
+	if element.notableAngles then
+		for i = 1, #element.notableAngles do
+			local angleID = element.notableAngles[i].id
+			local other = GetOtherLine(element, element.notableAngles[i].lines)
 			if not util.ListRemoveMutable(other.notableAngles, angleID) then
 				print("List remove could not find in notableAngles", myID)
 			end
@@ -166,7 +172,11 @@ local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	if Global.DEBUG_PRINT_POINT then
 		print("point {" .. pointPos[1] .. ", " .. pointPos[2] .. "}, ")
 	end
-	if not alreadyExists then
+	if alreadyExists then
+		if #point.elements > 0 and point.elements[#point.elements].id == newElement.id then
+			return -- Already added to this element.
+		end
+	else
 		otherElement.points[#otherElement.points + 1] = point
 		point.elements[#point.elements + 1] = otherElement
 	end
@@ -200,6 +210,7 @@ local function AddLine(self, newLine, isPermanent)
 	local newElement = InitElement(self, {
 		geo = newLine,
 		isLine = true,
+		isPermanent = isPermanent,
 	})
 	for i = 1, #self.circles do
 		if (not self.circles[i].destroyed) then
@@ -229,6 +240,7 @@ local function AddCircle(self, newCircle, isPermanent)
 	local newElement = InitElement(self, {
 		geo = newCircle,
 		isCircle = true,
+		isPermanent = isPermanent,
 	})
 	for i = 1, #self.circles do
 		if (not self.circles[i].destroyed) then
@@ -332,12 +344,46 @@ local function AddElement(self, u, v, elementType)
 	return true
 end
 
-local function SetAgeAppropriateColor(self, age)
-	if age then
-		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], math.max(0.18,  math.min(0.7, 0.9*math.pow(0.89, self.presentAge - age))))
-	else
-		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
+local function UpdateFadeAndDestroy(self, elements, dt)
+	local safeLines = PowerHandler.GetSafeLineCapacity()
+	local fadeTime = PowerHandler.GetLineFadeTime()
+	local recentSafety = self.newestElementCounter - safeLines
+	
+	local destroyed = false
+	local i = 1
+	while i < #elements do
+		local element = elements[i]
+		if (not element.isPermanent) and (not element.destroyed) and element.elementCount < recentSafety then
+			element.fade = (element.fade or 0) + dt
+			if element.fade > fadeTime then
+				DestroyElement(self, element)
+				destroyed = true
+			end
+		end
+		if element.destroyed then
+			element.destroyTimer = (element.destroyTimer or 1) - 2.3*dt
+			if element.destroyTimer < 0 then
+				elements[i] = elements[#elements]
+				elements[#elements] = nil
+				i = i - 1
+			end
+		end
+		i = i + 1
 	end
+	if destroyed then
+		CleanUpOrphanedPoints(self)
+	end
+end
+
+local function GetElementOpacity(element, fadeTime)
+	if element.destroyTimer then
+		return element.destroyTimer * 0.85
+	end
+	if not element.fade then
+		return 0.85
+	end
+	local prop = element.fade / fadeTime
+	return math.max(0.18,  math.min(0.85, 0.9*math.pow(0.89, 1 - prop)))
 end
 
 local function NewDiagram(levelData, world)
@@ -346,7 +392,7 @@ local function NewDiagram(levelData, world)
 	self.points = {}
 	self.lines = {}
 	self.circles = {}
-	self.presentAge = 0
+	self.newestElementCounter = 0
 	self.newID = 0
 	
 	for i = 1, #levelData.lines do
@@ -364,18 +410,25 @@ local function NewDiagram(levelData, world)
 		return AddElement(self, u, v, elementType)
 	end
 	
+	function self.Update(dt)
+		UpdateFadeAndDestroy(self, self.lines, dt)
+		UpdateFadeAndDestroy(self, self.circles, dt)
+	end
+	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
 		drawQueue:push({y=10; f=function()
 			love.graphics.setLineWidth(4)
+			local fadeTime = PowerHandler.GetLineFadeTime()
 			
-			love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 0.9)
 			for i = 1, #self.lines do
 				local line = self.lines[i].geo
+				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], GetElementOpacity(self.lines[i], fadeTime))
 				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
 			end
 			
 			for i = 1, #self.circles do
 				local circle = self.circles[i].geo
+				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], GetElementOpacity(self.circles[i], fadeTime))
 				love.graphics.circle('line', circle[1], circle[2], circle[3], math.floor(math.max(32, math.min(160, circle[3]*0.8))))
 			end
 			
@@ -395,6 +448,7 @@ local function NewDiagram(levelData, world)
 			love.graphics.setLineWidth(0)
 			for i = 1, #self.points do
 				local point = self.points[i].geo
+				love.graphics.printf(#self.points[i].elements, point[1], point[2], 30, "right")
 				if util.Eq(point, selectedPoint) then
 					love.graphics.circle('fill', point[1], point[2], 15)
 				elseif util.Eq(point, hoveredPoint) then
