@@ -13,8 +13,14 @@ Nothing bad will happen]],
 	background = "mainlevel",
 	defaultElement = Global.LINE,
 	chalkLimit = 1,
-	permanentLines = {},
-	permanentCircles = {},
+	permanentLines = {
+		true,
+		true,
+	},
+	permanentCircles = {
+		true,
+		true,
+	},
 	lines = {
 		util.RotateLineAroundOrigin(baseLine, -0.5),
 		util.RotateLineAroundOrigin(baseLine, -4.45),

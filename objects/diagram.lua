@@ -368,7 +368,8 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 	local i = 1
 	while i < #elements do
 		local element = elements[i]
-		if (not element.isPermanent) and (not element.destroyed) and element.elementCount < recentSafety then
+		if (not element.isPermanent) and (not element.destroyed) and element.elementCount < recentSafety and
+				((not Global.SHAPE_PREVENTS_FADE) or (not element.inShapes) or #element.inShapes == 0) then
 			element.fade = (element.fade or 0) + dt
 			if element.fade > fadeTime then
 				DestroyElement(self, element)

@@ -24,6 +24,7 @@ local globals = {
 	TURN_MULT = 175,
 	
 	LINE_LENGTH = 12000,
+	SHAPE_PREVENTS_FADE = true,
 	
 	
 	DEBUG_PRINT_CLICK_POS = false,
