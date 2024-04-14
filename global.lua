@@ -24,12 +24,16 @@ local globals = {
 	TURN_MULT = 175,
 	
 	LINE_LENGTH = 12000,
+	SHAPE_PREVENTS_FADE = true,
 	
 	
 	DEBUG_PRINT_CLICK_POS = false,
 	DEBUG_PRINT_POINT     = false,
 	DEBUG_PRINT_LINE      = false,
 	DEBUG_PRINT_CIRCLE    = false,
+	DEBUG_POINT_INTERSECT = false,
+	PRINT_SHAPE_FOUND     = false,
+	DEBUG_SPECIAL_ANGLES  = false,
 	
 	-- Enums
 	LINE = 1,

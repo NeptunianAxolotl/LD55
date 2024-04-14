@@ -74,6 +74,7 @@ function api.Update(dt)
 	if util.Eq(self.selectedPoint, self.hoveredPoint) then
 		self.hoveredPoint = false
 	end
+	self.currentDiagram.Update(dt)
 end
 
 function api.Initialize(world, levelData)
@@ -93,6 +94,7 @@ function api.Draw(drawQueue)
 	end
 	drawQueue:push({y=0; f=function()
 		local bounds = self.levelData.bounds
+		love.graphics.setLineWidth(4)
 		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 		love.graphics.circle("line", 0, 0, Global.WORLD_RADIUS, 500)
 		
