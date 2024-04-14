@@ -58,7 +58,7 @@ end
 function api.Update(dt)
 	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
-	self.spawnRate = self.spawnRate - 0.012*self.spawnRate*dt
+	self.spawnRate = self.spawnRate - 0.006*self.spawnRate*dt
 	self.spawnSize = self.spawnSize + 0.006*dt
 end
 
@@ -70,7 +70,7 @@ function api.Initialize(world, levelIndex, mapDataOverride)
 	self = {
 		world = world,
 		enemies = IterableMap.New(),
-		spawnRate = 4,
+		spawnRate = 7,
 		spawnSize = 0.3,
 		spawnTimer = 0,
 	}

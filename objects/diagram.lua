@@ -406,8 +406,7 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 			element.maxInShapes = math.max((element.maxInShapes or 0), #element.inShapes)
 		elseif (element.maxInShapes or 0) > 0 then
 			if (not element.isPermanent) and (not element.destroyed) then
-				DestroyElement(self, element)
-				destroyed = true
+				fadeMult = Global.SHAPE_BEFORE_FADE_MULT
 			end
 		end
 		if (not element.isPermanent) and (not element.destroyed) and (element.elementCount < recentSafety or fadeMult > 1) and fadeMult > 0 then

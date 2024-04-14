@@ -12,10 +12,9 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 	enemy.pos = util.Add(enemy.pos, util.Mult(force*dt, towards))
 	
 	if distFactor >= 0.72 then
-		local energyFactor = (0.6 + 0.4*enemy.EnergyProp())
+		local energyFactor = (0.66 + 0.34*enemy.EnergyProp())
 		local prop = enemy.DrainEnergy(self.magnitude*dt*self.def.drainForce)
 		self.power = self.power - self.def.drainCost*dt*prop*energyFactor
-		print("EnergyProp", enemy.EnergyProp())
 		if enemy.EnergyProp() == 0 and not enemy.destroyed then
 			GameHandler.AddScore(1)
 			enemy.Destroy()
