@@ -16,38 +16,48 @@ function util.LineGradient(l)
 	return (l[2][2] - l[1][2]) / (l[2][1] - l[1][1])
 end
 
-function util.ApproxEqNumber(n1, n2)
-	return n1 - n2 < 0.001 and n2 - n1 < 0.001
+function util.VeryApproxEqNumber(n1, n2)
+	return n1 - n2 < 0.01 and n2 - n1 < 0.01
 end
 
-function util.Eq(u, v)
+function util.ApproxEqNumber(n1, n2)
+	return n1 - n2 < 0.000001 and n2 - n1 < 0.000001
+end
+
+function util.VeryApproxEq(u, v)
 	return u and v and u[1] - v[1] < 0.001 and v[1] - u[1] < 0.001 and u[2] - v[2] < 0.001 and v[2] - u[2] < 0.001
 end
 
-function util.EqCircle(c, d)
-	return util.Eq(c, d) and c[3] - d[3] < 0.001 and d[3] - c[3] < 0.001
+function util.Eq(u, v)
+	return u and v and u[1] - v[1] < 0.000001 and v[1] - u[1] < 0.000001 and u[2] - v[2] < 0.000001 and v[2] - u[2] < 0.000001
 end
 
-function util.EqLine(l, m)
-	if (util.Eq(l[1], m[1]) and util.Eq(l[2], m[2])) or
-			(util.Eq(l[1], m[2]) and util.Eq(l[1], m[2])) then
+function util.EqCircle(c, d)
+	return util.Eq(c, d) and c[3] - d[3] < 0.000001 and d[3] - c[3] < 0.000001
+end
+
+function util.EqLine(l, m, veryApprox)
+	local Eq = (veryApprox and util.VeryApproxEq) or util.Eq
+	if (Eq(l[1], m[1]) and Eq(l[2], m[2])) or
+			(Eq(l[1], m[2]) and Eq(l[1], m[2])) then
 		return true
 	end
+	local EqNumber = (veryApprox and util.VeryApproxEqNumber) or util.ApproxEqNumber
 	-- Now begins the pain
 	local gradL = util.LineGradient(l)
 	local gradM = util.LineGradient(m)
 	if (not gradL) or (not gradM) then
 		if not (gradL or gradM) then
-			return l[1][1] == m[1][1]
+			return EqNumber(l[1][1], m[1][1])
 		end
 		return false
 	end
-	if not util.ApproxEqNumber(gradL, gradM) then
+	if not EqNumber(gradL, gradM) then
 		return false
 	end
 	local intL = l[1][2] - gradL * l[1][1]
 	local intM = m[1][2] - gradM * m[1][1]
-	return util.ApproxEqNumber(intL, intM)
+	return EqNumber(intL, intM)
 end
 
 function util.DistSqVectors(u, v)
@@ -450,13 +460,13 @@ function util.GetCircleLineIntersectionPoints(circle, line)
 	local normal, projection = util.Normal(startToPos, startToEnd)
 	local distSq = util.AbsValSq(normal)
 	local radiusSq = circle[3] * circle[3]
-	if distSq > radiusSq then
+	if distSq > radiusSq + 0.0000001 then
 		return false
 	end
 	-- We now do pythagoras on half the isosceles triangle formed by
 	-- the centre of the circle and its intersections with the line.
 	-- We also ignore the issue of degeneracy.
-	local innerProjLength = sqrt(radiusSq - distSq)
+	local innerProjLength = (distSq < radiusSq and sqrt(radiusSq - distSq)) or 0
 	local innerProj = util.SetLength(innerProjLength, projection)
 	local closestPoint = util.Add(line[1], projection)
 	return {
@@ -468,15 +478,21 @@ end
 function util.GetCircleIntersectionPoints(c, d)
 	local midToMid = util.Subtract(d, c)
 	local distSq = util.AbsValSq(midToMid)
-	if distSq > (c[3] + d[3])*(c[3] + d[3]) or distSq == 0 then
+	--print("distSq", distSq - (c[3] + d[3])*(c[3] + d[3]))
+	if distSq > (c[3] + d[3])*(c[3] + d[3]) + 0.01 or distSq < 0.0001 then
 		return
 	end
 	
 	local rSubFactor = (c[3]*c[3] - d[3]*d[3]) / distSq
 	local rAddFactor = (c[3]*c[3] + d[3]*d[3]) / distSq
 	local determinantSq = 2 * rAddFactor - rSubFactor*rSubFactor - 1
+	--print("determinantSq", determinantSq)
 	if determinantSq < 0 then
-		return
+		if determinantSq > -0.0001 then
+			determinantSq = 0
+		else
+			return
+		end
 	end
 	local perpFactor = 0.5 * sqrt(determinantSq)
 	

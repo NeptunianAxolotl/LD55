@@ -129,10 +129,10 @@ local function DestroyElement(self, element, doPointDestroy)
 	end
 end
 
-local function ElementAlreadyExists(self, newElement, elementType)
+local function ElementAlreadyExists(self, newElement, elementType, veryApprox)
 	if elementType == Global.LINE then
 		for i = 1, #self.lines do
-			if (not self.lines[i].destroyed) and util.EqLine(newElement, self.lines[i].geo) then
+			if (not self.lines[i].destroyed) and util.EqLine(newElement, self.lines[i].geo, veryApprox) then
 				return self.lines[i]
 			end
 		end
@@ -148,7 +148,7 @@ end
 
 local function GetPointAtPos(self, pos)
 	for i = 1, #self.points do
-		if (not self.points[i].destroyed) and util.Eq(pos, self.points[i].geo) then
+		if (not self.points[i].destroyed) and util.VeryApproxEq(pos, self.points[i].geo) then
 			return self.points[i]
 		end
 	end
@@ -157,7 +157,7 @@ end
 
 local function IsAngleInteresting(angle)
 	for i = 1, #ShapeDefs.angles do
-		if util.ApproxEqNumber(angle, ShapeDefs.angles[i]) then
+		if util.VeryApproxEqNumber(angle, ShapeDefs.angles[i]) then
 			return i
 		end
 	end
@@ -180,6 +180,9 @@ local function IsInElements(elements, id)
 end
 
 local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
+	if not pointPos then
+		return
+	end
 	local inBounds, alreadyExists, point = AddPoint(self, pointPos)
 	if not inBounds then
 		return
@@ -215,6 +218,21 @@ local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	end
 end
 
+local function PossiblyMerge(intersect)
+	if not intersect then
+		return false
+	end
+	if not intersect[2] then
+		return intersect
+	end
+	if util.DistSqVectors(intersect[1], intersect[2]) < 10 then
+		return {
+			util.Average(intersect[1], intersect[2])
+		}
+	end
+	return intersect
+end
+
 local function AddLine(self, newLine, isPermanent)
 	if Global.DEBUG_PRINT_LINE then
 		print("line {{" .. newLine[1][1] .. ", " .. newLine[1][2] .. "}, {" .. newLine[2][1] .. ", " .. newLine[2][2] .. "}},")
@@ -228,6 +246,7 @@ local function AddLine(self, newLine, isPermanent)
 	for i = 1, #self.circles do
 		if (not self.circles[i].destroyed) then
 			local intersect = util.GetCircleLineIntersectionPoints(self.circles[i].geo, newLine)
+			intersect = PossiblyMerge(intersect)
 			if intersect then
 				AddIntersectionPoint(self, newElement, self.circles[i], intersect[1])
 				AddIntersectionPoint(self, newElement, self.circles[i], intersect[2])
@@ -258,6 +277,7 @@ local function AddCircle(self, newCircle, isPermanent)
 	for i = 1, #self.circles do
 		if (not self.circles[i].destroyed) then
 			local intersect = util.GetCircleIntersectionPoints(self.circles[i].geo, newCircle)
+			intersect = PossiblyMerge(intersect)
 			if intersect then
 				AddIntersectionPoint(self, newElement, self.circles[i],intersect[1])
 				AddIntersectionPoint(self, newElement, self.circles[i],intersect[2])
@@ -267,6 +287,7 @@ local function AddCircle(self, newCircle, isPermanent)
 	for i = 1, #self.lines do
 		if (not self.lines[i].destroyed) then
 			local intersect = util.GetCircleLineIntersectionPoints(newCircle, self.lines[i].geo)
+			intersect = PossiblyMerge(intersect)
 			if intersect then
 				AddIntersectionPoint(self, newElement, self.lines[i],intersect[1])
 				AddIntersectionPoint(self, newElement, self.lines[i],intersect[2])
@@ -277,12 +298,18 @@ local function AddCircle(self, newCircle, isPermanent)
 end
 
 local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
-	print("Maybe found", shape.name)
+	if Global.PRINT_SHAPE_FOUND then
+		print("Maybe found", shape.name)
+	end
 	local verticies = shape.ExpectedLines(corner, mainVector, otherVector)
 	for i = 1, #verticies do
+		print("GetPointAtPos", GetPointAtPos(self, verticies[i]))
 		if not GetPointAtPos(self, verticies[i]) then
 			return false
 		end
+	end
+	if Global.PRINT_SHAPE_FOUND then
+		print("Found verticies")
 	end
 	local edges = {}
 	for i = 1, #verticies do
@@ -294,13 +321,18 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 	end
 	local foundLines = {}
 	for i = 1, #edges do
-		local line = ElementAlreadyExists(self, edges[i], Global.LINE)
+		local line = ElementAlreadyExists(self, edges[i], Global.LINE, true)
 		if not line then
 			return false
 		end
 		foundLines[#foundLines + 1] = line
 	end
-	print("Actually found", shape.name)
+	if Global.PRINT_SHAPE_FOUND then
+		print("Found foundLines")
+	end
+	if Global.PRINT_SHAPE_FOUND then
+		print("Actually found", shape.name)
+	end
 	ShapeHandler.AddShape(shape, verticies, edges, foundLines)
 end
 
@@ -316,11 +348,11 @@ end
 local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 	local reqLengthSq = util.DistSqVectors(mainCorner.point.geo, mainPoint.geo)
 	local otherLine = GetOtherLine(mainLine, mainCorner.lines)
-	print("CheckForShapeFromSegment")
 	for i = 1, #otherLine.notableAngles do
 		local otherCorner = otherLine.notableAngles[i]
 		if otherCorner.angleType == mainCorner.angleType and otherCorner.id ~= mainCorner.id then
-			if util.ApproxEqNumber(util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo), reqLengthSq) then
+			print("DistSqVectors", util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo) - reqLengthSq)
+			if util.VeryApproxEqNumber(util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo), reqLengthSq) then
 				FindShape(self, mainCorner.angleType, mainCorner.point.geo, mainPoint.geo, otherCorner.point.geo)
 			end
 		end
@@ -328,7 +360,6 @@ local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 end
 
 local function CheckNewLineForShapes(self, mainLine)
-	print("CheckNewLineForShapes", #mainLine.notableAngles)
 	for i = 1, #mainLine.notableAngles do
 		local primary = mainLine.notableAngles[i]
 		for j = 1, #mainLine.notableAngles do
@@ -440,6 +471,12 @@ local function NewDiagram(levelData, world)
 				local line = self.lines[i].geo
 				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], GetElementOpacity(self.lines[i], fadeTime))
 				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
+				if Global.DEBUG_SPECIAL_ANGLES then
+					for j = 1, #self.lines[i].notableAngles do
+						local notable = self.lines[i].notableAngles[j]
+						love.graphics.printf(notable.angleType, notable.point.geo[1], notable.point.geo[2], 30, "right")
+					end
+				end
 			end
 			
 			for i = 1, #self.circles do

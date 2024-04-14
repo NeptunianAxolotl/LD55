@@ -32,6 +32,8 @@ local globals = {
 	DEBUG_PRINT_LINE      = false,
 	DEBUG_PRINT_CIRCLE    = false,
 	DEBUG_POINT_INTERSECT = false,
+	PRINT_SHAPE_FOUND     = false,
+	DEBUG_SPECIAL_ANGLES  = false,
 	
 	-- Enums
 	LINE = 1,
