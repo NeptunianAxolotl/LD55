@@ -1,0 +1,30 @@
+Elementals:
+
+Lightning - increase damage/power of shapes so they are better at capturing elemental powers
+Alternate between the three images, but maybe show two at once.
+
+Water - recovers player health (conga-line)
+Have water_1 and water_2 orbit around water_main.  Preferably by crossing in front and then crossing behind.  There could be up to approx 3 ish droplets orbiting at once.
+
+Earth - stabilises lines
+Slow rotation (like a boulder?)
+
+Chalk - increases chalk refresh rate
+Slighty faster rotation
+
+Metal??? - increases max chalk
+
+Air - increase player walking speed
+Alternate between the three images.
+
+Ice - slows down elementals
+Surrounded by snow (effect similar to sparks)
+
+Life/Plants - increases max health
+Have life_1 and life_2 orbit around life_main.  Preferably by crossing in front and then crossing behind.  They should orbit much closer life_main than water.  And there can be more of them.
+
+Fire(light) - attracts elementals
+The three flames should be drawn on top of each other (fire_1 on the bottom), and slightly move in place against each other.  Possibly also add some sparks/embers?
+
+Darkness/void - repels elementals
+Alternate between the three pictures (don't overlay two at once because the transparency will be funny).  The order should be 1,2,3,2,1,2,3,2...
