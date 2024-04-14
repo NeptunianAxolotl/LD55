@@ -29,6 +29,13 @@ local globals = {
 	
 	LINE_LENGTH = 12000,
 	
+	ANGLES = {
+		math.pi/2,
+		math.pi/3,
+		math.pi*2/5,
+		math.pi/4,
+	},
+	
 	-- Enums
 	LINE = 1,
 	CIRCLE = 2,

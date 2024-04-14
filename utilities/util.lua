@@ -336,6 +336,20 @@ end
 --------------------------------------------------
 -- Lines
 
+function util.GetLineUnit(l)
+	return util.Unit(util.Subtract(l[2], l[1]))
+end
+
+function util.GetAngleBetweenLines(l, m)
+	local lu = util.GetLineUnit(l)
+	local mu = util.GetLineUnit(m)
+	local angle = util.GetAngleBetweenUnitVectors(lu, mu)
+	if angle > math.pi/2 then
+		angle = math.pi - angle
+	end
+	return angle
+end
+
 function util.GetBoundedLineIntersection(line1, line2)
 	local x1, y1, x2, y2 = line1[1][1], line1[1][2], line1[2][1], line1[2][2]
 	local x3, y3, x4, y4 = line2[1][1], line2[1][2], line2[2][1], line2[2][2]
@@ -732,7 +746,7 @@ function util.TableKeysToList(keyTable, indexToKey)
 end
 
 local TableToStringHelper
-local function AddTableLine(nameRaw, value, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+local function AddTableLine(nameRaw, value, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf, depth)
 	local name = nameRaw and tostring(nameRaw)
 	if name and type(nameRaw) == "number" then
 		name = "[" .. name .. "]"
@@ -743,21 +757,24 @@ local function AddTableLine(nameRaw, value, newIndent, indentAdd, delimiter, lin
 	if ty == "userdata" then
 		lineFunc("warning, userdata")
 	end
-	
 	if ty == "table" then
-		if inlineConf and nameRaw and inlineConf[nameRaw] then
-			lineFunc(newIndent .. name .. "{")
-			local retStr = ""
-			local function AddLine(str)
-				retStr = retStr .. str
-			end
-			TableToStringHelper(value, true, "", "", " ", AddLine, orderPreference, inlineConf)
-			lineFunc(string.sub(retStr, 0, -3))
-			lineFunc("},\n")
+		if depth and depth <= 0 then
+			lineFunc(newIndent .. name .. "{...}" .. delimiter)
 		else
-			lineFunc(newIndent .. name .. "{\n")
-			TableToStringHelper(value, true, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
-			lineFunc(newIndent .. "},\n")
+			if inlineConf and nameRaw and inlineConf[nameRaw] then
+				lineFunc(newIndent .. name .. "{")
+				local retStr = ""
+				local function AddLine(str)
+					retStr = retStr .. str
+				end
+				TableToStringHelper(value, true, "", "", " ", AddLine, orderPreference, inlineConf, depth and (depth - 1))
+				lineFunc(string.sub(retStr, 0, -3))
+				lineFunc("},\n")
+			else
+				lineFunc(newIndent .. name .. "{" .. delimiter)
+				TableToStringHelper(value, true, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf, depth and (depth - 1))
+				lineFunc(newIndent .. "}," .. delimiter)
+			end
 		end
 	elseif ty == "boolean" then
 		lineFunc(newIndent .. name .. (value and "true," or "false,") .. delimiter)
@@ -770,14 +787,14 @@ local function AddTableLine(nameRaw, value, newIndent, indentAdd, delimiter, lin
 	end
 end
 
-function TableToStringHelper(data, tableChecked, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+function TableToStringHelper(data, tableChecked, newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf, depth)
 	newIndent = (newIndent or "") .. indentAdd
 	local alreadyAdded = {}
 	for i = 1, #data do
 		if not data[i] then
 			break
 		end
-		AddTableLine(false, data[i], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+		AddTableLine(false, data[i], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf, depth)
 		alreadyAdded[i] = true
 	end
 	
@@ -785,7 +802,7 @@ function TableToStringHelper(data, tableChecked, newIndent, indentAdd, delimiter
 		for i = 1, #orderPreference do
 			local nameRaw = orderPreference[i]
 			if data[nameRaw] then
-				AddTableLine(nameRaw, data[nameRaw], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+				AddTableLine(nameRaw, data[nameRaw], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf, depth)
 				alreadyAdded[nameRaw] = true
 			end
 		end
@@ -801,7 +818,7 @@ function TableToStringHelper(data, tableChecked, newIndent, indentAdd, delimiter
 	table.sort(remainingKeys)
 	for i = 1, #remainingKeys do
 		local nameRaw = remainingKeys[i]
-		AddTableLine(nameRaw, data[nameRaw], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf)
+		AddTableLine(nameRaw, data[nameRaw], newIndent, indentAdd, delimiter, lineFunc, orderPreference, inlineConf, depth)
 	end
 end
 
@@ -816,12 +833,13 @@ function util.TableToString(data, orderPreference, inlineConf)
 	return str
 end
 
-function util.PrintTable(data, indent, tableChecked)
+function util.PrintTable(data, depth)
+	indent = indent or ""
 	if (not tableChecked) and type(data) ~= "table" then
 		print(data)
 		return
 	end
-	TableToStringHelper(data, tableChecked, indent"\t", "\n", print, orderPreference, inlineConf)
+	TableToStringHelper(data, true, false, "\t", "", print, false, false, depth)
 end
 
 function util.CopyTable(tableToCopy, deep, appendTo)

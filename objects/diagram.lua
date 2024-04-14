@@ -42,6 +42,9 @@ local function InitObject(self, data)
 	data.circles = {}
 	data.lines = {}
 	data.points = {}
+	if data.isLine then
+		data.notableAngles = {}
+	end
 	data.id = self.newID
 	self.newID = self.newID + 1
 	return data
@@ -66,6 +69,15 @@ local function AddPoint(self, point)
 	return true, false, newPoint
 end
 
+local function IsAngleInteresting(angle)
+	for i = 1, #Global.ANGLES do
+		if util.ApproxEqNumber(angle, Global.ANGLES[i]) then
+			return i
+		end
+	end
+	return false
+end
+
 local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	local inBounds, alreadyExists, point = AddPoint(self, pointPos)
 	if not inBounds then
@@ -77,6 +89,29 @@ local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	end
 	newElement.points[#newElement.points + 1] = point
 	point.elements[#point.elements + 1] = newElement
+	if newElement.isLine and otherElement.isLine then
+		local angle = util.GetAngleBetweenLines(newElement.geo, otherElement.geo)
+		local angleType = IsAngleInteresting(angle)
+		if angleType then
+			local angleStats = {
+				point = point,
+				lines = {
+					newElement,
+					otherElement,
+				},
+				angleType = angleType,
+			}
+			newElement.notableAngles[#newElement.notableAngles + 1] = angleStats
+			otherElement.notableAngles[#otherElement.notableAngles + 1] = angleStats
+		end
+	end
+end
+
+local function GetOtherLine(line, pairOfLines)
+	if pairOfLines[1].id == line.id then
+		return pairOfLines[2]
+	end
+	return pairOfLines[1]
 end
 
 local function AddLine(self, newLine, isPermanent)
@@ -102,6 +137,7 @@ local function AddLine(self, newLine, isPermanent)
 		end
 	end
 	self.lines[#self.lines + 1] = newElement
+	return newElement
 end
 
 local function AddCircle(self, newCircle, isPermanent)
@@ -129,6 +165,31 @@ local function AddCircle(self, newCircle, isPermanent)
 	self.circles[#self.circles + 1] = newElement
 end
 
+local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
+	local reqLengthSq = util.DistSqVectors(mainCorner.point.geo, mainPoint.geo)
+	local otherLine = GetOtherLine(mainLine, mainCorner.lines)
+	for i = 1, #otherLine.notableAngles do
+		local otherCorner = otherLine.notableAngles[i]
+		if otherCorner.angleType == mainCorner.angleType and otherCorner.point.id ~= mainCorner.point.id then
+			if util.ApproxEqNumber(util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo), reqLengthSq) then
+				print("found")
+			end
+		end
+	end
+end
+
+local function CheckNewLineForShapes(self, mainLine)
+	for i = 1, #mainLine.notableAngles do
+		local notableStats = mainLine.notableAngles[i]
+		for j = 1, #mainLine.points do
+			local point = mainLine.points[j]
+			if point.id ~= notableStats.point.id then
+				CheckForShapeFromSegment(self, mainLine, notableStats, point)
+			end
+		end
+	end
+end
+
 local function AddElement(self, u, v, elementType)
 	local newElement = GetNewElement(u, v, elementType)
 	if not newElement then
@@ -138,7 +199,8 @@ local function AddElement(self, u, v, elementType)
 		return false
 	end
 	if elementType == Global.LINE then
-		AddLine(self, newElement)
+		local newLine = AddLine(self, newElement)
+		CheckNewLineForShapes(self, newLine)
 	elseif elementType == Global.CIRCLE then
 		AddCircle(self, newElement)
 	end
