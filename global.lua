@@ -5,16 +5,12 @@ local globals = {
 	TEXT_COL = {0.73, 0.73, 0.75},
 	
 	WORLD_RADIUS = 2000,
-	PLAY_WIDTH = 2000,
-	PLAY_HEIGHT = 1200,
 	
 	MASTER_VOLUME = 0.05,
 	MUSIC_VOLUME = 0.02,
 	DEFAULT_MUSIC_DURATION = 174.69,
 	CROSSFADE_TIME = 0,
 	CAMERA_SPEED = 1000,
-	
-	DEBUG_PRINT_CLICK_POS = true,
 	
 	PHYSICS_SCALE = 300,
 	LINE_SPACING = 36,
@@ -29,12 +25,11 @@ local globals = {
 	
 	LINE_LENGTH = 12000,
 	
-	ANGLES = {
-		math.pi/2,
-		math.pi/3,
-		math.pi*2/5,
-		math.pi/4,
-	},
+	
+	DEBUG_PRINT_CLICK_POS = false,
+	DEBUG_PRINT_POINT     = true,
+	DEBUG_PRINT_LINE      = false,
+	DEBUG_PRINT_CIRCLE    = false,
 	
 	-- Enums
 	LINE = 1,

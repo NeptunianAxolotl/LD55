@@ -9,8 +9,8 @@ for i = 1, #names do
 		form = "image",
 		xScale = 1,
 		yScale = 1,
-		xOffset = 0,
-		yOffset = 0,
+		xOffset = 0.5,
+		yOffset = 0.5,
 	}
 end
 

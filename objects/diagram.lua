@@ -1,4 +1,6 @@
 
+local ShapeDefs = require("defs/shapeDefs")
+
 local function GetPointAt(self, world, pos)
 	local bestDistSq = false
 	local bestPoint = false
@@ -70,8 +72,8 @@ local function AddPoint(self, point)
 end
 
 local function IsAngleInteresting(angle)
-	for i = 1, #Global.ANGLES do
-		if util.ApproxEqNumber(angle, Global.ANGLES[i]) then
+	for i = 1, #ShapeDefs.angles do
+		if util.ApproxEqNumber(angle, ShapeDefs.angles[i]) then
 			return i
 		end
 	end
@@ -82,6 +84,9 @@ local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	local inBounds, alreadyExists, point = AddPoint(self, pointPos)
 	if not inBounds then
 		return
+	end
+	if Global.DEBUG_PRINT_POINT then
+		print("point {" .. pointPos[1] .. ", " .. pointPos[2] .. "}, ")
 	end
 	if not alreadyExists then
 		otherElement.points[#otherElement.points + 1] = point
@@ -115,7 +120,7 @@ local function GetOtherLine(line, pairOfLines)
 end
 
 local function AddLine(self, newLine, isPermanent)
-	if Global.DEBUG_PRINT_CLICK_POS then
+	if Global.DEBUG_PRINT_LINE then
 		print("line {{" .. newLine[1][1] .. ", " .. newLine[1][2] .. "}, {" .. newLine[2][1] .. ", " .. newLine[2][2] .. "}},")
 	end
 	newLine = util.ExtendLine(newLine, Global.LINE_LENGTH)
@@ -141,7 +146,7 @@ local function AddLine(self, newLine, isPermanent)
 end
 
 local function AddCircle(self, newCircle, isPermanent)
-	if Global.DEBUG_PRINT_CLICK_POS then
+	if Global.DEBUG_PRINT_CIRCLE then
 		print("circle {" .. newCircle[1] .. ", " .. newCircle[2] .. ", " .. newCircle[3] .. "},")
 	end
 	local newElement = InitObject(self, {
@@ -165,6 +170,14 @@ local function AddCircle(self, newCircle, isPermanent)
 	self.circles[#self.circles + 1] = newElement
 end
 
+local function FindShape(self, angleType, corner, mainEdge, otherEdge)
+	print("Maybe found")
+	local potentialShapes = ShapeDefs.shapesWithAngleIndex
+	for i = 1, #potentialShapes do
+		
+	end
+end
+
 local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 	local reqLengthSq = util.DistSqVectors(mainCorner.point.geo, mainPoint.geo)
 	local otherLine = GetOtherLine(mainLine, mainCorner.lines)
@@ -172,7 +185,7 @@ local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 		local otherCorner = otherLine.notableAngles[i]
 		if otherCorner.angleType == mainCorner.angleType and otherCorner.point.id ~= mainCorner.point.id then
 			if util.ApproxEqNumber(util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo), reqLengthSq) then
-				print("found")
+				FindShape(self, mainCorner.angleType, mainCorner.point.geo, mainPoint.geo, otherCorner.point.geo)
 			end
 		end
 	end
@@ -180,11 +193,13 @@ end
 
 local function CheckNewLineForShapes(self, mainLine)
 	for i = 1, #mainLine.notableAngles do
-		local notableStats = mainLine.notableAngles[i]
-		for j = 1, #mainLine.points do
-			local point = mainLine.points[j]
-			if point.id ~= notableStats.point.id then
-				CheckForShapeFromSegment(self, mainLine, notableStats, point)
+		local primary = mainLine.notableAngles[i]
+		for j = 1, #mainLine.notableAngles do
+			local secondary = mainLine.notableAngles[j]
+			-- Shapes have the loop back around, so we are only interested in segments that
+			-- have the same interesting angle on both end.
+			if primary.angleType == secondary.angleType and primary.point.id < secondary.point.id then
+				CheckForShapeFromSegment(self, mainLine, primary, secondary.point)
 			end
 		end
 	end

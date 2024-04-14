@@ -187,13 +187,6 @@ end
 
 local function UpdateCamera(dt)
 	CameraHandler.Update(dt)
-	--local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(dt, 
-	--	{
-	--		{pos = {Global.WORLD_WIDTH/2, Global.WORLD_HEIGHT/2}, xOff = Global.WORLD_WIDTH/2 + 80, yOff = Global.WORLD_HEIGHT/2 + 80},
-	--	}
-	--	, 0, 0
-	--)
-	--Camera.UpdateTransform(self.cameraTransform, cameraX, cameraY, cameraScale)
 end
 
 --------------------------------------------------

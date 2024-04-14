@@ -218,6 +218,22 @@ function util.Average(u, v, uFactor)
 	return util.Add(util.Mult(uFactor, util.Subtract(v, u)), u)
 end
 
+function util.AverageMulti(pointList)
+	if #pointList == 0 then
+		return false
+	end
+	local x = 0
+	local y = 0
+	for i = 1, #pointList do
+		x = x + pointList[i][1]
+		y = y + pointList[i][2]
+	end
+	return {
+		x/#pointList,
+		y/#pointList,
+	}
+end
+
 function util.AverageScalar(u, v, uFactor)
 	uFactor = uFactor or 0.5
 	return u*(1 - uFactor) + v * uFactor
@@ -338,6 +354,18 @@ end
 
 function util.GetLineUnit(l)
 	return util.Unit(util.Subtract(l[2], l[1]))
+end
+
+function util.RotateLineAroundOrigin(l, angle)
+	return {
+		util.RotateVector(l[1], angle),
+		util.RotateVector(l[2], angle),
+	}
+end
+
+function util.RotateCircleAroundOrigin(c, angle)
+	local newPoint = util.RotateVector(c, angle)
+	return {newPoint[1], newPoint[2], c[3]}
 end
 
 function util.GetAngleBetweenLines(l, m)
@@ -776,6 +804,8 @@ local function AddTableLine(nameRaw, value, newIndent, indentAdd, delimiter, lin
 				lineFunc(newIndent .. "}," .. delimiter)
 			end
 		end
+	elseif ty == "function" then
+		lineFunc(newIndent .. name .. " = function" .. delimiter)
 	elseif ty == "boolean" then
 		lineFunc(newIndent .. name .. (value and "true," or "false,") .. delimiter)
 	elseif ty == "string" then
