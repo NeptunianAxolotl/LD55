@@ -250,15 +250,22 @@ function api.Draw()
 	--ShadowHandler.DrawVisionShadow(CameraHandler.GetCameraTransform())
 	
 	local windowX, windowY = love.window.getMode()
-	if windowX/windowY > 16/9 then
-		self.interfaceTransform:setTransformation(0, 0, 0, windowY/1100, windowY/1100, 0, 0)
+	local ratio = 20/11
+	if windowX/windowY > ratio then
+		local padding = (windowX - windowY*ratio)/2
+		self.interfaceTransformTopLeft:setTransformation(0, 0, 0, windowY/1100, windowY/1100, 0, 0)
+		self.interfaceTransformBottom:setTransformation(padding*0.5, 0, 0, windowY/1100, windowY/1100, 0, 0)
+		self.interfaceTransform:setTransformation(padding*0.5, 0, 0, windowY/1100, windowY/1100, 0, 0)
 	else
-		self.interfaceTransform:setTransformation(0, 0, 0, windowX/2000, windowX/2000, 0, 0)
+		local padding = (windowY - windowX/ratio)
+		self.interfaceTransformTopLeft:setTransformation(0, 0, 0, windowX/2000, windowX/2000, 0, 0)
+		self.interfaceTransformBottom:setTransformation(0, padding, 0, windowX/2000, windowX/2000, 0, 0)
+		self.interfaceTransform:setTransformation(0, padding*0.5, 0, windowX/2000, windowX/2000, 0, 0)
 	end
-	love.graphics.replaceTransform(self.interfaceTransform)
+	love.graphics.replaceTransform(self.interfaceTransformTopLeft)
 	
 	-- Draw interface
-	GameHandler.DrawInterface()
+	GameHandler.DrawInterface(self.interfaceTransform, self.interfaceTransformTopLeft, self.interfaceTransformBottom)
 	EffectsHandler.DrawInterface()
 	DialogueHandler.DrawInterface()
 	ChatHandler.DrawInterface()
@@ -272,6 +279,8 @@ function api.Initialize(cosmos, levelData)
 	}
 	self.cosmos = cosmos
 	self.cameraTransform = love.math.newTransform()
+	self.interfaceTransformBottom = love.math.newTransform()
+	self.interfaceTransformTopLeft = love.math.newTransform()
 	self.interfaceTransform = love.math.newTransform()
 	self.emptyTransform = love.math.newTransform()
 	self.paused = false

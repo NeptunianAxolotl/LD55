@@ -11,7 +11,7 @@ local world
 --------------------------------------------------
 
 function api.GetSafeLineCapacity()
-	return self.power.safeLines*2 + 8000
+	return self.power.safeLines*2 + 8
 end
 
 function api.GetLineFadeTime()

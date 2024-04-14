@@ -56,7 +56,7 @@ function api.GetEnemies()
 end
 
 function api.Update(dt)
-	--SpawnEnemiesUpdate(dt)
+	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
 	self.spawnRate = self.spawnRate - 0.008*self.spawnRate*dt
 	self.spawnSize = self.spawnSize + 0.006*dt

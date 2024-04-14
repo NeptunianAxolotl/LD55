@@ -65,9 +65,9 @@ local function DrawLeftInterface()
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Score: " .. self.score, 2, xOffset + 20, 80, "left", 280)
-	PrintLine("Tool: " .. tool, 2, xOffset + 20, 120, "left", 280)
-	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 160, "left", 280)
+	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 280)
+	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 280)
+	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 100, "left", 280)
 	
 	local over, _, _, overType = self.world.GetGameOver()
 	if over then
@@ -77,7 +77,7 @@ end
 
 local function DrawHealth()
 	if PlayerHandler.GetHealthProp() >= 1 then
-		return
+		--return
 	end
 	InterfaceUtil.DrawBar({0.3, 1, 0.3}, {0.3, 0.3, 0.3}, PlayerHandler.GetHealthProp(), false, false, {600, 1020}, {800, 60})
 end
@@ -89,9 +89,13 @@ end
 function api.Update(dt)
 end
 
-function api.DrawInterface()
+function api.DrawInterface(transMid, transTopLeft, transBottom)
+	love.graphics.replaceTransform(transTopLeft)
 	DrawLeftInterface()
+	love.graphics.replaceTransform(transBottom)
 	DrawHealth()
+	love.graphics.replaceTransform(transMid)
+	InterfaceUtil.DrawBar({0.3, 1, 0.3}, {0.3, 0.3, 0.3}, PlayerHandler.GetHealthProp(), false, false, {1000, 550}, {80, 80})
 end
 
 function api.Initialize(world)
