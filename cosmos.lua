@@ -129,9 +129,9 @@ function api.Initialize()
 		realTime = 0,
 		inbuiltLevelIndex = Global.DEBUG_MODE_START_LEVEL or 1,
 		musicEnabled = true,
-		mouseScrollSpeed = 0,
-		keyScrollSpeed = 1,
-		grabInput = false,
+		mouseScrollSpeed = Global.MOUSE_SCROLL_MULT,
+		keyScrollSpeed = Global.KEYBOARD_SCROLL_MULT,
+		grabInput = Global.MOUSE_SCROLL_MULT > 0,
 		difficultySetting = {},
 	}
 	love.mouse.setGrabbed(self.grabInput)

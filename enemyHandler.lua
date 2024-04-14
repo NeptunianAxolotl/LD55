@@ -25,7 +25,7 @@ local function SpawnEnemiesUpdate(dt)
 	IterableMap.Add(self.enemies, new)
 end
 
-local function ClosestToWithDist(data, maxDist, maxDistSq, pos, filterFunc)w
+local function ClosestToWithDist(data, maxDist, maxDistSq, pos, filterFunc)
 	if data.destroyed then
 		return false
 	end
@@ -58,7 +58,7 @@ end
 function api.Update(dt)
 	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
-	self.spawnRate = self.spawnRate - 0.02*self.spawnRate*dt
+	self.spawnRate = self.spawnRate - 0.012*self.spawnRate*dt
 	self.spawnSize = self.spawnSize + 0.006*dt
 end
 
