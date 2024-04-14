@@ -12,7 +12,11 @@ function api.AddShape(shapeDef, vertices, edges, definingLines)
 end
 
 function api.Update(dt)
+	IterableMap.ApplySelf(self.shapes, "Update", dt)
+end
 
+function api.Draw(drawQueue)
+	IterableMap.ApplySelf(self.shapes, "Draw", drawQueue)
 end
 
 function api.Initialize(world, levelData)
@@ -21,10 +25,6 @@ function api.Initialize(world, levelData)
 		shapes = IterableMap.New(),
 		nextShapeID = 0,
 	}
-end
-
-function api.Draw(drawQueue)
-	IterableMap.ApplySelf(self.shapes, "Draw", drawQueue)
 end
 
 return api

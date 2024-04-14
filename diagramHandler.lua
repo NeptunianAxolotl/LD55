@@ -31,6 +31,12 @@ function api.CheckVictory()
 	end
 end
 
+function api.RespondToRemovedShape(edges, shapeId)
+	if self.currentDiagram then
+		self.currentDiagram.RespondToRemovedShape(edges, shapeId)
+	end
+end
+
 function api.GetMoves()
 	return self.moves
 end

@@ -26,6 +26,10 @@ function api.GetDrawRange()
 	return 430
 end
 
+function api.GetShapePower()
+	return 10 + self.powers.shapePower
+end
+
 --------------------------------------------------
 -- Updating
 --------------------------------------------------
