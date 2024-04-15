@@ -76,6 +76,19 @@ function api.Update(dt)
 		self.playerRotation = util.Angle(wantedVelocity)
 	end
 	
+	if self.lineAnimDt then
+		self.lineAnimDt = self.lineAnimDt - dt
+		if self.lineAnimDt < 0 then
+			self.lineAnimDt = false
+		end
+	end
+	if self.circleAnimDt then
+		self.circleAnimDt = self.circleAnimDt - dt
+		if self.circleAnimDt < 0 then
+			self.circleAnimDt = false
+		end
+	end
+	
 	CheckForDamage()
 	
 	local over, _, gameLost, overType = self.world.GetGameOver()
@@ -94,6 +107,8 @@ function api.Update(dt)
 	end
 	
 	self.playerSpeed = util.Average(self.playerSpeed, wantedVelocity, 0.6)
+	self.walkAnim = (self.walkAnim + 0.022*dt*util.AbsVal(self.playerSpeed))%1
+	
 	self.playerPos = util.Add(util.Mult(dt, self.playerSpeed), self.playerPos)
 	local worldDistance = util.AbsVal(self.playerPos)
 	if worldDistance > Global.PLAYER_MOVE_RADIUS then
@@ -104,13 +119,53 @@ function api.Update(dt)
 	end
 end
 
+function api.DoAction(elementType)
+	if elementType == Global.LINE then
+		self.lineAnimDt = Global.PLAYER_ANIM
+	end
+	if elementType == Global.CIRCLE then
+		self.circleAnimDt = Global.PLAYER_ANIM
+	end
+end
+
 function api.Draw(drawQueue)
 	local over, _, gameLost, overType = self.world.GetGameOver()
 	if gameLost then
 		return
 	end
 	drawQueue:push({y=40; f=function()
+		if self.walkAnim < 0.35 then
+			Resources.DrawImage("wizard_shoes_1", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+		elseif self.walkAnim < 0.85 and self.walkAnim > 0.5 then
+			Resources.DrawImage("wizard_shoes_2", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+		end
+		if self.circleAnimDt then
+			if self.circleAnimDt < Global.PLAYER_ANIM*1.1/6 then
+				Resources.DrawImage("wizard_staff_ready", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			elseif self.circleAnimDt < Global.PLAYER_ANIM*2.15/6 then
+				Resources.DrawImage("wizard_staff_circle_1", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			elseif self.circleAnimDt < Global.PLAYER_ANIM*3/6 then
+				Resources.DrawImage("wizard_staff_circle_2", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			elseif self.circleAnimDt < Global.PLAYER_ANIM*3.8/6 then
+				Resources.DrawImage("wizard_staff_circle_3", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			elseif self.circleAnimDt < Global.PLAYER_ANIM*4.9/6 then
+				Resources.DrawImage("wizard_staff_circle_4", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			else
+				Resources.DrawImage("wizard_staff_ready", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			end
+		elseif self.lineAnimDt then
+			if self.lineAnimDt < Global.PLAYER_ANIM*1/6 then
+				Resources.DrawImage("wizard_staff_ready", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			elseif self.lineAnimDt < Global.PLAYER_ANIM*5/6 then
+				Resources.DrawImage("wizard_staff_line", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			else
+				Resources.DrawImage("wizard_staff_ready", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+			end
+		else
+			--Resources.DrawImage("wizard_staff_default", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+		end
 		Resources.DrawImage("wizard_base", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
+		
 		local hoveredPoint = DiagramHandler.GetHoveredPoint()
 		if hoveredPoint and not api.InSelectRange(hoveredPoint) then
 			love.graphics.setLineWidth(2)
@@ -128,6 +183,7 @@ function api.Initialize(world)
 		playerPos = world.GetLevelData().playerPos,
 		playerSpeed = {0, 0},
 		playerRotation = 0,
+		walkAnim = 0,
 		playerRadius = 25,
 		animationTimer = 0,
 		hitLeeway = 0,

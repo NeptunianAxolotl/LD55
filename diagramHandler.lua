@@ -16,21 +16,17 @@ local function TryToPlaceElement(u, v)
 	local elementSwitch = self.currentDiagram.CheckElementTypeSwitch(self.selectedPoint, self.hoveredPoint, self.elementType)
 	local success = self.currentDiagram.AddElement(u, v, elementSwitch)
 	if not success then
-		return
+		return false
 	end
 	self.moves = self.moves + 1
-	api.CheckVictory()
+	PlayerHandler.DoAction(elementSwitch)
+	return true
 end
 
 function api.InBounds(pos)
 	return util.DistSq(0, 0, pos[1], pos[2]) < Global.WORLD_RADIUS * Global.WORLD_RADIUS
 end
 
-function api.CheckVictory()
-	if #self.levelData.win.lines == 0 and #self.levelData.win.circles == 0 then
-		return
-	end
-end
 
 function api.ElementExists(element, elementType)
 	return self.currentDiagram.ElementExists(element, elementType)
