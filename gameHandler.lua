@@ -136,10 +136,10 @@ local function HandleHoverClick()
 		self.world.GetCosmos().SetDifficulty(1)
 		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Switch to Hard" then
-		self.world.GetCosmos().SetDifficulty(1.8)
+		self.world.GetCosmos().SetDifficulty(Global.HARD_DIFFICULTY)
 		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Switch to Hardest" then
-		self.world.GetCosmos().SetDifficulty(3)
+		self.world.GetCosmos().SetDifficulty(Global.HARDER_DIFFICULTY)
 		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Restart" then
 		self.world.Restart()
