@@ -70,9 +70,12 @@ function api.Update(dt)
 	
 	CheckForDamage()
 	
-	if self.health < PowerHandler.GetPlayerMaxHealth() then
-		if self.hitLeeway <= 0 then
-			self.health = self.health + PowerHandler.GetPlayerHealthRegen()*dt
+	local over, _, gameLost, overType = self.world.GetGameOver()
+	if not gameLost then
+		if self.health < PowerHandler.GetPlayerMaxHealth() then
+			if self.hitLeeway <= 0 then
+				self.health = self.health + PowerHandler.GetPlayerHealthRegen()*dt
+			end
 		end
 	end
 	if self.hitLeeway > 0 then
