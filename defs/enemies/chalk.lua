@@ -26,8 +26,8 @@ local data = {
 	end,
 	draw = function (self, drawQueue)
 		local anim = self.animation*math.pi*2
-		local scale = {self.drawSizeMult*(1 + math.sin(anim -0.5)*0.1), self.drawSizeMult*(1 + math.cos(anim)*0.06)}
-		Resources.DrawImage("chalk", self.pos[1], self.pos[2], false, self.EnergyProp()*0.95 + 0.5, scale)
+		local scale = self.drawSizeMult
+		Resources.DrawImage("chalk", self.pos[1], self.pos[2], anim, self.EnergyProp()*0.95 + 0.5, scale)
 	end,
 }
 
