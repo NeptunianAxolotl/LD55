@@ -6,7 +6,7 @@ local self = {}
 local api = {}
 
 local function GetSpawnSize()
-	local draw = math.pow((self.spawnSize - math.random()*self.spawnSize), 1.8)
+	local draw = math.pow((self.spawnSize - math.random()*self.spawnSize), 1.5)
 	draw = math.floor(draw + 1)
 	return draw
 end
@@ -35,9 +35,9 @@ end
 
 local function SpawnEnemiesUpdate(dt)
 	self.spawnTimer = self.spawnTimer + dt*Global.ENEMY_SPAWN_MULT
-	while self.spawnTimer > self.spawnRate do
+	while self.spawnTimer > 1 / self.spawnFrequency do
 		SpawnEnemy()
-		self.spawnTimer = self.spawnTimer - self.spawnRate
+		self.spawnTimer = self.spawnTimer - 1 / self.spawnFrequency
 	end
 end
 
@@ -79,14 +79,19 @@ function api.PushEnemiesFrom(circle)
 	IterableMap.ApplySelf(self.enemies, "PushFrom", circle)
 end
 
+function api.GetSpawnParameters()
+	return 1 / self.spawnFrequency, math.pow(self.spawnSize, 1.5)
+end
+
 function api.Update(dt)
 	if self.noEnemies then
 		return
 	end
 	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
-	self.spawnRate = self.spawnRate - 0.008*self.spawnRate*dt
-	self.spawnSize = self.spawnSize + 0.006*dt
+	
+	self.spawnFrequency = math.min(3, self.spawnFrequency*(1 + 0.0004*dt) + 0.0003*dt)
+	self.spawnSize = self.spawnSize + 0.0011*dt
 end
 
 function api.Draw(drawQueue)
@@ -97,8 +102,8 @@ function api.Initialize(world, levelIndex, mapDataOverride)
 	self = {
 		world = world,
 		enemies = IterableMap.New(),
-		spawnRate = 8,
-		spawnSize = 0.3,
+		spawnFrequency = 0.125,
+		spawnSize = 0.7,
 		spawnTimer = 0,
 		noEnemies = world.GetLevelData().noEnemies,
 	}

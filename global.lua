@@ -83,9 +83,11 @@ local globals = {
 	SHAPE_IDLE_DRAIN_MULT = 1,
 	ACT_IN_GAME_OVER = false,
 	
+	GAME_SPEED = false,
+	
 	DEBUG_PRINT_LINE      = false,
 	DEBUG_PRINT_CIRCLE    = false,
-	DEBUG_SHAPES = false,
+	DEBUG_SHAPES          = false,
 	DEBUG_CIRCLE_POINTS   = false,
 	DEBUG_PRINT_CLICK_POS = true,
 	DEBUG_PRINT_POINT     = true,

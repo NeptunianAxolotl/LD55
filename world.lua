@@ -200,6 +200,7 @@ function api.ViewResize(width, height)
 end
 
 function api.Update(dt)
+	dt = dt * (Global.GAME_SPEED or 1)
 	GameHandler.Update(dt)
 	InterfaceUtil.Update(dt)
 	PowerHandler.Update(dt)

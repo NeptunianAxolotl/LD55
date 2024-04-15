@@ -59,7 +59,7 @@ local elementUiDefs = {
 	lightning = {
 		humanName = "Lightning",
 		descFunc = function ()
-			return "Can sustain " .. PercentInc(PowerHandler.GetMaxShapes() / PowerHandler.InitialMaxShapes()) .. "% more sigils"
+			return "Sustain more sigils and unlocks new ones"
 		end,
 		image = "lightning_2",
 	},
@@ -196,7 +196,7 @@ local function DrawLeftInterface()
 	local windowX, windowY = love.window.getMode()
 	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800)
 	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800)
-	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 280)
+	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 800)
 	
 	local offset = 240
 	for i = 1, #ShapeDefs.shapeNames do
@@ -204,7 +204,7 @@ local function DrawLeftInterface()
 		local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
 		if maximum > 0 then
 			local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
-			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 280)
+			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 800)
 		end
 		offset = offset + 30
 	end
@@ -213,6 +213,17 @@ local function DrawLeftInterface()
 	if over then
 		PrintLine(overType, 1, 400, 120, "center", 250)
 	end
+	
+	local rate, size = EnemyHandler.GetSpawnParameters()
+	offset = offset + 30
+	PrintLine("Game Time: " .. util.SecondsToString(self.world.GetLifetime()), 2, xOffset + 20, offset, "left", 800)
+	offset = offset + 30
+	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 2, xOffset + 20, offset, "left", 800)
+	offset = offset + 30
+	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 2, xOffset + 20, offset, "left", 800)
+	offset = offset + 30
+	
+	
 end
 
 local function DrawElementArea(x, y, element, mousePos)
@@ -266,7 +277,6 @@ local function DrawPowerMenu()
 			elementY = elementY + elementYOffset
 		end
 	end
-	
 	
 --		love.graphics.printf([[
 --'p' to unpause
