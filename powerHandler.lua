@@ -137,7 +137,7 @@ local function NotifyUpgrade(element)
 	if element == "lightning" then
 		UpdateMaxShapes()
 	elseif element == "life" then
-		UpdateMaxShapes()
+		PlayerHandler.UpdateMaxHealth()
 	end
 end
 

@@ -38,6 +38,10 @@ function api.GetHealthProp()
 	return math.max(0, self.health / PowerHandler.GetPlayerMaxHealth())
 end
 
+function api.UpdateMaxHealth()
+	self.health = PowerHandler.GetPlayerMaxHealth()
+end
+
 function api.DealDamage(damage)
 	if self.hitLeeway > 0 then
 		return
