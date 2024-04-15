@@ -101,7 +101,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 			self.bookDrawVerts = verts
 		end
 		love.graphics.setLineWidth(5)
-		love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.8)
+		love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.2)
 		love.graphics.polygon("fill", self.bookDrawVerts)
 		--love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.4)
 		--love.graphics.polygon("line", self.bookDrawVerts)

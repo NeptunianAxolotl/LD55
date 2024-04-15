@@ -2,9 +2,9 @@
 local data = {
 	speed = 135,
 	image = "fire_1",
-	maxEnergy = 3,
+	maxEnergy = 2.8,
 	baseRadius = 25,
-	baseDamage = 7,
+	baseDamage = 8,
 	weightMult = 1,
 	init = function (self)
 		self.animSpeed = 0.9 + math.random()*0.2
