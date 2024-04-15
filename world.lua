@@ -65,6 +65,7 @@ function api.SetGameOver(hasWon, overType)
 	
 	if hasWon then
 		self.gameWon = true
+		self.overType = overType
 	else
 		self.gameLost = true
 		self.overType = overType

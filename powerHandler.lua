@@ -220,7 +220,7 @@ function api.Initialize(world, difficulty)
 			water = startingLevel,
 			air = startingLevel,
 			earth = startingLevel,
-			fire = startingLevel,
+			fire = 1,
 			life = startingLevel,
 			ice = 1,
 			lightning = startingLevel,

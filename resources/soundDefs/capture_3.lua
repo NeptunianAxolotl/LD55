@@ -1,4 +1,4 @@
 return {
 	file = "effects/capture_3.ogg",
-	volMult = 0.4,
+	volMult = 0.35,
 }

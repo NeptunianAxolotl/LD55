@@ -7,11 +7,11 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 	end
 	local dist = math.sqrt(distSq)
 	local towards = util.UnitTowards(enemy.pos, self.midPoint)
-	local distFactor = math.min(0.73, (self.effectRange - dist)/self.effectRange)
+	local distFactor = (self.effectRange - dist)/self.effectRange
 	local force = distFactor*self.def.pullForce*(0.8*self.PowerProp() + 0.2)/enemy.GetWeight()
 	enemy.pos = util.Add(enemy.pos, util.Mult(force*dt, towards))
 	
-	if distFactor >= 0.72 then
+	if distFactor >= 0.92 then
 		local energyFactor = (0.66 + 0.34*enemy.EnergyProp())
 		local prop = enemy.DrainEnergy(self.magnitude*dt*self.def.drainForce)
 		local drainMult = math.min(1, self.lifetime*1.5)
@@ -31,6 +31,7 @@ local data = {
 	drainForce = 2,
 	affinityMult = 15,
 	affinityDirectionMult = 15,
+	pullForce = 500,
 	idleDischargeMult = 0.1,
 	glowSizeMult = 1.8,
 	init = function (self)
@@ -40,12 +41,12 @@ local data = {
 	update = function (self, dt)
 		local enemies = EnemyHandler.GetEnemies()
 		IterableMap.Apply(enemies, PullEnemies, self, dt)
-		self.power = self.power - 3*dt*Global.SHAPE_IDLE_DRAIN_MULT
+		self.power = self.power - 4*dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
 	color = {0, 0, 0},
 }
 
-local vertRadius = 1/ (2 * math.sin(36*math.pi/180))
+local vertRadius = 1 / (2 * math.sin(36*math.pi/180))
 local vertAngle = math.pi*2/5
 local vertSides = 5
 
@@ -54,7 +55,7 @@ function data.ExpectedLines(corner, u, v)
 	local origin = util.Add(corner, radiusVector)
 	local vertices = {}
 	for i = 1, vertSides do
-		vertices[i] = util.Add(origin, util.RotateVector(radiusVector, i*vertAngle))
+		vertices[i] = util.Add(origin, util.RotateVector(radiusVector, (i - 0.5)*vertAngle))
 	end
 	return vertices
 end

@@ -35,7 +35,8 @@ end
 
 local function SpawnEnemiesUpdate(dt)
 	self.spawnTimer = self.spawnTimer + dt * Global.ENEMY_SPAWN_MULT * self.difficulty * ((4 + ShapeHandler.GetShapeCount()) / 8)
-	self.spawnTimer = self.spawnTimer + dt * 5 * math.sqrt(ShapeHandler.GetShapeTypeCount("hexagon"))
+	self.spawnTimer = self.spawnTimer + dt * 3 * math.sqrt(ShapeHandler.GetShapeTypeCount("hexagon"))
+	self.spawnTimer = self.spawnTimer + dt * 18 * ShapeHandler.GetShapeTypeCount("octagon")
 	if Global.TEST_ENEMIES then
 		self.spawnTimer = self.spawnTimer + dt*5
 	end

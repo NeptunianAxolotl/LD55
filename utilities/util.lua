@@ -47,6 +47,21 @@ function util.EqCircle(c, d)
 	return util.Eq(c, d) and c[3] - d[3] < 0.000001 and d[3] - c[3] < 0.000001
 end
 
+local function FallbackCheck(l, m, EqNumber)
+	local unitL = util.GetLineUnit(l)
+	local unitM = util.GetLineUnit(m)
+	local angle = util.GetAngleBetweenUnitVectors(unitL, unitM)
+	if not (EqNumber(angle, 0) or EqNumber(angle, math.pi)) then
+		return false
+	end
+	
+	local distSq = util.DistanceToLineSq(l[1], m)
+	if EqNumber(distSq, 0) then
+		return true
+	end
+	return false
+end
+
 function util.EqLine(l, m, veryApprox)
 	local Eq = (veryApprox and util.VeryApproxEq) or util.Eq
 	if (Eq(l[1], m[1]) and Eq(l[2], m[2])) or
@@ -55,20 +70,21 @@ function util.EqLine(l, m, veryApprox)
 	end
 	local EqNumber = (veryApprox and util.VeryApproxEqNumber) or util.ApproxEqNumber
 	-- Now begins the pain
+	
 	local gradL = util.LineGradient(l)
 	local gradM = util.LineGradient(m)
 	if (not gradL) or (not gradM) then
 		if not (gradL or gradM) then
 			return EqNumber(l[1][1], m[1][1])
 		end
-		return false
+		return FallbackCheck(l, m, EqNumber)
 	end
 	if not EqNumber(gradL, gradM) then
-		return false
+		return FallbackCheck(l, m, EqNumber)
 	end
 	local intL = l[1][2] - gradL * l[1][1]
 	local intM = m[1][2] - gradM * m[1][1]
-	return EqNumber(intL, intM)
+	return EqNumber(intL, intM) or FallbackCheck(l, m, EqNumber)
 end
 
 function util.DistSqVectors(u, v)

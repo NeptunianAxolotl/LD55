@@ -351,13 +351,20 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 		end
 		edges[#edges + 1] = edge
 	end
+	if Global.PRINT_SHAPE_FOUND then
+		print("edges")
+	end
 	local foundLines = {}
 	for i = 1, #edges do
 		local line = ElementAlreadyExists(self, edges[i], Global.LINE, true)
 		if not line then
+			if Global.PRINT_SHAPE_FOUND then
+				print("Missing Line", i)
+			end
 			return false
+		else
+			foundLines[#foundLines + 1] = line
 		end
-		foundLines[#foundLines + 1] = line
 	end
 	--print("Found sssssssssssssssssssss")
 	--util.PrintTable(ShapeHandler.GetCompareVertices(vertices, true))
