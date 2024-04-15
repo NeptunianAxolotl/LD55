@@ -238,7 +238,7 @@ function api.Initialize(world)
 	self.initialMaxShapes = self.totalMaxShapes
 	
 	for name, data in pairs(self.progress) do
-		self.progress[name] = math.floor(math.random()*10)
+		self.progress[name] = math.floor(math.random()*Global.RANDOM_TESTING_ELEMENTS)
 	end
 end
 
