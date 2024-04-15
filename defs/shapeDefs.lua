@@ -31,11 +31,19 @@ shapeNames = {
 	"octagon",
 }
 
+local collectiveHumanName = {
+	triangle = "Triangles",
+	square = "Squares",
+	hexagon = "Hexagons",
+	octagon = "Octagons",
+}
+
 local data = {
 	shapes = shapes,
 	shapesWithAngleIndex = shapesWithAngleIndex,
 	angles = angles,
 	shapeNames = shapeNames,
+	collectiveHumanName = collectiveHumanName,
 }
 
 return data

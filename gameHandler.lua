@@ -1,5 +1,5 @@
 
-MusicHandler = require("musicHandler")
+local ShapeDefs = require("defs/shapeDefs")
 
 local self = {}
 local api = {}
@@ -31,7 +31,7 @@ local elementUiDefs = {
 	earth = {
 		humanName = "Earth",
 		descFunc = function ()
-			return "Maintain " .. math.floor(PowerHandler.GetSafeLineCapacity()) .. " lines, then fade after " .. math.floor(PowerHandler.GetLineFadeTime()) .. "s"
+			return "Sustain " .. math.floor(PowerHandler.GetSafeLineCapacity()) .. " lines, excess fade after " .. math.floor(PowerHandler.GetLineFadeTime()) .. "s"
 		end,
 		image = "earth",
 	},
@@ -59,7 +59,7 @@ local elementUiDefs = {
 	lightning = {
 		humanName = "Lightning",
 		descFunc = function ()
-			return "Maintain " .. math.floor(100*PowerHandler.GetMaxShapesMult()) .. "% more Sigils"
+			return "Can sustain " .. PercentInc(PowerHandler.GetMaxShapes() / PowerHandler.InitialMaxShapes()) .. "% more sigils"
 		end,
 		image = "lightning_2",
 	},
@@ -173,11 +173,18 @@ local function DrawLeftInterface()
 	local windowX, windowY = love.window.getMode()
 	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800)
 	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800)
-	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 100, "left", 800)
 	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 280)
 	
-	PrintLine("Triangles: " .. ShapeHandler.GetShapeTypeCount("triangle"), 2, xOffset + 20, 240, "left", 280)
-	
+	local offset = 240
+	for i = 1, #ShapeDefs.shapeNames do
+		local name = ShapeDefs.shapeNames[i]
+		local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
+		if maximum > 0 then
+			local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
+			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 280)
+		end
+		offset = offset + 30
+	end
 	
 	local over, _, _, overType = self.world.GetGameOver()
 	if over then

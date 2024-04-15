@@ -63,7 +63,7 @@ local function NewEnemy(world, enemyDef, position, size)
 			return true
 		end
 		self.def.update(self, dt)
-		self.pos = util.Add(self.pos, util.Mult(dt, self.velocity))
+		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetGeneralSpeedModifier(), self.velocity))
 	end
 	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
