@@ -11,25 +11,35 @@ local function GetSpawnSize()
 	return draw
 end
 
-local function SpawnEnemiesUpdate(dt)
-	self.spawnTimer = self.spawnTimer + dt
-	if self.spawnTimer < self.spawnRate then
-		return
-	end
-	local size = GetSpawnSize()
-	
+local function GetSpawnPosAndType()
 	local affinityPos = ShapeHandler.GetAffinityPos()
 	local affinityRadius = PowerHandler.GetSpawnAffinityRadius()
 	local pos = util.RandomPointInAnnulus(affinityRadius, affinityRadius + 100)
-	
 	local angle = util.Angle(pos)
 	
-	self.spawnTimer = self.spawnTimer - self.spawnRate
-	
-	local enemyType = "water"
+	local octant = math.max(1, math.min(8, math.floor(angle*8/(2*math.pi) + 1)))
+	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS * 0.5, pos)
+	pos = util.Add(pos, util.RandomPointInCircle(Global.ENEMY_SPAWN_WIGGLE))
+	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS, pos)
+	print("octant", octant, EnemyDefs.order[octant])
+	return pos, EnemyDefs.order[octant]
+end
+
+local function SpawnEnemy()
+	local size = GetSpawnSize()
+	local pos, enemyType = GetSpawnPosAndType()
+	print("enemyType", enemyType)
 	local new = NewEnemy(self.world, EnemyDefs.defs[enemyType], pos, size)
 	
 	IterableMap.Add(self.enemies, new)
+end
+
+local function SpawnEnemiesUpdate(dt)
+	self.spawnTimer = self.spawnTimer + dt*Global.ENEMY_SPAWN_MULT
+	while self.spawnTimer > self.spawnRate do
+		SpawnEnemy()
+		self.spawnTimer = self.spawnTimer - self.spawnRate
+	end
 end
 
 local function ClosestToWithDist(data, maxDist, maxDistSq, pos, filterFunc)
