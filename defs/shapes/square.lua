@@ -5,7 +5,8 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 		return
 	end
 	local prop = enemy.DrainEnergy(self.magnitude*dt*self.def.drainForce, 0.1)
-	self.power = self.power - self.def.drainCost*dt*prop
+	local drainMult = math.min(1, self.lifetime*1.5)
+	self.power = self.power - self.def.drainCost*dt*prop*drainMult
 end
 
 local data = {

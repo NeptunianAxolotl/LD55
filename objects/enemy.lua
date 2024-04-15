@@ -13,6 +13,7 @@ local function NewEnemy(world, enemyDef, position, size)
 	self.energy = self.def.maxEnergy * self.size
 	self.maxEnergy = self.energy
 	self.destroyed = false
+	self.speedMult = 1
 	
 	if self.def.init then
 		self.def.init(self)
@@ -81,13 +82,14 @@ local function NewEnemy(world, enemyDef, position, size)
 			return true
 		end
 		self.def.update(self, dt)
+		self.speedMult = self.speedMult + dt*Global.SPEED_RAMP_UP
 		local distanceMult = util.AbsVal(self.pos)
 		if distanceMult < Global.WORLD_RADIUS then
 			distanceMult = 1
 		else
 			distanceMult = 1 + (distanceMult - Global.WORLD_RADIUS) / Global.SPEEDY_ELEMENT_RADIUS
 		end
-		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetEnemySpeedModifier() * distanceMult, self.velocity))
+		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetEnemySpeedModifier() * distanceMult * self.speedMult, self.velocity))
 		if self.push then
 			self.pos = util.Add(self.pos, util.Mult(dt, self.push))
 			self.push = util.Mult(1 - dt*Global.CIRCLE_PUSH_EXPONENT, self.push)

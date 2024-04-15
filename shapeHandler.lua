@@ -169,6 +169,14 @@ function api.GetShapeCount()
 	return IterableMap.Count(self.shapes)
 end
 
+function api.AddTotalMagnitude(magnitude)
+	self.totalCreatedMagnitude = self.totalCreatedMagnitude + magnitude
+end
+
+function api.GetTotalCreatedMagnitude()
+	return self.totalCreatedMagnitude
+end
+
 function api.TotalShapesCreated()
 	return self.shapesCreated
 end
@@ -180,6 +188,7 @@ function api.Initialize(world, levelData)
 		nextShapeID = 0,
 		affinityPos = {0, 0},
 		shapesCreated = 0,
+		totalCreatedMagnitude = 0
 	}
 end
 

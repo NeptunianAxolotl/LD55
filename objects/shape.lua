@@ -16,6 +16,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	self.animateSpeed = math.random()
 	self.animate = math.random()
 	self.def = shapeDef
+	self.lifetime = 0
 	
 	local drawVerts = {}
 	for i = 1, #self.vertices do
@@ -25,6 +26,8 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	
 	self.compareVertices = ShapeHandler.GetCompareVertices(self.vertices)
 	self.magnitude = math.sqrt(self.radius/75)
+	
+	ShapeHandler.AddTotalMagnitude(self.magnitude)
 	
 	-- Shapes are not told which lines they include. They can find them when they need to.
 	-- Note that to change this, lines need to tell shapes that they are leaving when they
@@ -53,6 +56,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	function self.Update(dt)
+		self.lifetime = self.lifetime + dt
 		self.animateSpeed = ((math.random()*dt*0.1 + self.animateSpeed))%1
 		self.animate = (self.animate + (0.6 + math.random()*0.1 + self.animateSpeed)*dt)%1
 		if GameHandler.ShapesAreInactive() then
