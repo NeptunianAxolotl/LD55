@@ -261,32 +261,39 @@ local function DrawLeftInterface()
 	local chalkRemaining = (self.world.GetLevelData().chalkLimit - DiagramHandler.GetMoves())
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
+	local offset = 1040
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800, Global.FLOATING_TEXT_COL)
-	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800, Global.FLOATING_TEXT_COL)
-	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 800, Global.FLOATING_TEXT_COL)
+	PrintLine("Score: " .. self.score, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset - 40
+	PrintLine("Tool: " .. tool, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset - 40
 	
-	local offset = 240
-	for i = 1, #ShapeDefs.shapeNames do
+	offset = offset - 40
+	for i = #ShapeDefs.shapeNames, 1, -1 do
 		local name = ShapeDefs.shapeNames[i]
 		local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
 		if maximum > 0 then
 			local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
-			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
+			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+			offset = offset - 40
 		end
-		offset = offset + 30
 	end
 	
 	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
-	offset = offset + 30
-	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 30
-	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 30
-	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 30
 	
-	
+	if not Global.DEBUG_UI then
+		return
+	end
+	offset = 20
+	offset = offset + 20
+	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
+	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
+	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
+	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
 end
 
 local function DrawElementArea(x, y, element, mousePos)

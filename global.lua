@@ -86,8 +86,9 @@ local globals = {
 	
 	GAME_SPEED = false,
 	
+	DEBUG_UI              = false,
 	DEBUG_PRINT_LINE      = false,
-	DEBUG_PRINT_CIRCLE    = true,
+	DEBUG_PRINT_CIRCLE    = false,
 	DEBUG_SHAPES          = false,
 	DEBUG_CIRCLE_POINTS   = false,
 	DEBUG_PRINT_CLICK_POS = false,
