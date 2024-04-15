@@ -26,6 +26,7 @@ local function SpawnEnemiesUpdate(dt)
 	
 	self.spawnTimer = self.spawnTimer - self.spawnRate
 	
+	local enemyType = "water"
 	local new = NewEnemy(self.world, EnemyDefs.defs[enemyType], pos, size)
 	
 	IterableMap.Add(self.enemies, new)
