@@ -12,14 +12,19 @@ local world
 --------------------------------------------------
 
 function api.AddScore(score)
-	self.score = self.score +  util.Round(score)
+	if not api.IsGameOver() then
+		self.score = self.score +  util.Round(score)
+	end
 end
 
 function api.PanelOpen()
 	return self.menuOpen or self.powersOpen
 end
 
-local function GetNewHint()
+local function ToggleBook()
+	self.powersOpen = not self.powersOpen
+	self.world.SetMenuState(api.PanelOpen())
+	self.lastUpgradeCount = PowerHandler.CountUpgrades()
 	if not self.powersOpen then
 		return
 	end
@@ -43,8 +48,7 @@ local function HandleHoverClick()
 		return
 	end
 	if self.hovered == "Grimoire" then
-		self.powersOpen = not self.powersOpen
-		GetNewHint()
+		ToggleBook()
 		self.world.SetMenuState(api.PanelOpen())
 	elseif self.hovered == "Menu" then
 		self.menuOpen = not self.menuOpen
@@ -108,9 +112,7 @@ function api.KeyPressed(key, scancode, isRepeat)
 	end
 	if key == "tab" or key == "c" then
 		if not self.noGrimoire then
-			self.powersOpen = not self.powersOpen
-			GetNewHint()
-			self.world.SetMenuState(api.PanelOpen())
+			ToggleBook()
 		end
 	end
 end
@@ -256,6 +258,12 @@ local function DrawLeftInterface()
 	PrintLine("Tool: " .. tool, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
 	offset = offset - 40
 	
+	if self.menuOpen then
+		local lifetime = EnemyHandler.GetSpawnParameters()
+		PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+		offset = offset - 40
+	end
+	
 	if not api.GetTutorial() then
 		offset = 20
 		for i = 1, #ShapeDefs.shapeNames do
@@ -270,21 +278,6 @@ local function DrawLeftInterface()
 			end
 		end
 	end
-	
-	if not Global.DEBUG_UI then
-		return
-	end
-	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
-	offset = 20
-	offset = offset + 20
-	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 20
-	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 20
-	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 20
-	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 20
 end
 
 local function DrawElementArea(x, y, element, mousePos)
@@ -420,7 +413,8 @@ local function BottomInterface(transBottom)
 	
 	self.hovered = false
 	if not self.noGrimoire then
-		self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything() and not api.PanelOpen(), false, 2, 12)
+		local flash = (PowerHandler.CountUpgrades() > math.min(7, self.lastUpgradeCount))
+		self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, flash and not api.PanelOpen(), false, 2, 12)
 	end
 	self.hovered = InterfaceUtil.DrawButton(1710, 1010, 180, 70, mousePos, "Menu", false, false, false, 2, 12) or self.hovered
 	
@@ -464,6 +458,7 @@ function api.Initialize(world, difficulty)
 		menuOpen = false,
 		powersOpen = false,
 		hintsLooped = false,
+		lastUpgradeCount = 0,
 		hintIndex = 0,
 		noGrimoire = levelData.noGrimoire,
 		noWin = levelData.noGrimoire,

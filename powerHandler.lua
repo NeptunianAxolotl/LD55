@@ -111,14 +111,15 @@ function api.CanUpgradeElement(element)
 	return api.GetProgress(element) >= api.GetRequirement(element)
 end
 
-function api.CanUpgradeAnything()
+function api.CountUpgrades()
+	local upgrades = 0
 	for i = 1, #EnemyDefs.order do
 		local name = EnemyDefs.order[i]
 		if api.CanUpgradeElement(name) then
-			return true
+			upgrades = upgrades + 1
 		end
 	end
-	return false
+	return upgrades
 end
 
 function api.GetLevel(element)
@@ -173,7 +174,7 @@ function api.UpgradeElement(element)
 	end
 	for name, _ in pairs(self.progress) do
 		if name ~= element then
-			self.progress[name] = 0
+			self.progress[name] = math.max(0, self.progress[name] - 1)
 		end
 	end
 	NotifyUpgrade(element)

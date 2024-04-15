@@ -2,7 +2,7 @@
 local hints = {
 	[[Elemental essences may be used to upgrade your abilities.
 
-Selecting an upgrade will deplete the rest of your reserves, so choose wisely.]],
+Selecting an upgrade will free an elemental of each other type, so choose wisely.]],
 	[[Not ready for the full Summoning?
 
 The Sandbox found in the Menu can be used to refine your technique.]],
