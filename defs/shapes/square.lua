@@ -15,7 +15,7 @@ local data = {
 	drainCost = 1,
 	drainForce = 2,
 	affinityMult = 2,
-	idleDischargeMult = 0.15,
+	idleDischargeMult = 0.12,
 	glowSizeMult = 1.3,
 	init = function (self)
 		self.effectRange = self.radius*1.6
@@ -25,7 +25,7 @@ local data = {
 		local enemies = EnemyHandler.GetEnemies()
 		IterableMap.Apply(enemies, PullEnemies, self, dt)
 	end,
-	color = {0.9, 0.4, 0.8},
+	color = {209/255, 50/255, 174/255},
 }
 
 function data.ExpectedLines(origin, u, v)

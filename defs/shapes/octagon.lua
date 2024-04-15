@@ -40,7 +40,7 @@ local data = {
 		IterableMap.Apply(enemies, PullEnemies, self, dt)
 		self.power = self.power - dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
-	color = {0.7, 0.1, 0.9},
+	color = {62/255, 16/255, 213/255},
 }
 
 local vertRadius = math.sqrt(1 + 1 / math.sqrt(2))

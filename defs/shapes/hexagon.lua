@@ -6,7 +6,7 @@ local data = {
 	drainForce = 2,
 	affinityMult = 15,
 	affinityDirectionMult = 2.5,
-	idleDischargeMult = 0.15,
+	idleDischargeMult = 0.18,
 	glowSizeMult = 1.8,
 	init = function (self)
 		self.effectRange = self.radius*2
@@ -15,7 +15,7 @@ local data = {
 	update = function (self, dt)
 		self.power = self.power - 2*dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
-	color = {0.9, 0.9, 0.5},
+	color = {1, 182/255, 12/255},
 }
 
 local vertRadius = 1
