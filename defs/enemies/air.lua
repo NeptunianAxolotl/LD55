@@ -1,6 +1,6 @@
 
 local data = {
-	speed = 120,
+	speed = 155,
 	image = "air_1",
 	maxEnergy = 3,
 	baseRadius = 25,

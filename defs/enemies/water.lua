@@ -1,6 +1,6 @@
 
 local data = {
-	speed = 120,
+	speed = 105,
 	image = "water_main",
 	maxEnergy = 3,
 	baseRadius = 25,

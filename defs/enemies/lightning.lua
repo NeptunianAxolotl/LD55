@@ -1,6 +1,6 @@
 
 local data = {
-	speed = 120,
+	speed = 145,
 	image = "lightning_3",
 	maxEnergy = 3,
 	baseRadius = 25,

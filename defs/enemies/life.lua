@@ -1,6 +1,6 @@
 
 local data = {
-	speed = 120,
+	speed = 125,
 	image = "life_main",
 	maxEnergy = 3,
 	baseRadius = 25,

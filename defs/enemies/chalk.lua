@@ -1,6 +1,6 @@
 
 local data = {
-	speed = 120,
+	speed = 115,
 	image = "chalk",
 	maxEnergy = 3,
 	baseRadius = 25,
