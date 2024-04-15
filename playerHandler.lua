@@ -48,9 +48,9 @@ function api.DealDamage(damage)
 	end
 	self.hitLeeway = PowerHandler.GetPlayerHitLeeway()
 	self.health = self.health - damage
-  
-  local soundNum = math.floor(love.math.random(1,4))
-  SoundHandler.PlaySound("damage_"..soundNum)
+
+	local soundNum = math.floor(math.random()*4) + 1
+	SoundHandler.PlaySound("damage_" .. soundNum)
 	if self.health <= 0 then
 		self.world.SetGameOver(false, "Game Over")
 	end

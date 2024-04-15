@@ -350,7 +350,7 @@ local function DrawPowerMenu()
 	end
 	
 	local octaX = overX + overWidth/6
-	local octaY = 390
+	local octaY = 386
 	
 	Font.SetSize(2)
 	PrintLine("Elemental Affinity", 1, overX, octaY - 240, "center", overWidth/3, Global.TEXT_MENU_COL)
@@ -363,7 +363,7 @@ local function DrawPowerMenu()
 	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.5)
 	love.graphics.circle('fill', affinityPos[1], affinityPos[2], 5)
 	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.2)
-	love.graphics.circle('fill', affinityPos[1], affinityPos[2], affinityRadius, 40)
+	love.graphics.circle('fill', affinityPos[1], affinityPos[2], affinityRadius, 64)
 					
 --		love.graphics.printf([[
 --'p' to unpause
