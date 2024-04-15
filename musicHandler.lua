@@ -169,7 +169,7 @@ function api.Update(dt)
         cueTrack(activeTrack)
     -- Loop case - below limits of current loop
     elseif bgmTension < loopDefs[activeTrack]["tensionLow"] then
-        if activeTrack == "B" or activeTrack == "C" then
+        if activeTrack == "B" or activeTrack == "C" or activeTrack == "D" or activeTrack == "E" then
           cueTrack("CA");
         elseif activeTrack == "F" then
         cueTrack("FA");
