@@ -106,14 +106,17 @@ function api.Draw(drawQueue)
 		self.currentDiagram.Draw(drawQueue, self.selectedPoint, self.hoveredPoint, self.elementType)
 	end
 	drawQueue:push({y=0; f=function()
+		Resources.DrawImage("stonecircle", 0, 0)
+	end})
+	drawQueue:push({y=12; f=function()
+		Resources.DrawImage("elementenvironments", 0, 0)
+	end})
+	drawQueue:push({y=50; f=function()
 		local bounds = self.levelData.bounds
 		love.graphics.setLineWidth(4)
 		love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], 1)
 		love.graphics.circle("line", 0, 0, Global.WORLD_RADIUS, 500)
-		
-		if self.levelData.background then
-			Resources.DrawImage(self.levelData.background, 0, 0)
-		end
+		Resources.DrawImage("fog", 0, 0)
 	end})
 end
 
