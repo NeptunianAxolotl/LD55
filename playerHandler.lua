@@ -43,7 +43,7 @@ function api.UpdateMaxHealth()
 end
 
 function api.DealDamage(damage)
-	if self.hitLeeway > 0 then
+	if self.hitLeeway > 0 or GameHandler.IsGameOver() then
 		return
 	end
 	self.hitLeeway = PowerHandler.GetPlayerHitLeeway()

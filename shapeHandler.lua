@@ -125,6 +125,10 @@ local function GetCachedAffinityPos()
 	if not IterableMap.IsStale(self.shapes) then
 		return self.affinityPos
 	end
+	if api.GetShapeTypeCount("octagon") > 0 then
+		self.affinityPos = {0, 0}
+		return self.affinityPos
+	end
 	IterableMap.ResetStale(self.shapes)
 	if api.GetShapeCount() == 0 then
 		self.affinityPos = {0, 0}

@@ -1,4 +1,5 @@
 
+
 local function PullEnemies(enemyID, enemy, index, self, dt)
 	local distSq = util.DistSqVectors(enemy.pos, self.midPoint)
 	if distSq > self.effectRangeSq then
@@ -24,11 +25,12 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 end
 
 local data = {
-	characteristicAngle = math.pi/4, -- At most pi/2, this is the angle between involved lines.
-	powerMult = 3,
+	characteristicAngle = math.pi*2/5, -- At most pi/2, this is the angle between involved lines.
+	powerMult = 5,
 	drainCost = 1,
 	drainForce = 2,
-	affinityMult = 10,
+	affinityMult = 15,
+	affinityDirectionMult = 15,
 	idleDischargeMult = 0.15,
 	glowSizeMult = 1.8,
 	init = function (self)
@@ -38,14 +40,14 @@ local data = {
 	update = function (self, dt)
 		local enemies = EnemyHandler.GetEnemies()
 		IterableMap.Apply(enemies, PullEnemies, self, dt)
-		self.power = self.power - dt*Global.SHAPE_IDLE_DRAIN_MULT
+		self.power = self.power - 3*dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
-	color = {0.7, 0.1, 0.9},
+	color = {0, 0, 0},
 }
 
-local vertRadius = math.sqrt(1 + 1 / math.sqrt(2))
-local vertAngle = math.pi/4
-local vertSides = 8
+local vertRadius = 1/ (2 * math.sin(36*math.pi/180))
+local vertAngle = math.pi*2/5
+local vertSides = 5
 
 function data.ExpectedLines(corner, u, v)
 	local radiusVector = util.SetLength(vertRadius * util.AbsVal(u), util.Average(u, v))

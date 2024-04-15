@@ -29,9 +29,11 @@ shapeNames = {
 	"square",
 	"hexagon",
 	"octagon",
+	"pentagon",
 }
 
 local collectiveHumanName = {
+	-- The existence of pentagon is hidden!
 	triangle = "Triangles",
 	square = "Squares",
 	hexagon = "Hexagons",
