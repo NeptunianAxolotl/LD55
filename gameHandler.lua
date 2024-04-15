@@ -199,6 +199,13 @@ local function UpdateTutorial(dt)
 	end
 end
 
+function api.ShapesAreInactive()
+	if not self.tutorialStage then
+		return
+	end
+	return api.GetTutorial().noEnemySpawn
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -221,9 +228,12 @@ local function PrintLine(text, size, x, y, align, width, col)
 end
 
 local function DrawFloatingStuff()
-	local over, _, _, overType = self.world.GetGameOver()
+	local over, _, gameLost, overType = self.world.GetGameOver()
 	if over then
 		PrintLine(overType or "Game Over", 0, 500, 400, "center", 1000, Global.FLOATING_TEXT_COL)
+		if gameLost then
+			PrintLine("Press Ctrl+R to to try again", 2, 500, 500, "center", 1000, Global.FLOATING_TEXT_COL)
+		end
 	end
 	
 	local tutorial = api.GetTutorial()

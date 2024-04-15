@@ -23,7 +23,7 @@ local globals = {
 	TEXT_FLASH_COL      = {0.73, 0.73, 0.75},
 	TEXT_HIGHLIGHT_COL  = {0.73, 0.73, 0.75},
 	TEXT_COL            = {0.83, 0.83, 0.87},
-	FLOATING_TEXT_COL   = {0, 0, 0},
+	FLOATING_TEXT_COL   = {0.95,0.95,0.9},
 	
 	BUTTON_FLASH_PERIOD = 0.6,
 	

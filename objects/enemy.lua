@@ -37,7 +37,7 @@ local function NewEnemy(world, enemyDef, position, size)
 	end
 	
 	function self.DealPlayerDamage()
-		PlayerHandler.DealDamage(self.size*self.def.baseDamage*(self.EnergyProp()*0.66 + 0.34))
+		PlayerHandler.DealDamage((self.size + 0.5*math.max(0, self.size - 1))*self.def.baseDamage*(self.EnergyProp()*0.66 + 0.34))
 	end
 	
 	function self.PushFrom(circle)

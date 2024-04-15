@@ -56,7 +56,7 @@ function api.GetDrawRange()
 end
 
 function api.GetShapePower()
-	return Global.BASE_SHAPE_POWER + (self.level.fire - 1) + math.max(0, self.level.fire - 3)*0.5
+	return Global.BASE_SHAPE_POWER + 0.8*(self.level.fire - 1) + math.max(0, self.level.fire - 3)*0.4
 end
 
 function api.GetPlayerMaxHealth()

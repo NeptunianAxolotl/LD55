@@ -49,7 +49,7 @@ function api.DealDamage(damage)
 	self.hitLeeway = PowerHandler.GetPlayerHitLeeway()
 	self.health = self.health - damage
 	if self.health <= 0 then
-		self.world.SetGameOver(false, "You Died")
+		self.world.SetGameOver(false, "Game Over")
 	end
 end
 
@@ -88,6 +88,10 @@ function api.Update(dt)
 end
 
 function api.Draw(drawQueue)
+	local over, _, gameLost, overType = self.world.GetGameOver()
+	if gameLost then
+		return
+	end
 	drawQueue:push({y=40; f=function()
 		Resources.DrawImage("wizard_base", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
 		local hoveredPoint = DiagramHandler.GetHoveredPoint()

@@ -4,7 +4,7 @@ local data = {
 	image = "water_main",
 	maxEnergy = 3,
 	baseRadius = 25,
-	baseDamage = 10,
+	baseDamage = 7,
 	weightMult = 1,
 	init = function (self)
 		self.animSpeed = 0.9 + math.random()*0.2
@@ -17,7 +17,7 @@ local data = {
 			self.animation = self.animation - 1
 		end
 		if self.wantedDir then
-			local speed = (1.2 - self.animation)*self.def.speed*(0.3 + 0.7*self.EnergyProp())
+			local speed = (1.2 - self.animation)*self.def.speed*(0.6 + 0.4*self.EnergyProp())
 			local wantedVelocity = util.Mult(speed, self.wantedDir)
 			self.velocity = util.Average(self.velocity, wantedVelocity, 0.7)
 		end

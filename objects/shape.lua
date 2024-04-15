@@ -52,9 +52,13 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	function self.Update(dt)
-		self.power = self.power - dt*self.def.idleDischargeMult*Global.SHAPE_IDLE_DRAIN_MULT
 		self.animateSpeed = ((math.random()*dt*0.1 + self.animateSpeed))%1
 		self.animate = (self.animate + (0.6 + math.random()*0.1 + self.animateSpeed)*dt)%1
+		if GameHandler.ShapesAreInactive() then
+			return
+		end
+		local discharge = math.min(1, ShapeHandler.GetShapeCount()/15)
+		self.power = self.power - dt*self.def.idleDischargeMult*Global.SHAPE_IDLE_DRAIN_MULT*(0.2 + 0.8*discharge)
 		
 		if self.def.update then
 			self.def.update(self, dt)
