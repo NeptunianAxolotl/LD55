@@ -17,7 +17,7 @@ local data = {
 	idleDischargeMult = 0.15,
 	glowSizeMult = 1.3,
 	init = function (self)
-		self.effectRange = self.radius*2
+		self.effectRange = self.radius*1.6
 		self.effectRangeSq = self.effectRange*self.effectRange
 	end,
 	update = function (self, dt)

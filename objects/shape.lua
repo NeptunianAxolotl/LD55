@@ -52,7 +52,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	function self.Update(dt)
-		self.power = self.power - dt*self.def.idleDischargeMult
+		self.power = self.power - dt*self.def.idleDischargeMult*Global.SHAPE_IDLE_DRAIN_MULT
 		self.animateSpeed = ((math.random()*dt*0.1 + self.animateSpeed))%1
 		self.animate = (self.animate + (0.6 + math.random()*0.1 + self.animateSpeed)*dt)%1
 		
@@ -70,7 +70,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		drawQueue:push({y=8; f=function()
 			love.graphics.setLineWidth((13 + math.sin(self.animate*math.pi*2))*self.def.glowSizeMult)
 			
-			local alpha = 0.1 + 0.8*self.power/self.maxPower
+			local alpha = 0.25 + 0.65*self.power/self.maxPower
 			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], alpha*0.25)
 			love.graphics.polygon("fill", drawVerts)
 			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], alpha)

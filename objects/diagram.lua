@@ -437,11 +437,11 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 		local fadeMult = 1
 		if element.isLine then
 			if element.inShapes and #element.inShapes > 0 then
-				fadeMult = Global.SHAPE_FADE_MULT
+				fadeMult = Global.SHAPE_LINE_FADE_MULT
 				element.maxInShapes = math.max((element.maxInShapes or 0), #element.inShapes)
 			elseif (element.maxInShapes or 0) > 0 then
 				if (not element.isPermanent) and (not element.destroyed) then
-					fadeMult = Global.SHAPE_BEFORE_FADE_MULT
+					fadeMult = Global.SHAPE_LINE_ORPHAN_FADE_MULT
 				end
 			end
 		end
@@ -560,19 +560,18 @@ local function NewDiagram(levelData, world)
 						love.graphics.printf(notable.angleType, notable.point.geo[1], notable.point.geo[2], 30, "right")
 					end
 				end
+				if Global.DEBUG_SHAPES then
+					local geo = util.Average(line[1], line[2])
+					love.graphics.printf((not self.lines[i].inShapes and "n") or #self.lines[i].inShapes, geo[1], geo[2], 50, "left")
+				end
 			end
 			
 			for i = 1, #self.circles do
 				local circle = self.circles[i].geo
 				SetElementColor(self.circles[i], fadeTime, hoveredPoint)
 				love.graphics.circle('line', circle[1], circle[2], circle[3], math.floor(math.max(32, math.min(160, circle[3]*0.8))))
-				if Global.DEBUG_CIRCLE_POINTS then
-					love.graphics.printf(#self.circles[i].points, circle[1], circle[2], 30, "right")
-					
-					for j = 1, #self.circles[i].points do
-						local geo = self.circles[i].points[j].geo
-						love.graphics.circle('line', geo[1], geo[2], 60)
-					end
+				if Global.DEBUG_SHAPES then
+					--love.graphics.printf((not self.circles[i].inShapes and "n") or #self.circles[i].inShapes, circle[1], circle[2], 50, "left")
 				end
 			end
 			
