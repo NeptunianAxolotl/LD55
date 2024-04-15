@@ -127,7 +127,7 @@ function api.GetLevel(element)
 end
 
 function api.GetRequirement(element)
-	return 1 + api.GetLevel(element)
+	return self.baseLevelRequirement + api.GetLevel(element)
 end
 
 function api.GetProgress(element)
@@ -197,9 +197,10 @@ function api.Update(dt)
 	UpdateAutomaticUpgrade()
 end
 
-function api.Initialize(world)
+function api.Initialize(world, difficulty)
 	local startingLevel = world.GetLevelData().startingLevel or 1
 	self = {
+		baseLevelRequirement = (difficulty > 1.2 and 1) or 0,
 		world = world,
 		baseMaxShapes = {
 			triangle = 6,

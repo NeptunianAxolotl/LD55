@@ -293,7 +293,7 @@ function api.Initialize(cosmos, levelData, difficulty)
 	ChatHandler.Initialize(api)
 	DialogueHandler.Initialize(api)
 	
-	PowerHandler.Initialize(api)
+	PowerHandler.Initialize(api, difficulty)
 	PlayerHandler.Initialize(api)
 	EnemyHandler.Initialize(api, difficulty)
 	DiagramHandler.Initialize(api, levelData)
