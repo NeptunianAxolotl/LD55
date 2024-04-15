@@ -344,6 +344,9 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 			return false -- How did we get here? I saw an isosceles triangle once.
 		else
 			lengthSq = util.LineLengthSq(edge)
+			if lengthSq < 1 then
+				return false -- ???
+			end
 		end
 		edges[#edges + 1] = edge
 	end
@@ -355,6 +358,8 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 		end
 		foundLines[#foundLines + 1] = line
 	end
+	--print("Found sssssssssssssssssssss")
+	--util.PrintTable(ShapeHandler.GetCompareVertices(vertices, true))
 	if Global.PRINT_SHAPE_FOUND then
 		print("Found foundLines")
 	end
