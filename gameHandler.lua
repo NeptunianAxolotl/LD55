@@ -52,7 +52,7 @@ local elementUiDefs = {
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Everything moves " .. PercentInc(1 / PowerHandler.GetGeneralSpeedModifier()) .. "% slower"
+			return "Spirits moves " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
 		end,
 		image = "ice",
 	},
@@ -199,6 +199,13 @@ local function UpdateTutorial(dt)
 	end
 end
 
+function api.ShapesAreInactive()
+	if not self.tutorialStage then
+		return
+	end
+	return api.GetTutorial().noEnemySpawn
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -221,9 +228,12 @@ local function PrintLine(text, size, x, y, align, width, col)
 end
 
 local function DrawFloatingStuff()
-	local over, _, _, overType = self.world.GetGameOver()
+	local over, _, gameLost, overType = self.world.GetGameOver()
 	if over then
 		PrintLine(overType or "Game Over", 0, 500, 400, "center", 1000, Global.FLOATING_TEXT_COL)
+		if gameLost then
+			PrintLine("Press Ctrl+R to to try again", 2, 500, 500, "center", 1000, Global.FLOATING_TEXT_COL)
+		end
 	end
 	
 	local tutorial = api.GetTutorial()
@@ -251,32 +261,40 @@ local function DrawLeftInterface()
 	local chalkRemaining = (self.world.GetLevelData().chalkLimit - DiagramHandler.GetMoves())
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
+	local offset = 1040
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800, Global.FLOATING_TEXT_COL)
-	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800, Global.FLOATING_TEXT_COL)
-	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 800, Global.FLOATING_TEXT_COL)
+	PrintLine("Score: " .. self.score, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset - 40
+	PrintLine("Tool: " .. tool, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset - 40
 	
-	local offset = 240
-	for i = 1, #ShapeDefs.shapeNames do
-		local name = ShapeDefs.shapeNames[i]
-		local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
-		if maximum > 0 then
-			local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
-			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	if not api.GetTutorial() then
+		offset = 20
+		for i = 1, #ShapeDefs.shapeNames do
+			local name = ShapeDefs.shapeNames[i]
+			local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
+			if maximum > 0 then
+				local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
+				PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+			end
+			offset = offset + 40
 		end
-		offset = offset + 30
 	end
 	
+	if not Global.DEBUG_UI then
+		return
+	end
 	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
-	offset = offset + 30
-	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 30
-	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 30
-	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
-	offset = offset + 30
-	
-	
+	offset = 20
+	offset = offset + 20
+	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
+	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
+	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
+	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
+	offset = offset + 20
 end
 
 local function DrawElementArea(x, y, element, mousePos)
@@ -331,6 +349,22 @@ local function DrawPowerMenu()
 		end
 	end
 	
+	local octaX = overX + overWidth/6
+	local octaY = 390
+	
+	Font.SetSize(2)
+	PrintLine("Elemental Affinity", 1, overX, octaY - 240, "center", overWidth/3, Global.TEXT_MENU_COL)
+	Resources.DrawImage("bookback", octaX, octaY, 0, 1, 1)
+	
+	ShapeHandler.DrawInBook(octaX, octaY)
+	local affinityPos = util.Add({octaX, octaY}, util.Mult(Global.BOOK_SCALE, ShapeHandler.GetAffinityPos()))
+	local affinityRadius = PowerHandler.GetSpawnAffinityRadius()*Global.BOOK_SCALE * 0.4
+	
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.5)
+	love.graphics.circle('fill', affinityPos[1], affinityPos[2], 5)
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.2)
+	love.graphics.circle('fill', affinityPos[1], affinityPos[2], affinityRadius, 40)
+					
 --		love.graphics.printf([[
 --'p' to unpause
 --'ctrl+m' to toggle music
@@ -415,13 +449,13 @@ function api.DrawInterface(transMid, transTopLeft, transBottom)
 	love.graphics.replaceTransform(transBottom)
 	BottomInterface(transBottom)
 	love.graphics.replaceTransform(transMid)
+	DrawFloatingStuff()
 	if self.powersOpen then
 		DrawPowerMenu()
 	end
 	if self.menuOpen then
 		DrawMainMenu()
 	end
-	DrawFloatingStuff()
 end
 
 function api.Initialize(world, difficulty)

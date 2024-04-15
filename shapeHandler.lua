@@ -102,6 +102,7 @@ local function ShapePartialMatch(shape, shapeType, compareVertices, compareN)
 end
 
 function api.ShapePartialAt(shapeType, vertices)
+	print("shapeType", shapeType)
 	local compareVertices = api.GetCompareVertices(vertices)
 	local compareN = #compareVertices
 	return IterableMap.GetFirstSatisfies(self.shapes, ShapePartialMatch, shapeType, compareVertices, compareN)
@@ -137,7 +138,10 @@ local function GetCachedAffinityPos()
 		return self.affinityPos
 	end
 	self.affinityPos = util.Mult(1/self.affinityAcc, self.posAcc)
-	print(self.affinityPos[1], self.affinityPos[2])
+	local size = util.AbsVal(self.affinityPos)
+	if size > Global.AFFINITY_MAX_RADIUS then
+		self.affinityPos = util.SetLength(Global.AFFINITY_MAX_RADIUS, self.affinityPos)
+	end
 	return self.affinityPos
 end
 
@@ -153,6 +157,10 @@ function api.Draw(drawQueue)
 	IterableMap.ApplySelf(self.shapes, "Draw", drawQueue)
 end
 
+function api.DrawInBook(midX, midY)
+	IterableMap.ApplySelf(self.shapes, "DrawInBook", midX, midY)
+end
+
 local function NameMatches(shape, name)
 	return shape.def.name == name
 end
@@ -163,6 +171,14 @@ end
 
 function api.GetShapeCount()
 	return IterableMap.Count(self.shapes)
+end
+
+function api.AddTotalMagnitude(magnitude)
+	self.totalCreatedMagnitude = self.totalCreatedMagnitude + magnitude
+end
+
+function api.GetTotalCreatedMagnitude()
+	return self.totalCreatedMagnitude
 end
 
 function api.TotalShapesCreated()
@@ -176,6 +192,7 @@ function api.Initialize(world, levelData)
 		nextShapeID = 0,
 		affinityPos = {0, 0},
 		shapesCreated = 0,
+		totalCreatedMagnitude = 0
 	}
 end
 

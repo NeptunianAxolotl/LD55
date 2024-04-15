@@ -16,6 +16,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	self.animateSpeed = math.random()
 	self.animate = math.random()
 	self.def = shapeDef
+	self.lifetime = 0
 	
 	local drawVerts = {}
 	for i = 1, #self.vertices do
@@ -24,7 +25,9 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	self.compareVertices = ShapeHandler.GetCompareVertices(self.vertices)
-	self.magnitude = self.radius/100
+	self.magnitude = math.sqrt(self.radius/75)
+	
+	ShapeHandler.AddTotalMagnitude(self.magnitude)
 	
 	-- Shapes are not told which lines they include. They can find them when they need to.
 	-- Note that to change this, lines need to tell shapes that they are leaving when they
@@ -39,7 +42,8 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	
 	function self.ContributeSpawnAffinity(handler)
 		local affinity = self.magnitude*self.def.affinityMult
-		handler.posAcc = util.Add(handler.posAcc, util.Mult(affinity, self.midPoint))
+		local extraPosMult = self.def.affinityDirectionMult or 1
+		handler.posAcc = util.Add(handler.posAcc, util.Mult(extraPosMult * affinity, self.midPoint))
 		handler.affinityAcc = handler.affinityAcc + affinity
 	end
 	
@@ -48,13 +52,18 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	function self.NotifyDestroy()
-			RemoveShape(self)
+		RemoveShape(self)
 	end
 	
 	function self.Update(dt)
-		self.power = self.power - dt*self.def.idleDischargeMult*Global.SHAPE_IDLE_DRAIN_MULT
+		self.lifetime = self.lifetime + dt
 		self.animateSpeed = ((math.random()*dt*0.1 + self.animateSpeed))%1
 		self.animate = (self.animate + (0.6 + math.random()*0.1 + self.animateSpeed)*dt)%1
+		if GameHandler.ShapesAreInactive() then
+			return
+		end
+		local discharge = math.max(0, math.min(1, (ShapeHandler.GetShapeCount() - 1)/8))
+		self.power = self.power - dt*self.def.idleDischargeMult*Global.SHAPE_IDLE_DRAIN_MULT*(0.2 + 0.8*discharge)
 		
 		if self.def.update then
 			self.def.update(self, dt)
@@ -80,6 +89,22 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 			--	love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
 			--end
 		end})
+	end
+	
+	function self.DrawInBook(midX, midY)
+		if not self.bookDrawVerts then
+			local verts = {}
+			for i = 1, #drawVerts, 2 do
+				verts[#verts + 1] = Global.BOOK_SCALE*drawVerts[i] + midX
+				verts[#verts + 1] = Global.BOOK_SCALE*drawVerts[i + 1] + midY
+			end
+			self.bookDrawVerts = verts
+		end
+		love.graphics.setLineWidth(5)
+		love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.1)
+		love.graphics.polygon("fill", self.bookDrawVerts)
+		--love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.4)
+		--love.graphics.polygon("line", self.bookDrawVerts)
 	end
 	
 	return self

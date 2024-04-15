@@ -1,20 +1,11 @@
 
-local function PullEnemies(enemyID, enemy, index, self, dt)
-	local distSq = util.DistSqVectors(enemy.pos, self.midPoint)
-	if distSq > self.effectRangeSq then
-		return
-	end
-	local prop = enemy.DrainEnergy(self.magnitude*dt*self.def.drainForce, 0.1)
-	self.power = self.power - self.def.drainCost*dt*prop
-end
-
-
 local data = {
 	characteristicAngle = math.pi/3, -- At most pi/2, this is the angle between involved lines.
 	powerMult = 3,
 	drainCost = 1,
 	drainForce = 2,
-	affinityMult = 10,
+	affinityMult = 15,
+	affinityDirectionMult = 2.5,
 	idleDischargeMult = 0.15,
 	glowSizeMult = 1.8,
 	init = function (self)
@@ -22,8 +13,7 @@ local data = {
 		self.effectRangeSq = self.effectRange*self.effectRange
 	end,
 	update = function (self, dt)
-		local enemies = EnemyHandler.GetEnemies()
-		IterableMap.Apply(enemies, PullEnemies, self, dt)
+		self.power = self.power - 2*dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
 	color = {0.9, 0.9, 0.5},
 }

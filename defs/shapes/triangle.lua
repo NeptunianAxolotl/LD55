@@ -14,7 +14,8 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 	if distFactor >= 0.72 then
 		local energyFactor = (0.66 + 0.34*enemy.EnergyProp())
 		local prop = enemy.DrainEnergy(self.magnitude*dt*self.def.drainForce)
-		self.power = self.power - self.def.drainCost*dt*prop*energyFactor
+		local drainMult = math.min(1, self.lifetime*1.5)
+		self.power = self.power - self.def.drainCost*dt*energyFactor*prop*drainMult
 		if enemy.EnergyProp() == 0 and not enemy.destroyed then
 			GameHandler.AddScore(enemy.size)
 			PowerHandler.AddProgress(enemy.def.name, enemy.size)

@@ -56,7 +56,7 @@ function api.GetDrawRange()
 end
 
 function api.GetShapePower()
-	return Global.BASE_SHAPE_POWER + (self.level.fire - 1) + math.max(0, self.level.fire - 3)*0.5
+	return Global.BASE_SHAPE_POWER + 0.8*(self.level.fire - 1) + math.max(0, self.level.fire - 3)*0.4
 end
 
 function api.GetPlayerMaxHealth()
@@ -67,7 +67,7 @@ function api.GetPlayerHealthRegen()
 	return 2 + 0.5*(self.level.water - 1) + 0.5*math.max(0, self.level.water - 3) + 1.5*math.max(0, self.level.water - 6)
 end
 
-function api.GetGeneralSpeedModifier()
+function api.GetEnemySpeedModifier()
 	return 1 / ((self.level.ice - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, self.level.ice - 4) + 1)
 end
 
@@ -76,7 +76,7 @@ function api.GetPlayerHitLeeway()
 end
 
 function api.GetSpawnAffinityRadius()
-	return Global.AFFINITY_RADIUS
+	return Global.AFFINITY_RADIUS * 1.5 / (1.5 + ShapeHandler.GetShapeTypeCount("hexagon"))
 end
 
 function api.GetMaxShapes()
@@ -188,13 +188,13 @@ function api.Initialize(world)
 		baseMaxShapes = {
 			triangle = 6,
 			square = 2,
-			hexagon = 0.500001,
+			hexagon = 0.666667,
 			octagon = 0.125001,
 		},
 		maxShapesPerLevel = {
 			triangle = 1,
 			square = 0.6666667,
-			hexagon = 0.500001,
+			hexagon = 0.333334,
 			octagon = 0.125001,
 		},
 		level = {

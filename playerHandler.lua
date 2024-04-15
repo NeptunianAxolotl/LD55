@@ -52,13 +52,13 @@ function api.DealDamage(damage)
   local soundNum = math.floor(love.math.random(1,5))
   SoundHandler.PlaySound("damage_"..soundNum)
 	if self.health <= 0 then
-		self.world.SetGameOver(false, "You Died")
+		self.world.SetGameOver(false, "Game Over")
 	end
 end
 
 function api.Update(dt)
 	local mousePos = self.world.GetMousePosition()
-	local maxSpeed = PowerHandler.GetPlayerSpeed() * PowerHandler.GetGeneralSpeedModifier()
+	local maxSpeed = PowerHandler.GetPlayerSpeed()
 	local wantedSpeed = maxSpeed
 	local dist = util.DistVectors(self.playerPos, mousePos) - 50
 	wantedSpeed = math.max(0, math.min(dist*10, wantedSpeed))
@@ -91,6 +91,10 @@ function api.Update(dt)
 end
 
 function api.Draw(drawQueue)
+	local over, _, gameLost, overType = self.world.GetGameOver()
+	if gameLost then
+		return
+	end
 	drawQueue:push({y=40; f=function()
 		Resources.DrawImage("wizard_base", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
 		local hoveredPoint = DiagramHandler.GetHoveredPoint()

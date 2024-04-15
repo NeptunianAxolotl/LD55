@@ -28,8 +28,9 @@ local data = {
 		{
 			points = firstTutorialLine,
 			pointsIfSelected = firstTutorialLine,
-			text = [[Click one flashing point then the other
-to inscribe a line]],
+			text = [[Click one flashing point then the other to inscribe a line.
+It is time to begin the summoning.
+]],
 			noEnemySpawn = true,
 			progressFunc = function (self, dt)
 				self.tutorialLinger = 0
@@ -37,7 +38,7 @@ to inscribe a line]],
 			end,
 		},
 		{
-			text = [[Excellent, that line created a triangle sigil
+			text = [[Excellent, that line created a triangle sigil.
 (click to continue)]],
 			noEnemySpawn = true,
 			progressClick = true,
@@ -46,7 +47,7 @@ to inscribe a line]],
 			end,
 		},
 		{
-			text = [[Only triangles with equal side lengths are sigils
+			text = [[Only triangles with equal side lengths are sigils.
 (click to continue)]],
 			noEnemySpawn = true,
 			progressClick = true,
@@ -55,7 +56,7 @@ to inscribe a line]],
 			end,
 		},
 		{
-			text = [[Now inscribe a circle clicking a flash point then clicking the corner of the triangle]],
+			text = [[Now inscribe a circle clicking by a flashing point then clicking the corner of the triangle.]],
 			points = {
 				{669.88245634869, -10.691263620614},
 			},
@@ -81,7 +82,7 @@ to inscribe a line]],
 			end,
 		},
 		{
-			text = [[Outstanding, now complete the square by linking up these three points]],
+			text = [[Outstanding, now complete the square by linking up these three points.]],
 			noEnemySpawn = true,
 			points = {
 				{745.88596184244, -442.652686401},
@@ -109,7 +110,16 @@ Squares weaken them so they are easier to absorb.
 		},
 		{
 			text = [[Lines and circles may only be inscribed from existing points.
-Press Space to toggle between them. The spirits are coming!
+Press Space to toggle between the two.
+(click to continue)]],
+			progressClick = true,
+			progressFunc = function (self, dt)
+				return SkipTutorial()
+			end,
+		},
+		{
+			text = [[The spirits are coming! Sigils are temporary!
+Draw more sigils!
 (click to continue)]],
 			progressClick = true,
 			progressFunc = function (self, dt)
