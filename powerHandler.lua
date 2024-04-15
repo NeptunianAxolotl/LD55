@@ -46,6 +46,11 @@ function api.GetSpawnAffinityRadius()
 	return Global.WORLD_RADIUS*0.9
 end
 
+function api.GetMaxShapes()
+	return 10
+end
+
+
 --------------------------------------------------
 -- Progression and UI
 --------------------------------------------------

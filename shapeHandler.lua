@@ -9,6 +9,10 @@ function api.AddShape(shapeDef, vertices, edges, definingLines)
 	local new = NewShape(self.world, self.nextShapeID, shapeDef, vertices, edges, definingLines)
 	IterableMap.Add(self.shapes, self.nextShapeID, new)
 	self.nextShapeID = self.nextShapeID + 1
+	
+	if api.GetShapeTypeCount(shapeDef.name) > PowerHandler.GetMaxShapes(shapeDef.name) then
+		
+	end
 end
 
 function api.GetCompareVertices(vertices)
