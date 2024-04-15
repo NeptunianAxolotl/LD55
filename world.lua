@@ -148,14 +148,14 @@ function api.ScreenToWorld(pos)
 	return {x, y}
 end
 
-function api.ScreenToInterface(pos)
-	local x, y = self.interfaceTransform:inverse():transformPoint(pos[1], pos[2])
+function api.ScreenToInterface(pos, transform)
+	local x, y = (transform or self.interfaceTransform):inverse():transformPoint(pos[1], pos[2])
 	return {x, y}
 end
 
-function api.GetMousePositionInterface()
+function api.GetMousePositionInterface(transform)
 	local x, y = love.mouse.getPosition()
-	return api.ScreenToInterface({x, y})
+	return api.ScreenToInterface({x, y}, transform)
 end
 
 function api.GetMousePosition()

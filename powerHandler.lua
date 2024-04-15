@@ -42,6 +42,10 @@ function api.GetPlayerHitLeeway()
 	return 0.3
 end
 
+function api.CanUpgrade()
+	return false -- If I have enough gathered elements
+end
+
 --------------------------------------------------
 -- Updating
 --------------------------------------------------

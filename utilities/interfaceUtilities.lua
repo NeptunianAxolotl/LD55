@@ -140,7 +140,7 @@ end
 -- Buttons
 --------------------------------------------------
 
-function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, canHoverDisabled)
+function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, canHoverDisabled, fontSize, fontOffset)
 	local hovered = ((not disabled) or canHoverDisabled) and util.PosInRectangle(mousePos, x, y, width, height)
 	
 	if disabled then
@@ -155,7 +155,7 @@ function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, ca
 	love.graphics.setLineWidth(4)
 	love.graphics.rectangle("fill", x, y, width, height, 4, 4, 16)
 	
-	Font.SetSize(3)
+	Font.SetSize(fontSize or 3)
 	if disabled then
 		love.graphics.setColor(Global.TEXT_DISABLE_COL[1], Global.TEXT_DISABLE_COL[2], Global.TEXT_DISABLE_COL[3], 1)
 	elseif (flash and (self.animDt%Global.BUTTON_FLASH_PERIOD < Global.BUTTON_FLASH_PERIOD/2)) then
@@ -165,7 +165,7 @@ function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, ca
 	else
 		love.graphics.setColor(Global.TEXT_COL[1], Global.TEXT_COL[2], Global.TEXT_COL[3], 1)
 	end
-	love.graphics.printf(text, x, y + 8, width, "center")
+	love.graphics.printf(text, x, y + (fontOffset or 8), width, "center")
 	
 	if disabled then
 		love.graphics.setColor(Global.OUTLINE_DISABLE_COL[1], Global.OUTLINE_DISABLE_COL[2], Global.OUTLINE_DISABLE_COL[3], 1)
@@ -180,6 +180,15 @@ function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, ca
 	love.graphics.setLineWidth(8)
 	love.graphics.rectangle("line", x, y, width, height, 4, 4, 16)
 	return hovered and text
+end
+
+function api.DrawPanel(x, y, width, height)
+	love.graphics.setColor(Global.MENU_COL[1], Global.MENU_COL[2], Global.MENU_COL[3], 0.8)
+	love.graphics.setLineWidth(4)
+	love.graphics.rectangle("fill", x, y, width, height, 8, 8, 16)
+	love.graphics.setColor(Global.MENU_OUTLINE_COL[1], Global.MENU_OUTLINE_COL[2], Global.MENU_OUTLINE_COL[3], 0.8)
+	love.graphics.setLineWidth(10)
+	love.graphics.rectangle("line", x, y, width, height, 8, 8, 16)
 end
 
 --------------------------------------------------

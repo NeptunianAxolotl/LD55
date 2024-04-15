@@ -55,6 +55,10 @@ function api.GetEnemies()
 	return self.enemies
 end
 
+function api.CountEnemies()
+	return IterableMap.Count(self.enemies)
+end
+
 function api.Update(dt)
 	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
