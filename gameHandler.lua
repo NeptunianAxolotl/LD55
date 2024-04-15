@@ -337,7 +337,7 @@ local function DrawPowerMenu()
 	
 	Font.SetSize(2)
 	PrintLine("Elemental Affinity", 1, overX, octaY - 260, "center", overWidth/3, Global.TEXT_MENU_COL)
-	Resources.DrawImage("bookback", octaX, octaY, 0, 1, 1)
+	Resources.DrawImage("bookback", octaX - 2, octaY + 2, 0, 1, 1)
 	
 	PrintLine(HintDefs[self.hintIndex] or "", 3, overX + 40, octaY + 210, "left", overWidth/3 - 80, Global.TEXT_MENU_COL)
 	
@@ -345,10 +345,14 @@ local function DrawPowerMenu()
 	local affinityPos = util.Add({octaX, octaY}, util.Mult(Global.BOOK_SCALE, ShapeHandler.GetAffinityPos()))
 	local affinityRadius = PowerHandler.GetSpawnAffinityRadius()*Global.BOOK_SCALE * 0.4
 	
-	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.5)
-	love.graphics.circle('fill', affinityPos[1], affinityPos[2], 5)
-	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.2)
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.8)
+	love.graphics.circle('fill', affinityPos[1], affinityPos[2], 6)
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.3)
 	love.graphics.circle('fill', affinityPos[1], affinityPos[2], affinityRadius, 64)
+	
+	love.graphics.setLineWidth(4)
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 1)
+	love.graphics.circle('line', octaX - 2, octaY + 2, 184, 200)
 	
 --		love.graphics.printf([[
 --'p' to unpause
