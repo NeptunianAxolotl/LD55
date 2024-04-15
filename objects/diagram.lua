@@ -303,13 +303,18 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 	end
 	local vertices = shape.ExpectedLines(corner, mainVector, otherVector)
 	for i = 1, #vertices do
-		print("GetPointAtPos", GetPointAtPos(self, vertices[i]))
 		if not GetPointAtPos(self, vertices[i]) then
 			return false
 		end
 	end
 	if Global.PRINT_SHAPE_FOUND then
 		print("Found vertices")
+	end
+	if ShapeHandler.ShapePartialAt(shape.name, vertices) then
+		if Global.PRINT_SHAPE_FOUND then
+			print("Found duplicate")
+		end
+		return false
 	end
 	local edges = {}
 	for i = 1, #vertices do
@@ -326,7 +331,6 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 			return false
 		end
 		foundLines[#foundLines + 1] = line
-		print("Found foundLines", line, line.isLine)
 	end
 	if Global.PRINT_SHAPE_FOUND then
 		print("Found foundLines")
@@ -352,7 +356,6 @@ local function CheckForShapeFromSegment(self, mainLine, mainCorner, mainPoint)
 	for i = 1, #otherLine.notableAngles do
 		local otherCorner = otherLine.notableAngles[i]
 		if otherCorner.angleType == mainCorner.angleType and otherCorner.id ~= mainCorner.id then
-			print("DistSqVectors", util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo) - reqLengthSq)
 			if util.VeryApproxEqNumber(util.DistSqVectors(otherCorner.point.geo, mainCorner.point.geo), reqLengthSq) then
 				FindShape(self, mainCorner.angleType, mainCorner.point.geo, mainPoint.geo, otherCorner.point.geo)
 			end

@@ -17,6 +17,13 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	self.animate = math.random()
 	self.def = shapeDef
 	
+	local drawVerts = {}
+	for i = 1, #self.vertices do
+		drawVerts[#drawVerts + 1] = self.vertices[i][1]
+		drawVerts[#drawVerts + 1] = self.vertices[i][2]
+	end
+	
+	self.compareVertices = ShapeHandler.GetCompareVertices(self.vertices)
 	self.magnitude = self.radius/100
 	
 	-- Shapes are not told which lines they include. They can find them when they need to.
@@ -53,11 +60,15 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		drawQueue:push({y=8; f=function()
 			love.graphics.setLineWidth((13 + math.sin(self.animate*math.pi*2))*self.def.glowSizeMult)
 			
-			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.1 + 0.8*self.power/self.maxPower)
-			for i = 1, #self.edges do
-				local line = self.edges[i]
-				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
-			end
+			local alpha = 0.1 + 0.8*self.power/self.maxPower
+			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], alpha*0.25)
+			love.graphics.polygon("fill", drawVerts)
+			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], alpha)
+			love.graphics.polygon("line", drawVerts)
+			--for i = 1, #self.edges do
+			--	local line = self.edges[i]
+			--	love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
+			--end
 		end})
 	end
 	

@@ -60,10 +60,10 @@ local globals = {
 	
 	ACT_IN_GAME_OVER = false,
 	
+	DEBUG_PRINT_LINE      = false,
+	DEBUG_PRINT_CIRCLE    = false,
 	DEBUG_PRINT_CLICK_POS = false,
 	DEBUG_PRINT_POINT     = false,
-	DEBUG_PRINT_LINE      = true,
-	DEBUG_PRINT_CIRCLE    = true,
 	DEBUG_POINT_INTERSECT = false,
 	PRINT_SHAPE_FOUND     = false,
 	DEBUG_SPECIAL_ANGLES  = false,

@@ -111,6 +111,8 @@ local function DrawLeftInterface()
 	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 100, "left", 280)
 	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 280)
 	
+	PrintLine("Triangles: " .. ShapeHandler.GetShapeCount("triangle"), 2, xOffset + 20, 240, "left", 280)
+	
 	
 	local over, _, _, overType = self.world.GetGameOver()
 	if over then
@@ -229,7 +231,7 @@ function api.Initialize(world)
 		score = 0,
 		hovered = false,
 		menuOpen = false,
-		powersOpen = true,
+		powersOpen = false,
 	}
 	
 	self.world.SetMenuState(self.menuOpen or self.powersOpen)

@@ -16,12 +16,19 @@ function util.LineGradient(l)
 	return (l[2][2] - l[1][2]) / (l[2][1] - l[1][1])
 end
 
+function util.GradientPoints(u, v)
+	if u[2] == v[2] then
+		return false
+	end
+	return (v[2] - u[2]) / (v[1] - u[1])
+end
+
 function util.VeryApproxEqNumber(n1, n2)
-	return n1 - n2 < 0.01 and n2 - n1 < 0.01
+	return n1 and n2 and n1 - n2 < 0.01 and n2 - n1 < 0.01
 end
 
 function util.ApproxEqNumber(n1, n2)
-	return n1 - n2 < 0.000001 and n2 - n1 < 0.000001
+	return n1 and n2 and n1 - n2 < 0.000001 and n2 - n1 < 0.000001
 end
 
 function util.VeryApproxEq(u, v)
