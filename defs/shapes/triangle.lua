@@ -28,8 +28,8 @@ end
 local data = {
 	characteristicAngle = math.pi/3, -- At most pi/2, this is the angle between involved lines.
 	powerMult = 1,
-	drainCost = 2,
-	drainForce = 0.4,
+	drainCost = 4,
+	drainForce = 1,
 	affinityMult = 1,
 	idleDischargeMult = 0.2,
 	pullForce = 150,
