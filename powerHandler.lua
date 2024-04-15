@@ -37,7 +37,7 @@ end
 --------------------------------------------------
 
 function api.GetSafeLineCapacity()
-	return self.level.earth + 6 + math.max(0, self.level.earth - 3)
+	return self.level.earth + 6 + math.max(0, self.level.earth - 4)
 end
 
 function api.GetLineFadeTime()
@@ -45,31 +45,34 @@ function api.GetLineFadeTime()
 end
 
 function api.GetPlayerSpeed()
-	return ((self.level.air - 1)*0.1 + 0.05*math.max(0, self.level.air - 4) + 1) * Global.PLAYER_SPEED
+	return ((self.level.air - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, self.level.air - 4) + 1) * Global.PLAYER_SPEED
 end
 
 function api.GetDrawRange()
-	return Global.BASE_DRAW_RANGE + math.sqrt(self.level.chalk - 1)*50
+	if self.level.chalk == 2 then
+		return Global.BASE_DRAW_RANGE*1.22
+	end
+	return Global.BASE_DRAW_RANGE + math.sqrt((self.level.chalk - 1) + 0.5*math.max(0, self.level.chalk - 3))*(70 + 5*math.max(0, self.level.chalk - 6))
 end
 
 function api.GetShapePower()
-	return Global.BASE_SHAPE_POWER + self.level.fire + math.max(0, self.level.fire - 3)*0.5
+	return Global.BASE_SHAPE_POWER + (self.level.fire - 1) + math.max(0, self.level.fire - 3)*0.5
 end
 
 function api.GetPlayerMaxHealth()
-	return 100 + 10*(self.level.life - 1) + math.max(0, self.level.life - 3)
+	return Global.BASE_PLAYER_HEALTH + 10*(self.level.life - 1) + 5*math.max(0, self.level.life - 3) + 10*math.max(0, self.level.life - 6)
 end
 
 function api.GetPlayerHealthRegen()
-	return 2 + 0.5*(self.level.water - 1) + 0.3*math.max(0, self.level.life - 3)
+	return 2 + 0.5*(self.level.water - 1) + 0.5*math.max(0, self.level.water - 3) + 1.5*math.max(0, self.level.water - 6)
 end
 
 function api.GetGeneralSpeedModifier()
-	return 1 / ((self.level.ice - 1)*0.1 + 0.05*math.max(0, self.level.ice - 4) + 1)
+	return 1 / ((self.level.ice - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, self.level.ice - 4) + 1)
 end
 
 function api.GetPlayerHitLeeway()
-	return 0.3
+	return 0.8
 end
 
 function api.GetSpawnAffinityRadius()
@@ -87,7 +90,6 @@ end
 function api.GetMaxShapesType(name)
 	return self.currentMaxShapes[name]
 end
-
 
 --------------------------------------------------
 -- Progression and UI
@@ -131,7 +133,20 @@ function api.IsAutomatic(element)
 	return self.autoUpgrade[element]
 end
 
+local function NotifyUpgrade(element)
+	if element == "lightning" then
+		UpdateMaxShapes()
+	elseif element == "life" then
+		UpdateMaxShapes()
+	end
+end
+
 function api.UpgradeElement(element)
+	if Global.FREE_UPGRADES then
+		self.level[element] = self.level[element] + 1
+		NotifyUpgrade(element)
+		return
+	end
 	if not api.CanUpgradeElement(element) then
 		return
 	end
@@ -144,9 +159,7 @@ function api.UpgradeElement(element)
 			self.progress[name] = 0
 		end
 	end
-	if element == "lightning" then
-		UpdateMaxShapes()
-	end
+	NotifyUpgrade(element)
 end
 
 function api.ToggleAutomatic(element)

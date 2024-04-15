@@ -10,14 +10,14 @@ local world
 --------------------------------------------------
 
 local function PercentInc(value)
-	return math.floor(100*(value - 1))
+	return util.Round(100*(value - 1))
 end
 
 local elementUiDefs = {
 	water = {
 		humanName = "Water",
 		descFunc = function ()
-			return "Regenerate " .. math.floor(10*PowerHandler.GetPlayerHealthRegen()) .. " health every 10 seconds"
+			return "Regenerate " .. util.Round(10*PowerHandler.GetPlayerHealthRegen()) .. " health every 10 seconds"
 		end,
 		image = "water_main",
 	},
@@ -31,7 +31,7 @@ local elementUiDefs = {
 	earth = {
 		humanName = "Earth",
 		descFunc = function ()
-			return "Sustain " .. math.floor(PowerHandler.GetSafeLineCapacity()) .. " lines, excess fade after " .. math.floor(PowerHandler.GetLineFadeTime()) .. "s"
+			return "Sustain " .. math.floor(PowerHandler.GetSafeLineCapacity()) .. " lines, excess fade after " .. util.Round(PowerHandler.GetLineFadeTime()) .. "s"
 		end,
 		image = "earth",
 	},
@@ -45,14 +45,14 @@ local elementUiDefs = {
 	life = {
 		humanName = "Life",
 		descFunc = function ()
-			return "Maximum health is " .. math.floor(PowerHandler.GetPlayerMaxHealth())
+			return "Maximum health is " .. util.Round(PowerHandler.GetPlayerMaxHealth())
 		end,
 		image = "life_main",
 	},
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Everything moves at " .. math.floor(100*PowerHandler.GetGeneralSpeedModifier()) .. "% speed"
+			return "Everything moves at " .. util.Round(100*PowerHandler.GetGeneralSpeedModifier()) .. "% speed"
 		end,
 		image = "ice",
 	},
@@ -207,7 +207,7 @@ local function DrawElementArea(x, y, element, mousePos)
 	
 	Resources.DrawImage(def.image, x + 60, y + 120 + offset, 0, 1, 1.4)
 	
-	local upgrade = InterfaceUtil.DrawButton(x + 120, y + 85 + offset, 140, 46, mousePos, "Consume", not PowerHandler.CanUpgradeElement(element), false, false, 3, 6, 4)
+	local upgrade = InterfaceUtil.DrawButton(x + 120, y + 85 + offset, 140, 46, mousePos, "Consume", not PowerHandler.CanUpgradeElement(element), false, Global.FREE_UPGRADES, 3, 6, 4)
 	local automatic = InterfaceUtil.DrawButton(x + 280, y + 85 + offset, 90, 46, mousePos, "Auto", not PowerHandler.IsAutomatic(element), false, true, 3, 6, 4)
 	if upgrade or automatic then
 		self.hovered = upgrade or automatic
