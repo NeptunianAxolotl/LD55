@@ -45,6 +45,10 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		return math.max(0, self.power / self.maxPower)
 	end
 	
+	function self.NotifyDestroy()
+			RemoveShape(self)
+	end
+	
 	function self.Update(dt)
 		self.power = self.power - dt*self.def.idleDischargeMult
 		self.animateSpeed = ((math.random()*dt*0.1 + self.animateSpeed))%1

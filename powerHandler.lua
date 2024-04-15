@@ -50,6 +50,9 @@ function api.GetMaxShapes()
 	return 10
 end
 
+function api.GetMaxShapesType(name)
+	return self.maxShapes[name]
+end
 
 --------------------------------------------------
 -- Progression and UI
@@ -113,6 +116,12 @@ end
 function api.Initialize(world)
 	self = {
 		world = world,
+		maxShapes = {
+			triangle = 6,
+			square = 2,
+			hexagon = 1,
+			octagon = 0,
+		},
 		power = {
 			safeLines = 0,
 			fadeTime = 0,

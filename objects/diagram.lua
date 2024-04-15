@@ -298,6 +298,9 @@ local function AddCircle(self, newCircle, isPermanent)
 end
 
 local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
+	if PowerHandler.GetMaxShapesType(shape.name) <= 0 then
+		return false
+	end
 	if Global.PRINT_SHAPE_FOUND then
 		print("Maybe found", shape.name)
 	end

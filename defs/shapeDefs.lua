@@ -4,6 +4,7 @@ local shapes = util.LoadDefDirectory("defs/shapes")
 local angles = {}
 local shapesWithAngleIndex = {}
 local angleToIndex = {}
+local shapeNames = {}
 
 for name, data in pairs(shapes) do
 	if not angleToIndex[data.characteristicAngle] then
@@ -20,12 +21,21 @@ for name, data in pairs(shapes) do
 	data.name = name
 	data.angleIndex = index
 	indexMap[#indexMap + 1] = data
+	shapeNames[#shapeNames + 1] = name
 end
+
+shapeNames = {
+	"triangle",
+	"square",
+	"hexagon",
+	"octagon",
+}
 
 local data = {
 	shapes = shapes,
 	shapesWithAngleIndex = shapesWithAngleIndex,
 	angles = angles,
+	shapeNames = shapeNames,
 }
 
 return data

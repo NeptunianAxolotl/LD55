@@ -10,8 +10,8 @@ function api.AddShape(shapeDef, vertices, edges, definingLines)
 	IterableMap.Add(self.shapes, self.nextShapeID, new)
 	self.nextShapeID = self.nextShapeID + 1
 	
-	if api.GetShapeTypeCount(shapeDef.name) > PowerHandler.GetMaxShapes(shapeDef.name) then
-		
+	if api.GetShapeTypeCount(shapeDef.name) > PowerHandler.GetMaxShapesType(shapeDef.name) then
+		api.DestroyOldestShape(shapeDef.name)
 	end
 end
 
@@ -63,6 +63,19 @@ function api.ShapeAt(shapeType, vertices)
 	local compareVertices = api.GetCompareVertices(vertices)
 	local compareN = #compareVertices
 	return IterableMap.GetFirstSatisfies(self.shapes, ShapeMatches, shapeType, compareVertices, compareN)
+end
+
+local function OldestShapeOfType(shape, shapeType)
+	if shape.def.name ~= shapeType then
+		return false
+	end
+	return shape.id
+end
+
+function api.DestroyOldestShape(shapeType)
+	local shape = IterableMap.GetMinimum(self.shapes, OldestShapeOfType, shapeType)
+	shape.NotifyDestroy()
+	IterableMap.Remove(self.shapes, shape.iterableMapKey)
 end
 
 function api.GetAffinityPos()
