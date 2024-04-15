@@ -133,7 +133,10 @@ local function GetCachedAffinityPos()
 		return self.affinityPos
 	end
 	self.affinityPos = util.Mult(1/self.affinityAcc, self.posAcc)
-	print(self.affinityPos[1], self.affinityPos[2])
+	local size = util.AbsVal(self.affinityPos)
+	if size > Global.AFFINITY_MAX_RADIUS then
+		self.affinityPos = util.SetLength(Global.AFFINITY_MAX_RADIUS, self.affinityPos)
+	end
 	return self.affinityPos
 end
 

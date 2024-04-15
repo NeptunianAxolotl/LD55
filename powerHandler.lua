@@ -76,7 +76,7 @@ function api.GetPlayerHitLeeway()
 end
 
 function api.GetSpawnAffinityRadius()
-	return Global.AFFINITY_RADIUS
+	return Global.AFFINITY_RADIUS * 1.5 / (1.5 + ShapeHandler.GetShapeTypeCount("hexagon"))
 end
 
 function api.GetMaxShapes()

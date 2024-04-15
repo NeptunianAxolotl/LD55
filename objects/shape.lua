@@ -39,7 +39,8 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	
 	function self.ContributeSpawnAffinity(handler)
 		local affinity = self.magnitude*self.def.affinityMult
-		handler.posAcc = util.Add(handler.posAcc, util.Mult(affinity, self.midPoint))
+		local extraPosMult = self.def.affinityDirectionMult or 1
+		handler.posAcc = util.Add(handler.posAcc, util.Mult(extraPosMult * affinity, self.midPoint))
 		handler.affinityAcc = handler.affinityAcc + affinity
 	end
 	
@@ -48,7 +49,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	function self.NotifyDestroy()
-			RemoveShape(self)
+		RemoveShape(self)
 	end
 	
 	function self.Update(dt)
