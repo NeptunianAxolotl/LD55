@@ -52,7 +52,7 @@ local elementUiDefs = {
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Everything moves at " .. util.Round(100*PowerHandler.GetGeneralSpeedModifier()) .. "% speed"
+			return "Everything moves " .. PercentInc(1 / PowerHandler.GetGeneralSpeedModifier()) .. "% slower"
 		end,
 		image = "ice",
 	},
