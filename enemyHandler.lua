@@ -20,7 +20,7 @@ local function GetSpawnPosAndType()
 	local octant = math.max(1, math.min(8, math.floor(angle*8/(2*math.pi) + 1)))
 	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS * 0.5, pos)
 	pos = util.Add(pos, util.RandomPointInCircle(Global.ENEMY_SPAWN_WIGGLE))
-	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS, pos)
+	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS*(Global.TEST_ENEMIES and 0.1 or 1), pos)
 	return pos, EnemyDefs.order[octant]
 end
 
@@ -36,6 +36,9 @@ end
 local function SpawnEnemiesUpdate(dt)
 	self.spawnTimer = self.spawnTimer + dt * Global.ENEMY_SPAWN_MULT * self.difficulty * ((4 + ShapeHandler.GetShapeCount()) / 8)
 	self.spawnTimer = self.spawnTimer + dt * 5 * math.sqrt(ShapeHandler.GetShapeTypeCount("hexagon"))
+	if Global.TEST_ENEMIES then
+		self.spawnTimer = self.spawnTimer + dt*5
+	end
 	while self.spawnTimer > 1 / self.spawnFrequency do
 		SpawnEnemy()
 		self.spawnTimer = self.spawnTimer - 1 / self.spawnFrequency

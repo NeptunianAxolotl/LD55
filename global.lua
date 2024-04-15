@@ -94,6 +94,7 @@ local globals = {
 	ACT_IN_GAME_OVER = false,
 	
 	GAME_SPEED = false,
+	TEST_ENEMIES = true,
 	
 	DEBUG_UI              = false,
 	DEBUG_PRINT_LINE      = false,

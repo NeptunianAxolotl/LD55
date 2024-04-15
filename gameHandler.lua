@@ -372,6 +372,14 @@ local function BottomInterface(transBottom)
 end
 
 --------------------------------------------------
+-- Flying Stuff
+--------------------------------------------------
+
+function api.AddFlyingEnemy(pos, size, enemyType)
+
+end
+
+--------------------------------------------------
 -- Updating
 --------------------------------------------------
 
