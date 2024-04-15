@@ -202,14 +202,4 @@ function api.Initialize(newCosmos)
 	cueTrack("A")
 end
 
-
--- DEBUGGING - DO NOT FOR THE LOVE OF GOD LEAVE THIS IN
-function love.keyreleased( key )
-	if key == "j" then
-		bgmTension = bgmTension + 1
-	elseif key == "k" then
-		bgmTension = bgmTension - 1
-	end
-end
-
 return api
