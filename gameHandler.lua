@@ -130,12 +130,17 @@ local function HandleHoverClick()
 		self.world.GetCosmos().ScrollSpeedChange(7/6)
 	elseif self.hovered == "Scroll Speed Down" then
 		self.world.GetCosmos().ScrollSpeedChange(6/7)
+	elseif self.hovered == "Switch to Sandbox" then
+		self.world.GetCosmos().SwitchLevel(true)
 	elseif self.hovered == "Switch to Base" then
-		
+		self.world.GetCosmos().SetDifficulty(1)
+		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Switch to Hard" then
-		
+		self.world.GetCosmos().SetDifficulty(1.8)
+		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Switch to Hardest" then
-		
+		self.world.GetCosmos().SetDifficulty(3)
+		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Restart" then
 		self.world.Restart()
 	elseif self.hovered == "Quit" then
@@ -240,7 +245,7 @@ local function DrawLeftInterface()
 	
 	local over, _, _, overType = self.world.GetGameOver()
 	if over then
-		PrintLine(overType, 1, 400, 120, "center", 250)
+		PrintLine(overType or "Game Over", 0, 1000, 400, "center", 250)
 	end
 	
 	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
@@ -322,8 +327,8 @@ local function DrawMainMenu()
 	local windowX, windowY = 2000, 1100
 	local overX = windowX*0.84
 	local overWidth = windowX*0.16
-	local overY = windowY*0.12
-	local overHeight = windowY*0.64
+	local overY = windowY*0.1
+	local overHeight = windowY*0.7
 	InterfaceUtil.DrawPanel(overX, overY, overWidth, overHeight*1.12)
 	
 	local offset = overY + 20
@@ -347,11 +352,14 @@ local function DrawMainMenu()
 	offset = offset + 55
 	
 	offset = offset + 20
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Sandbox", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Base", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Hard", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Hardest", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
 	
 	local offset = overY + overHeight*1.12 - 20 - 45
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Quit", false, false, false, 3, 8, 4) or self.hovered
@@ -396,7 +404,7 @@ function api.DrawInterface(transMid, transTopLeft, transBottom)
 	end
 end
 
-function api.Initialize(world)
+function api.Initialize(world, difficulty)
 	local levelData = world.GetLevelData()
 	self = {
 		world = world,
@@ -405,8 +413,8 @@ function api.Initialize(world)
 		menuOpen = false,
 		powersOpen = false,
 		noGrimoire = levelData.noGrimoire,
-		tutorial = levelData.tutorial,
-		tutorialStage = levelData.tutorial and 1,
+		tutorial = difficulty <= 1.2 and levelData.tutorial,
+		tutorialStage = difficulty <= 1.2 and levelData.tutorial and 1,
 	}
 	
 	self.world.SetMenuState(api.PanelOpen())

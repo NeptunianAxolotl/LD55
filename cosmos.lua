@@ -82,6 +82,10 @@ function api.ScrollSpeedChange(change)
 	self.keyScrollSpeed = self.keyScrollSpeed * change
 end
 
+function api.SetDifficulty(newDifficulty)
+	self.difficultySetting = newDifficulty
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -110,7 +114,7 @@ end
 --------------------------------------------------
 
 function api.KeyPressed(key, scancode, isRepeat)
-	if key == "r" then
+	if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
 		api.RestartWorld()
 		return true
 	end
@@ -120,14 +124,6 @@ function api.KeyPressed(key, scancode, isRepeat)
 	end
 	if key == "s" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
 		api.TakeScreenshot()
-		return true
-	end
-	if key == "n" then
-		api.SwitchLevel(true)
-		return true
-	end
-	if key == "p" then
-		api.SwitchLevel(false)
 		return true
 	end
 	return World.KeyPressed(key, scancode, isRepeat)
@@ -167,7 +163,7 @@ function api.Initialize()
 		mouseScrollSpeed = Global.MOUSE_SCROLL_MULT,
 		keyScrollSpeed = Global.KEYBOARD_SCROLL_MULT,
 		grabInput = Global.MOUSE_SCROLL_MULT > 0,
-		difficultySetting = {},
+		difficultySetting = 1,
 	}
 	love.mouse.setGrabbed(self.grabInput)
 	self.curLevelData = LevelDefs[LevelOrder[self.inbuiltLevelIndex]]

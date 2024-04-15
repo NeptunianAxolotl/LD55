@@ -273,7 +273,7 @@ function api.Draw()
 	love.graphics.replaceTransform(self.emptyTransform)
 end
 
-function api.Initialize(cosmos, levelData)
+function api.Initialize(cosmos, levelData, difficulty)
 	self = {
 		levelData = levelData,
 	}
@@ -295,13 +295,13 @@ function api.Initialize(cosmos, levelData)
 	
 	PowerHandler.Initialize(api)
 	PlayerHandler.Initialize(api)
-	EnemyHandler.Initialize(api)
+	EnemyHandler.Initialize(api, difficulty)
 	DiagramHandler.Initialize(api, levelData)
 	ShapeHandler.Initialize(api)
 	--ShadowHandler.Initialize(api)
 	
 	DeckHandler.Initialize(api)
-	GameHandler.Initialize(api)
+	GameHandler.Initialize(api, difficulty)
 	
 	CameraHandler.Initialize(api, levelData)
 end

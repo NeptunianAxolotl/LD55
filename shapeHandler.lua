@@ -9,6 +9,7 @@ function api.AddShape(shapeDef, vertices, edges, definingLines)
 	local new = NewShape(self.world, self.nextShapeID, shapeDef, vertices, edges, definingLines)
 	IterableMap.Add(self.shapes, self.nextShapeID, new)
 	self.nextShapeID = self.nextShapeID + 1
+	self.shapesCreated = self.shapesCreated + 1
 	
 	if api.GetShapeTypeCount(shapeDef.name) > PowerHandler.GetMaxShapesType(shapeDef.name) then
 		api.DestroyOldestShape(shapeDef.name)
@@ -160,12 +161,17 @@ function api.GetShapeCount()
 	return IterableMap.Count(self.shapes)
 end
 
+function api.TotalShapesCreated()
+	return self.shapesCreated
+end
+
 function api.Initialize(world, levelData)
 	self = {
 		world = world,
 		shapes = IterableMap.New(),
 		nextShapeID = 0,
 		affinityPos = {0, 0},
+		shapesCreated = 0,
 	}
 end
 

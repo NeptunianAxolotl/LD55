@@ -17,7 +17,7 @@ local secondTutorialSquare = {
 }
 
 local function SkipTutorial()
-
+	return ShapeHandler.TotalShapesCreated() > 4
 end
 
 local data = {

@@ -34,7 +34,7 @@ local function SpawnEnemy()
 end
 
 local function SpawnEnemiesUpdate(dt)
-	self.spawnTimer = self.spawnTimer + dt*Global.ENEMY_SPAWN_MULT
+	self.spawnTimer = self.spawnTimer + dt*Global.ENEMY_SPAWN_MULT*self.difficulty
 	while self.spawnTimer > 1 / self.spawnFrequency do
 		SpawnEnemy()
 		self.spawnTimer = self.spawnTimer - 1 / self.spawnFrequency
@@ -103,7 +103,7 @@ function api.Draw(drawQueue)
 	IterableMap.ApplySelf(self.enemies, "Draw", drawQueue)
 end
 
-function api.Initialize(world, levelIndex, mapDataOverride)
+function api.Initialize(world, difficulty)
 	self = {
 		world = world,
 		lifetime = 0,
@@ -112,6 +112,7 @@ function api.Initialize(world, levelIndex, mapDataOverride)
 		spawnSize = 0.7,
 		spawnTimer = 0,
 		noEnemies = world.GetLevelData().noEnemies,
+		difficulty = difficulty,
 	}
 end
 

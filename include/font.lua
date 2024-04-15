@@ -29,7 +29,9 @@ function externalFunc.SetSize(size)
 end
 
 function externalFunc.GetFont()
-	if _size == 1 then
+	if _size == 0 then
+		return hugeFont
+	elseif _size == 1 then
 		return bigFont
 	elseif _size == 2 then
 		return medFont
