@@ -458,11 +458,14 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 				end
 			end
 		end
-		if (not element.isPermanent) and (not element.destroyed) and (element.elementCount < recentSafety or fadeMult > 1) and fadeMult > 0 then
-			element.fade = (element.fade or 0) + dt*fadeMult
-			if element.fade > fadeTime then
-				DestroyElement(self, element)
-				destroyed = true
+		
+		if not GameHandler.GetTutorial() then
+			if (not element.isPermanent) and (not element.destroyed) and (element.elementCount < recentSafety or fadeMult > 1) and fadeMult > 0 then
+				element.fade = (element.fade or 0) + dt*fadeMult
+				if element.fade > fadeTime then
+					DestroyElement(self, element)
+					destroyed = true
+				end
 			end
 		end
 		if element.destroyed then
