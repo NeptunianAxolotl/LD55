@@ -24,7 +24,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 	end
 	
 	self.compareVertices = ShapeHandler.GetCompareVertices(self.vertices)
-	self.magnitude = self.radius/100
+	self.magnitude = math.sqrt(self.radius/75)
 	
 	-- Shapes are not told which lines they include. They can find them when they need to.
 	-- Note that to change this, lines need to tell shapes that they are leaving when they

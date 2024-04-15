@@ -186,13 +186,13 @@ function api.Initialize(world)
 		baseMaxShapes = {
 			triangle = 6,
 			square = 2,
-			hexagon = 0.500001,
+			hexagon = 1,
 			octagon = 0.125001,
 		},
 		maxShapesPerLevel = {
 			triangle = 1,
 			square = 0.6666667,
-			hexagon = 0.500001,
+			hexagon = 0.333334,
 			octagon = 0.125001,
 		},
 		level = {

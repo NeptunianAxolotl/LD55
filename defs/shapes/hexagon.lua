@@ -13,7 +13,7 @@ local data = {
 		self.effectRangeSq = self.effectRange*self.effectRange
 	end,
 	update = function (self, dt)
-		self.power = self.power - dt*0.5*Global.SHAPE_IDLE_DRAIN_MULT
+		self.power = self.power - 2*dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
 	color = {0.9, 0.9, 0.5},
 }

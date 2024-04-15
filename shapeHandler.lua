@@ -98,6 +98,7 @@ local function ShapePartialMatch(shape, shapeType, compareVertices, compareN)
 end
 
 function api.ShapePartialAt(shapeType, vertices)
+	print("shapeType", shapeType)
 	local compareVertices = api.GetCompareVertices(vertices)
 	local compareN = #compareVertices
 	return IterableMap.GetFirstSatisfies(self.shapes, ShapePartialMatch, shapeType, compareVertices, compareN)
