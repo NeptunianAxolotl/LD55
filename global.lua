@@ -5,9 +5,11 @@ local globals = {
 	RED_COL  = {0.95,0.2,0.2},
 	
 	PANEL_COL = {78/255, 70/255, 90/255},
+	PANEL_DISABLE_COL = {78/255, 70/255, 90/255},
 	PANEL_FLASH_COL = {78/255 + 0.1, 70/255, 90/25},
 	PANEL_HIGHLIGHT_COL = {0.95,0.95,0.9},
 	OUTLINE_COL = {0.95,0.2,0.9},
+	OUTLINE_DISABLE_COL = {5/255, 5/255, 4/255},
 	OUTLINE_FLASH_COL = {0.95,0.5,0.9},
 	OUTLINE_HIGHLIGHT_COL = {0.2,0.5,0.9},
 	
@@ -15,7 +17,7 @@ local globals = {
 	MENU_COL            = {78/255, 70/255, 90/255},
 	MENU_OUTLINE_COL    = {0, 0, 0},
 	
-	TEXT_DISABLE_COL    = {0.73, 0.73, 0.75},
+	TEXT_DISABLE_COL    = {0.5, 0.5, 0.5},
 	TEXT_FLASH_COL      = {0.73, 0.73, 0.75},
 	TEXT_HIGHLIGHT_COL  = {0.73, 0.73, 0.75},
 	TEXT_COL            = {0.73, 0.73, 0.75},

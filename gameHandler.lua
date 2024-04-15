@@ -6,6 +6,30 @@ local api = {}
 local world
 
 --------------------------------------------------
+-- Definitions
+--------------------------------------------------
+
+local elementUiDefs = {
+	water = {
+		humanName = "Water",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "water_main",
+	},
+}
+local elementList = {
+	"water",
+	"air",
+	"earth",
+	"fire",
+	"life",
+	"ice",
+	"lightning",
+	"chalk",
+}
+
+--------------------------------------------------
 -- Updating
 --------------------------------------------------
 
@@ -17,12 +41,29 @@ end
 -- API
 --------------------------------------------------
 
+local function HandleHoverClick()
+	if self.hovered == "Grimoire" then
+		self.powersOpen = not self.powersOpen
+		self.world.SetMenuState(self.menuOpen or self.powersOpen)
+	elseif self.hovered == "Menu" then
+		self.menuOpen = not self.menuOpen
+		self.world.SetMenuState(self.menuOpen or self.powersOpen)
+	elseif self.hovered == "Auto" then
+		PowerHandler.ToggleAutomatic(self.hoveredElement)
+	elseif self.hovered == "Consume" then
+		PowerHandler.UpgradeElement(self.hoveredElement)
+	end
+end
+
 function api.ToggleMenu()
 	--self.menuOpen = not self.menuOpen
 	--world.SetMenuState(self.menuOpen)
 end
 
 function api.MousePressed(x, y)
+	if self.hovered then
+		HandleHoverClick()
+	end
 end
 
 --------------------------------------------------
@@ -77,25 +118,57 @@ local function DrawLeftInterface()
 	end
 end
 
+local function DrawElementArea(x, y, element, mousePos)
+	local def = elementUiDefs[element] or elementUiDefs['water']
+	local offset = 4
+
+	--InterfaceUtil.DrawPanel(x + 5, y + 5, 415, 175)
+	love.graphics.setColor(Global.TEXT_MENU_COL[1], Global.TEXT_MENU_COL[2], Global.TEXT_MENU_COL[3], 1)
+	Font.SetSize(2)
+	love.graphics.printf(def.humanName .. " Level " .. PowerHandler.GetLevel(element), x + 12, y + 8, 500, "left")
+	Font.SetSize(3)
+	love.graphics.printf(def.descFunc(), x + 12, y + 48, 500, "left")
+	Font.SetSize(3)
+	love.graphics.printf(PowerHandler.GetProgress(element) .. "/" .. PowerHandler.GetRequirement(element), x + 120, y + 135 + offset, 500, "left")
+	
+	Resources.DrawImage(def.image, x + 60, y + 120 + offset, 0, 1, 1.45)
+	
+	local upgrade = InterfaceUtil.DrawButton(x + 120, y + 85 + offset, 140, 46, mousePos, "Consume", not PowerHandler.CanUpgradeElement(element), false, false, 3, 6, 4)
+	local automatic = InterfaceUtil.DrawButton(x + 280, y + 85 + offset, 90, 46, mousePos, "Auto", not PowerHandler.IsAutomatic(element), false, true, 3, 6, 4)
+	if upgrade or automatic then
+		self.hovered = upgrade or automatic
+		self.hoveredElement = element
+	end
+end
+
 local function DrawPowerMenu()
 	local windowX, windowY = 2000, 1100
-	local overX = windowX*0.2
-	local overWidth = windowX*0.6
-	local overY = windowY*0.15
-	local overHeight = windowY*0.6
+	local overX = windowX*0.17
+	local overWidth = windowX*0.66
+	local overY = windowY*0.12
+	local overHeight = windowY*0.64
 	
 	local mousePos = self.world.GetMousePositionInterface()
-	
-	InterfaceUtil.DrawButton(500, 100, 100, 1000, mousePos, "POWER", false, false, false)
-	
 	InterfaceUtil.DrawPanel(overX, overY, overWidth, overHeight*1.12)
-		
 	Font.SetSize(0)
-	love.graphics.setColor(Global.TEXT_MENU_COL[1], Global.TEXT_MENU_COL[2], Global.TEXT_MENU_COL[3], 0.8)
-	love.graphics.printf("Grimoire", overX, overY + overHeight * 0.04, overWidth, "center")
+	--love.graphics.setColor(Global.TEXT_MENU_COL[1], Global.TEXT_MENU_COL[2], Global.TEXT_MENU_COL[3], 0.8)
+	--love.graphics.printf("Grimoire", overX, overY + overHeight * 0.04, overWidth, "center")
 	
 	Font.SetSize(2)
 	
+	local elementX = overX + overWidth/3
+	local elementXOffset = overWidth/3
+	local elementY = 150
+	local elementYOffset = 190
+	for i = 1, #elementList do
+		DrawElementArea(elementX, elementY, elementList[i], mousePos)
+		if i%2 == 1 then
+			elementX = elementX + elementXOffset
+		else
+			elementX = elementX - elementXOffset
+			elementY = elementY + elementYOffset
+		end
+	end
 	
 	
 --		love.graphics.printf([[
@@ -108,11 +181,21 @@ local function DrawPowerMenu()
 --'ctrl+l' to load custom level]], overX + overWidth*0.02, overY + overHeight * 0.3 , overWidth*0.96, "center")
 end
 
+local function DrawMainMenu()
+	local windowX, windowY = 2000, 1100
+	local overX = windowX*0.8
+	local overWidth = windowX*0.2
+	local overY = windowY*0.15
+	local overHeight = windowY*0.6
+	InterfaceUtil.DrawPanel(overX, overY, overWidth, overHeight*1.12)
+
+end
+
 local function BottomInterface(transBottom)
 	local mousePos = self.world.GetMousePositionInterface(transBottom)
 	
-	self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgrade(), false, 2, 12)
-	self.hovered = InterfaceUtil.DrawButton(1710, 1010, 180, 70, mousePos, "Menu", false, PowerHandler.CanUpgrade(), false, 2, 12)
+	self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything(), false, 2, 12)
+	self.hovered = InterfaceUtil.DrawButton(1710, 1010, 180, 70, mousePos, "Menu", false, PowerHandler.CanUpgradeAnything(), false, 2, 12) or self.hovered
 	
 	if PlayerHandler.GetHealthProp() < 1 then
 		InterfaceUtil.DrawBar({0.3, 1, 0.3}, {0.3, 0.3, 0.3}, PlayerHandler.GetHealthProp(), false, false, {600, 1020}, {800, 60})
@@ -132,7 +215,12 @@ function api.DrawInterface(transMid, transTopLeft, transBottom)
 	love.graphics.replaceTransform(transBottom)
 	BottomInterface(transBottom)
 	love.graphics.replaceTransform(transMid)
-	DrawPowerMenu()
+	if self.powersOpen then
+		DrawPowerMenu()
+	end
+	if self.menuOpen then
+		DrawMainMenu()
+	end
 end
 
 function api.Initialize(world)
@@ -144,7 +232,7 @@ function api.Initialize(world)
 		powersOpen = true,
 	}
 	
-	--self.world.SetMenuState(self.menuOpen or self.powersOpen)
+	self.world.SetMenuState(self.menuOpen or self.powersOpen)
 end
 
 return api
