@@ -153,7 +153,9 @@ function api.ToggleAutomatic(element)
 	if not (element and self.progress[element]) then
 		return
 	end
+	local save = self.world.GetPersistentData()
 	self.autoUpgrade[element] = not self.autoUpgrade[element]
+	save.autoUpgrade[element] = self.autoUpgrade[element]
 end
 
 --------------------------------------------------
@@ -210,6 +212,12 @@ function api.Initialize(world)
 			chalk = false,
 		},
 	}
+	local save = self.world.GetPersistentData()
+	if save.autoUpgrade then
+		self.autoUpgrade = util.CopyTable(save.autoUpgrade)
+	else
+		save.autoUpgrade = util.CopyTable(self.autoUpgrade)
+	end
 	
 	self.currentMaxShapes = {}
 	self.totalMaxShapes = 8

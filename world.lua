@@ -53,6 +53,11 @@ function api.GetCosmos()
 	return self.cosmos
 end
 
+function api.GetPersistentData()
+	return self.cosmos.GetPersistentData()
+end
+
+
 function api.SetGameOver(hasWon, overType)
 	if self.gameWon or self.gameLost then
 		return

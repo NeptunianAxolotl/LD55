@@ -56,6 +56,10 @@ function api.GetScrollSpeeds()
 	return self.mouseScrollSpeed, self.keyScrollSpeed
 end
 
+function api.GetPersistentData()
+	return self.persistentDataTable
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -132,6 +136,7 @@ end
 
 function api.Initialize()
 	self = {
+		persistentDataTable = {},
 		realTime = 0,
 		inbuiltLevelIndex = Global.DEBUG_MODE_START_LEVEL or 1,
 		musicEnabled = true,
