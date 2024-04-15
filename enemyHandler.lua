@@ -80,16 +80,21 @@ function api.PushEnemiesFrom(circle)
 end
 
 function api.GetSpawnParameters()
-	return 1 / self.spawnFrequency, math.pow(self.spawnSize, 1.5)
+	return 1 / self.spawnFrequency, math.pow(self.spawnSize, 1.5), self.lifetime
 end
 
 function api.Update(dt)
 	if self.noEnemies then
 		return
 	end
+	local tutorial = GameHandler.GetTutorial()
+	if tutorial and tutorial.noEnemySpawn then
+		return
+	end
 	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
 	
+	self.lifetime = self.lifetime + dt
 	self.spawnFrequency = math.min(3, self.spawnFrequency*(1 + 0.0004*dt) + 0.0003*dt)
 	self.spawnSize = self.spawnSize + 0.0011*dt
 end
@@ -101,6 +106,7 @@ end
 function api.Initialize(world, levelIndex, mapDataOverride)
 	self = {
 		world = world,
+		lifetime = 0,
 		enemies = IterableMap.New(),
 		spawnFrequency = 0.125,
 		spawnSize = 0.7,

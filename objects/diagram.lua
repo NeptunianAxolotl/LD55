@@ -490,13 +490,13 @@ end
 
 local function GetElementOpacity(element, fadeTime)
 	if element.destroyTimer then
-		return element.destroyTimer * 0.25
+		return element.destroyTimer * 0.55
 	end
 	if not element.fade then
 		return 0.85
 	end
 	local prop = 1 - math.pow(1 - (element.fade / fadeTime), 1.8)
-	return prop * 0.25 + (1 - prop) * 0.9
+	return prop * 0.55 + (1 - prop) * 0.9
 end
 
 local function SetElementColor(element, fadeTime, hoveredPoint)
@@ -637,7 +637,7 @@ local function NewDiagram(levelData, world)
 			end
 			
 			local tutorial = GameHandler.GetTutorial()
-			if tutorial then
+			if tutorial and tutorial.points then
 				love.graphics.setLineWidth(4)
 				love.graphics.setColor(Global.POINT_TUTORIAL_COL[1], Global.POINT_TUTORIAL_COL[2], Global.POINT_TUTORIAL_COL[3], 1)
 				local radius = 25 + 10*math.sin(self.animTimer*2*math.pi)

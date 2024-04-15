@@ -16,14 +16,19 @@ local secondTutorialSquare = {
 	{669.88245634869, -10.691263620614},
 }
 
+local function SkipTutorial()
+
+end
+
 local data = {
 	tutorial = {
 		{
 			points = firstTutorialLine,
 			pointsIfSelected = firstTutorialLine,
 			text = "Click on the points for lines",
+			noEnemySpawn = true,
 			progressFunc = function (self, dt)
-				return DiagramHandler.ElementExists(firstTutorialLine, Global.LINE)
+				return SkipTutorial() or DiagramHandler.ElementExists(firstTutorialLine, Global.LINE)
 			end,
 		},
 		{
@@ -34,8 +39,9 @@ local data = {
 			pointsIfSelected = {
 				{237.92103356828, -86.694769114262},
 			},
+			noEnemySpawn = true,
 			progressFunc = function (self, dt)
-				return DiagramHandler.PointExists(secondTutorialPoint)
+				return SkipTutorial() or DiagramHandler.PointExists(secondTutorialPoint)
 			end,
 		},
 		{
@@ -49,8 +55,13 @@ local data = {
 				{313.92453906203, -518.65619189465},
 				{669.88245634869, -10.691263620614},
 			},
+			noEnemySpawn = true,
 			progressFunc = function (self, dt)
-				return ShapeHandler.ShapeAt("square", secondTutorialSquare)
+				if SkipTutorial() or ShapeHandler.ShapeAt("square", secondTutorialSquare) then
+					self.tutorialLinger = 0
+					return true
+				end
+				return false
 			end,
 		},
 	},
@@ -66,7 +77,7 @@ local data = {
 		true,
 	},
 	playerPos = {420, 60},
-	cameraPos = {450, -110},
+	cameraPos = {450, -180},
 	lines = {
 		util.RotateLineAroundOrigin(baseLine, -0.5),
 		util.RotateLineAroundOrigin(baseLine, -4.45),

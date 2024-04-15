@@ -101,6 +101,9 @@ end
 --------------------------------------------------
 
 local function HandleHoverClick()
+	if not self.hovered then
+		return
+	end
 	if self.hovered == "Grimoire" then
 		self.powersOpen = not self.powersOpen
 		self.world.SetMenuState(api.PanelOpen())
@@ -111,6 +114,32 @@ local function HandleHoverClick()
 		PowerHandler.ToggleAutomatic(self.hoveredElement)
 	elseif self.hovered == "Consume" then
 		PowerHandler.UpgradeElement(self.hoveredElement)
+	elseif self.hovered == "Toggle Music" then
+		self.world.GetCosmos().ToggleMusic()
+	elseif self.hovered == "Music Lounder" then
+		self.world.GetCosmos().MusicVolumeChange(3/2)
+	elseif self.hovered == "Music Softer" then
+		self.world.GetCosmos().MusicVolumeChange(2/3)
+	elseif self.hovered == "Effects Lounder" then
+		self.world.GetCosmos().EffectsVolumeChange(7/6)
+	elseif self.hovered == "Effects Softer" then
+		self.world.GetCosmos().EffectsVolumeChange(6/7)
+	elseif self.hovered == "Toggle Edge Scroll" then
+		self.world.GetCosmos().ToggleGrabInput()
+	elseif self.hovered == "Scroll Speed Up" then
+		self.world.GetCosmos().ScrollSpeedChange(7/6)
+	elseif self.hovered == "Scroll Speed Down" then
+		self.world.GetCosmos().ScrollSpeedChange(6/7)
+	elseif self.hovered == "Switch to Base" then
+		
+	elseif self.hovered == "Switch to Hard" then
+		
+	elseif self.hovered == "Switch to Hardest" then
+		
+	elseif self.hovered == "Restart" then
+		self.world.Restart()
+	elseif self.hovered == "Quit" then
+		love.event.quit()
 	end
 end
 
@@ -214,9 +243,9 @@ local function DrawLeftInterface()
 		PrintLine(overType, 1, 400, 120, "center", 250)
 	end
 	
-	local rate, size = EnemyHandler.GetSpawnParameters()
+	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
 	offset = offset + 30
-	PrintLine("Game Time: " .. util.SecondsToString(self.world.GetLifetime()), 2, xOffset + 20, offset, "left", 800)
+	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 20, offset, "left", 800)
 	offset = offset + 30
 	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 2, xOffset + 20, offset, "left", 800)
 	offset = offset + 30
@@ -289,17 +318,52 @@ local function DrawPowerMenu()
 end
 
 local function DrawMainMenu()
+	local mousePos = self.world.GetMousePositionInterface()
 	local windowX, windowY = 2000, 1100
-	local overX = windowX*0.8
-	local overWidth = windowX*0.2
-	local overY = windowY*0.15
-	local overHeight = windowY*0.6
+	local overX = windowX*0.84
+	local overWidth = windowX*0.16
+	local overY = windowY*0.12
+	local overHeight = windowY*0.64
 	InterfaceUtil.DrawPanel(overX, overY, overWidth, overHeight*1.12)
+	
+	local offset = overY + 20
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Toggle Music", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Music Lounder", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Music Softer", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Effects Lounder", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Effects Softer", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	
+	offset = offset + 20
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Toggle Edge Scroll", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Scroll Speed Up", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Scroll Speed Down", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	
+	offset = offset + 20
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Base", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Hard", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset + 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Hardest", false, false, false, 3, 8, 4) or self.hovered
+	
+	local offset = overY + overHeight*1.12 - 20 - 45
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Quit", false, false, false, 3, 8, 4) or self.hovered
+	offset = offset - 55
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Restart", false, false, false, 3, 8, 4) or self.hovered
 
 end
 
 local function BottomInterface(transBottom)
 	local mousePos = self.world.GetMousePositionInterface(transBottom)
+	
+	self.hovered = false
 	if not self.noGrimoire then
 		self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything() and not api.PanelOpen(), false, 2, 12)
 	end

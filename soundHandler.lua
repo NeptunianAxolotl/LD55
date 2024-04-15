@@ -2,7 +2,7 @@
 
 local api = {}
 local sounds = IterableMap.New()
-
+local cosmos
 local soundFiles = util.LoadDefDirectory("resources/soundDefs")
 
 function AddSource(name)
@@ -47,7 +47,7 @@ function api.PlaySound(name, id, fadeIn, fadeOut, delay, loop, wantedVolume, pla
 	if not soundData.delay then
 		soundData.source:stop()
 		love.audio.play(soundData.source)
-		soundData.source:setVolume(soundData.want * soundData.volumeMult)
+		soundData.source:setVolume(soundData.want * soundData.volumeMult * cosmos.GetEffectsVolume())
 	end
 	return soundData
 end
@@ -121,7 +121,8 @@ function api.Update(dt)
 	end
 end
 
-function api.Initialize()
+function api.Initialize(newCosmos)
+	cosmos = newCosmos
 	for _, soundData in IterableMap.Iterator(sounds) do
 		soundData.source:stop()
 	end

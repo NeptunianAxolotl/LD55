@@ -29,8 +29,20 @@ function api.MusicEnabled()
 	return self.musicEnabled
 end
 
+function api.MusicVolumeChange(change)
+	self.musicVolume = self.musicVolume * change
+end
+
 function api.GetMusicVolume()
 	return self.musicVolume
+end
+
+function api.EffectsVolumeChange(change)
+	self.effectsVolume = self.effectsVolume * change
+end
+
+function api.GetEffectsVolume()
+	return self.effectsVolume
 end
 
 --------------------------------------------------
@@ -53,11 +65,21 @@ function api.SwitchLevel(goNext)
 end
 
 function api.GetScrollSpeeds()
-	return self.mouseScrollSpeed, self.keyScrollSpeed
+	return (self.grabInput and self.mouseScrollSpeed) or 0, self.keyScrollSpeed
 end
 
 function api.GetPersistentData()
 	return self.persistentDataTable
+end
+
+function api.ToggleGrabInput()
+	self.grabInput = not self.grabInput
+	love.mouse.setGrabbed(self.grabInput)
+end
+
+function api.ScrollSpeedChange(change)
+	self.mouseScrollSpeed = self.mouseScrollSpeed * change
+	self.keyScrollSpeed = self.keyScrollSpeed * change
 end
 
 --------------------------------------------------
@@ -141,6 +163,7 @@ function api.Initialize()
 		inbuiltLevelIndex = Global.DEBUG_MODE_START_LEVEL or 1,
 		musicEnabled = true,
 		musicVolume = 1,
+		effectsVolume = 1,
 		mouseScrollSpeed = Global.MOUSE_SCROLL_MULT,
 		keyScrollSpeed = Global.KEYBOARD_SCROLL_MULT,
 		grabInput = Global.MOUSE_SCROLL_MULT > 0,

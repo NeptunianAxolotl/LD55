@@ -94,17 +94,21 @@ local bgmTimer = 0
 
 local musicEnabled = true
 local musicWasEnabled = true
-local musicVolume = 1
-local musicWasVolume = 1
+local musicVolume = Global.MUSIC_VOLUME
+local musicWasVolume = Global.MUSIC_VOLUME
 
 function loadSounds()
   for k, v in pairs(loopDefs) do
       musicBanks["A"][k] = love.audio.newSource(v["path"],"static")
       musicBanks["B"][k] = love.audio.newSource(v["path"],"static")
+      musicBanks["A"][k]:setVolume(musicVolume)
+      musicBanks["B"][k]:setVolume(musicVolume)
   end
   for k, v in pairs(transitionDefs) do
       musicBanks["A"][k] = love.audio.newSource(v["path"],"static")
       musicBanks["B"][k] = love.audio.newSource(v["path"],"static")
+      musicBanks["A"][k]:setVolume(musicVolume)
+      musicBanks["B"][k]:setVolume(musicVolume)
   end
   
 end
@@ -135,16 +139,16 @@ end
 
 function api.Update(dt)
 	bgmTimer = bgmTimer - dt
-  musicVolume = cosmos.GetMusicVolume()
+  musicVolume = cosmos.GetMusicVolume() * Global.MUSIC_VOLUME
   bgmTension = EnemyHandler.CountEnemies() / tensionEnemyCountDivsor * (1 - (ShapeHandler.GetShapeCount() / PowerHandler.GetMaxShapes()) * 0.4)
   if musicEnabled ~= musicWasEnabled or musicVolume ~= musicWasVolume then
     musicWasEnabled = musicEnabled
     musicWasVolume = musicVolume
     for k, v in pairs(musicBanks["A"]) do
-      v.setVolume(musicEnabled and musicWasVolume or 0)
+      v:setVolume(musicEnabled and musicWasVolume or 0)
     end
     for k, v in pairs(musicBanks["B"]) do
-      v.setVolume(musicEnabled and musicWasVolume or 0)
+      v:setVolume(musicEnabled and musicWasVolume or 0)
     end
   end
   
