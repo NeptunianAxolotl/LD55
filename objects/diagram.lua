@@ -3,14 +3,18 @@ local ShapeDefs = require("defs/shapeDefs")
 
 local function GetPointAtMouse(self, world, pos)
 	local bestDistSq = false
+	local bestID = false
 	local bestPoint = false
 	for i = 1, #self.points do
 		if not self.points[i].destroyed then
 			local point = self.points[i].geo
-			local distSq = world.MouseNearWorldPos(point, 20)
+			local distSq = world.MouseNearWorldPos(point, Global.CLICK_RADIUS)
 			if distSq and ((not bestDistSq) or distSq < bestDistSq) then
-				bestDistSq = distSq
-				bestPoint = point
+				if (math.sqrt(distSq) > Global.CLICK_RECENT_RADIUS) or ((not bestID) or bestID > self.points[i].id) then
+					bestID = self.points[i].id
+					bestDistSq = distSq
+					bestPoint = point
+				end
 			end
 		end
 	end
@@ -67,6 +71,15 @@ local function CleanUpOrphanedPoints(self)
 			i = i + 1
 		end
 	end
+end
+
+local function ElementContainsPoint(element, pointPos)
+	for i = 1, #element.points do
+		if util.VeryApproxEq(pointPos, element.points[i].geo) then
+			return true
+		end
+	end
+	return false
 end
 
 local function GetNewElement(u, v, elementType)
@@ -320,12 +333,19 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 		return false
 	end
 	local edges = {}
+	local lengthSq = false
 	for i = 1, #vertices do
 		local prev = i - 1
 		if prev == 0 then
 			prev = #vertices
 		end
-		edges[#edges + 1] = {vertices[prev], vertices[i]}
+		local edge = {vertices[prev], vertices[i]}
+		if lengthSq and not util.ApproxEqNumber(util.LineLengthSq(edge), lengthSq) then
+			return false -- How did we get here? I saw an isosceles triangle once.
+		else
+			lengthSq = util.LineLengthSq(edge)
+		end
+		edges[#edges + 1] = edge
 	end
 	local foundLines = {}
 	for i = 1, #edges do
@@ -447,17 +467,6 @@ local function UpdateFadeAndDestroy(self, elements, dt)
 	end
 end
 
-local function GetElementOpacity(element, fadeTime)
-	if element.destroyTimer then
-		return element.destroyTimer * 0.25
-	end
-	if not element.fade then
-		return 0.85
-	end
-	local prop = 1 - math.pow(1 - (element.fade / fadeTime), 1.8)
-	return prop * 0.25 + (1 - prop) * 0.9
-end
-
 local function RespondToRemovedShape(self, edges, shapeID)
 	for i = 1, #edges do
 		local line = ElementAlreadyExists(self, edges[i], Global.LINE, true)
@@ -471,6 +480,22 @@ local function RespondToRemovedShape(self, edges, shapeID)
 			end
 		end
 	end
+end
+
+local function GetElementOpacity(element, fadeTime)
+	if element.destroyTimer then
+		return element.destroyTimer * 0.25
+	end
+	if not element.fade then
+		return 0.85
+	end
+	local prop = 1 - math.pow(1 - (element.fade / fadeTime), 1.8)
+	return prop * 0.25 + (1 - prop) * 0.9
+end
+
+local function SetElementColor(element, fadeTime, hoveredPoint)
+	local col = (hoveredPoint and ElementContainsPoint(element, hoveredPoint) and Global.LINE_HIGHLIGHT_COL) or Global.LINE_COL
+	love.graphics.setColor(col[1], col[2], col[3], GetElementOpacity(element, fadeTime))
 end
 
 local function NewDiagram(levelData, world)
@@ -513,7 +538,7 @@ local function NewDiagram(levelData, world)
 			
 			for i = 1, #self.lines do
 				local line = self.lines[i].geo
-				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], GetElementOpacity(self.lines[i], fadeTime))
+				SetElementColor(self.lines[i], fadeTime, hoveredPoint)
 				love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
 				if Global.DEBUG_SPECIAL_ANGLES then
 					for j = 1, #self.lines[i].notableAngles do
@@ -525,8 +550,16 @@ local function NewDiagram(levelData, world)
 			
 			for i = 1, #self.circles do
 				local circle = self.circles[i].geo
-				love.graphics.setColor(Global.LINE_COL[1], Global.LINE_COL[2], Global.LINE_COL[3], GetElementOpacity(self.circles[i], fadeTime))
+				SetElementColor(self.circles[i], fadeTime, hoveredPoint)
 				love.graphics.circle('line', circle[1], circle[2], circle[3], math.floor(math.max(32, math.min(160, circle[3]*0.8))))
+				if Global.DEBUG_CIRCLE_POINTS then
+					love.graphics.printf(#self.circles[i].points, circle[1], circle[2], 30, "right")
+					
+					for j = 1, #self.circles[i].points do
+						local geo = self.circles[i].points[j].geo
+						love.graphics.circle('line', geo[1], geo[2], 60)
+					end
+				end
 			end
 			
 			if selectedPoint then

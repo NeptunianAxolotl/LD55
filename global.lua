@@ -2,6 +2,7 @@
 local globals = {
 	BACK_COL = {78/255, 70/255, 90/255},
 	LINE_COL = {0.95,0.95,0.9},
+	LINE_HIGHLIGHT_COL = {0.98, 1, 0.6},
 	RED_COL  = {0.95,0.2,0.2},
 	
 	PANEL_COL = {78/255, 70/255, 90/255},
@@ -30,6 +31,9 @@ local globals = {
 	AFFINITY_RADIUS = 1200,
 	ENEMY_SPAWN_WIGGLE = 250,
 	PLAYER_SPEED = 30,
+	
+	CLICK_RADIUS = 20,
+	CLICK_RECENT_RADIUS = 6,
 	
 	ENEMY_SPAWN_MULT = 1,
 	ZOOM_OUT = 1,
@@ -65,6 +69,7 @@ local globals = {
 	
 	ACT_IN_GAME_OVER = false,
 	
+	DEBUG_CIRCLE_POINTS   = false,
 	DEBUG_PRINT_LINE      = false,
 	DEBUG_PRINT_CIRCLE    = false,
 	DEBUG_PRINT_CLICK_POS = false,

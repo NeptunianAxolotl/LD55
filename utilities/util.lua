@@ -35,6 +35,10 @@ function util.VeryApproxEq(u, v)
 	return u and v and u[1] - v[1] < 0.001 and v[1] - u[1] < 0.001 and u[2] - v[2] < 0.001 and v[2] - u[2] < 0.001
 end
 
+function util.ExtremelyApproxEq(u, v)
+	return u and v and u[1] - v[1] < 10 and v[1] - u[1] < 10 and u[2] - v[2] < 10 and v[2] - u[2] < 10
+end
+
 function util.Eq(u, v)
 	return u and v and u[1] - v[1] < 0.000001 and v[1] - u[1] < 0.000001 and u[2] - v[2] < 0.000001 and v[2] - u[2] < 0.000001
 end
@@ -80,6 +84,10 @@ function util.DistSq(x1, y1, x2, y2)
 		return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2)
 	end
 	return util.DistSqVectors(x1, y1)
+end
+
+function util.LineLengthSq(l)
+	return util.DistSqVectors(l[1], l[2])
 end
 
 function util.DistSqWithWrap(x1, y1, x2, y2, wrapX, wrapY)
