@@ -34,8 +34,7 @@ local function SpawnEnemy()
 end
 
 local function SpawnEnemiesUpdate(dt)
-	local hexMult = 1
-	self.spawnTimer = self.spawnTimer + dt * Global.ENEMY_SPAWN_MULT * self.difficulty * hexMult * (4 + ShapeHandler.GetShapeCount() / 8)
+	self.spawnTimer = self.spawnTimer + dt * Global.ENEMY_SPAWN_MULT * self.difficulty * ((4 + ShapeHandler.GetShapeCount()) / 8)
 	self.spawnTimer = self.spawnTimer + dt * 5 * math.sqrt(ShapeHandler.GetShapeTypeCount("hexagon"))
 	while self.spawnTimer > 1 / self.spawnFrequency do
 		SpawnEnemy()
