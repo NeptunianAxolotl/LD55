@@ -14,6 +14,7 @@ local globals = {
 	OUTLINE_DISABLE_COL = {5/255, 5/255, 4/255},
 	OUTLINE_FLASH_COL = {0.95,0.5,0.9},
 	OUTLINE_HIGHLIGHT_COL = {0.2,0.5,0.9},
+	AFFINITY_COLOR = {0.9,0.5,0.9},
 	
 	TEXT_MENU_COL       = {0, 0, 0},
 	MENU_COL            = {78/255, 70/255, 90/255},
@@ -78,6 +79,8 @@ local globals = {
 	TURN_MULT = 175,
 	
 	LINE_LENGTH = 12000,
+	
+	BOOK_SCALE = 0.075,
 	
 	ENEMY_SPAWN_MULT = 1,
 	ZOOM_OUT = 1,

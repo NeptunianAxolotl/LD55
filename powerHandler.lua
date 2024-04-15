@@ -67,7 +67,7 @@ function api.GetPlayerHealthRegen()
 	return 2 + 0.5*(self.level.water - 1) + 0.5*math.max(0, self.level.water - 3) + 1.5*math.max(0, self.level.water - 6)
 end
 
-function api.GetGeneralSpeedModifier()
+function api.GetEnemySpeedModifier()
 	return 1 / ((self.level.ice - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, self.level.ice - 4) + 1)
 end
 

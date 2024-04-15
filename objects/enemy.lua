@@ -87,7 +87,7 @@ local function NewEnemy(world, enemyDef, position, size)
 		else
 			distanceMult = 1 + (distanceMult - Global.WORLD_RADIUS) / Global.SPEEDY_ELEMENT_RADIUS
 		end
-		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetGeneralSpeedModifier() * distanceMult, self.velocity))
+		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetEnemySpeedModifier() * distanceMult, self.velocity))
 		if self.push then
 			self.pos = util.Add(self.pos, util.Mult(dt, self.push))
 			self.push = util.Mult(1 - dt*Global.CIRCLE_PUSH_EXPONENT, self.push)

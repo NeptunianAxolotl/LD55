@@ -52,7 +52,7 @@ local elementUiDefs = {
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Everything moves " .. PercentInc(1 / PowerHandler.GetGeneralSpeedModifier()) .. "% slower"
+			return "Spirits moves " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
 		end,
 		image = "ice",
 	},
@@ -349,6 +349,22 @@ local function DrawPowerMenu()
 		end
 	end
 	
+	local octaX = overX + overWidth/6
+	local octaY = 390
+	
+	Font.SetSize(2)
+	PrintLine("Elemental Affinity", 1, overX, octaY - 240, "center", overWidth/3, Global.TEXT_MENU_COL)
+	Resources.DrawImage("bookback", octaX, octaY, 0, 1, 1)
+	
+	ShapeHandler.DrawInBook(octaX, octaY)
+	local affinityPos = util.Add({octaX, octaY}, util.Mult(Global.BOOK_SCALE, ShapeHandler.GetAffinityPos()))
+	local affinityRadius = PowerHandler.GetSpawnAffinityRadius()*Global.BOOK_SCALE * 0.4
+	
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.5)
+	love.graphics.circle('fill', affinityPos[1], affinityPos[2], 5)
+	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.2)
+	love.graphics.circle('fill', affinityPos[1], affinityPos[2], affinityRadius, 40)
+					
 --		love.graphics.printf([[
 --'p' to unpause
 --'ctrl+m' to toggle music
@@ -433,13 +449,13 @@ function api.DrawInterface(transMid, transTopLeft, transBottom)
 	love.graphics.replaceTransform(transBottom)
 	BottomInterface(transBottom)
 	love.graphics.replaceTransform(transMid)
+	DrawFloatingStuff()
 	if self.powersOpen then
 		DrawPowerMenu()
 	end
 	if self.menuOpen then
 		DrawMainMenu()
 	end
-	DrawFloatingStuff()
 end
 
 function api.Initialize(world, difficulty)

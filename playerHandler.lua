@@ -55,7 +55,7 @@ end
 
 function api.Update(dt)
 	local mousePos = self.world.GetMousePosition()
-	local maxSpeed = PowerHandler.GetPlayerSpeed() * PowerHandler.GetGeneralSpeedModifier()
+	local maxSpeed = PowerHandler.GetPlayerSpeed()
 	local wantedSpeed = maxSpeed
 	local dist = util.DistVectors(self.playerPos, mousePos) - 50
 	wantedSpeed = math.max(0, math.min(dist*10, wantedSpeed))

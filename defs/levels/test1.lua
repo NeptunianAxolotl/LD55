@@ -56,7 +56,7 @@ It is time to begin the summoning.
 			end,
 		},
 		{
-			text = [[Now inscribe a circle clicking a flashing point then clicking the corner of the triangle.]],
+			text = [[Now inscribe a circle clicking by a flashing point then clicking the corner of the triangle.]],
 			points = {
 				{669.88245634869, -10.691263620614},
 			},

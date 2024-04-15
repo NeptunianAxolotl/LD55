@@ -57,7 +57,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		if GameHandler.ShapesAreInactive() then
 			return
 		end
-		local discharge = math.min(1, ShapeHandler.GetShapeCount()/15)
+		local discharge = math.max(0, math.min(1, (ShapeHandler.GetShapeCount() - 1)/8))
 		self.power = self.power - dt*self.def.idleDischargeMult*Global.SHAPE_IDLE_DRAIN_MULT*(0.2 + 0.8*discharge)
 		
 		if self.def.update then
@@ -84,6 +84,22 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 			--	love.graphics.line(line[1][1], line[1][2], line[2][1], line[2][2])
 			--end
 		end})
+	end
+	
+	function self.DrawInBook(midX, midY)
+		if not self.bookDrawVerts then
+			local verts = {}
+			for i = 1, #drawVerts, 2 do
+				verts[#verts + 1] = Global.BOOK_SCALE*drawVerts[i] + midX
+				verts[#verts + 1] = Global.BOOK_SCALE*drawVerts[i + 1] + midY
+			end
+			self.bookDrawVerts = verts
+		end
+		love.graphics.setLineWidth(5)
+		love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.1)
+		love.graphics.polygon("fill", self.bookDrawVerts)
+		--love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], 0.4)
+		--love.graphics.polygon("line", self.bookDrawVerts)
 	end
 	
 	return self

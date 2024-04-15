@@ -149,6 +149,10 @@ function api.Draw(drawQueue)
 	IterableMap.ApplySelf(self.shapes, "Draw", drawQueue)
 end
 
+function api.DrawInBook(midX, midY)
+	IterableMap.ApplySelf(self.shapes, "DrawInBook", midX, midY)
+end
+
 local function NameMatches(shape, name)
 	return shape.def.name == name
 end
