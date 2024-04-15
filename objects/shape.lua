@@ -79,7 +79,7 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		drawQueue:push({y=8; f=function()
 			love.graphics.setLineWidth((13 + math.sin(self.animate*math.pi*2))*self.def.glowSizeMult)
 			
-			local alpha = 0.25 + 0.65*self.power/self.maxPower
+			local alpha = 0.55 + 0.35*self.power/self.maxPower
 			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], alpha*0.25)
 			love.graphics.polygon("fill", drawVerts)
 			love.graphics.setColor(shapeDef.color[1], shapeDef.color[2], shapeDef.color[3], alpha)

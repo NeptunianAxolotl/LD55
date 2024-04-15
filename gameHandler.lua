@@ -206,6 +206,18 @@ function api.ShapesAreInactive()
 	return api.GetTutorial().noEnemySpawn
 end
 
+function api.WinTheGame()
+	if self.noWin then
+		return
+	end
+	self.world.SetGameOver(true, "The Summoning is Complete")
+end
+
+function api.IsGameOver()
+	local over = self.world.GetGameOver()
+	return over
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -272,12 +284,14 @@ local function DrawLeftInterface()
 		offset = 20
 		for i = 1, #ShapeDefs.shapeNames do
 			local name = ShapeDefs.shapeNames[i]
-			local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
-			if maximum > 0 then
-				local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
-				PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+			if ShapeDefs.collectiveHumanName[name] then
+				local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
+				if maximum > 0 then
+					local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
+					PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+				end
+				offset = offset + 40
 			end
-			offset = offset + 40
 		end
 	end
 	
@@ -467,6 +481,7 @@ function api.Initialize(world, difficulty)
 		menuOpen = false,
 		powersOpen = false,
 		noGrimoire = levelData.noGrimoire,
+		noWin = levelData.noGrimoire,
 		tutorial = difficulty <= 1.2 and levelData.tutorial,
 		tutorialStage = difficulty <= 1.2 and levelData.tutorial and 1,
 	}

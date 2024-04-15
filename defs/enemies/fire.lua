@@ -12,7 +12,7 @@ local data = {
 	end,
 	update = function (self, dt)
 		self.animation = self.animation + dt*self.animSpeed
-		if self.animation >= 1 then
+		if self.animation >= 1 and not GameHandler.IsGameOver() then
 			self.wantedDir = PlayerHandler.GetVectorToPlayer(self.pos)
 			self.animation = self.animation - 1
 		end
