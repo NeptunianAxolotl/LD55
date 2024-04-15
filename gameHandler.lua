@@ -268,22 +268,23 @@ local function DrawLeftInterface()
 	PrintLine("Tool: " .. tool, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
 	offset = offset - 40
 	
-	offset = offset - 40
-	for i = #ShapeDefs.shapeNames, 1, -1 do
-		local name = ShapeDefs.shapeNames[i]
-		local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
-		if maximum > 0 then
-			local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
-			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
-			offset = offset - 40
+	if not api.GetTutorial() then
+		offset = 20
+		for i = 1, #ShapeDefs.shapeNames do
+			local name = ShapeDefs.shapeNames[i]
+			local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
+			if maximum > 0 then
+				local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
+				PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+			end
+			offset = offset + 40
 		end
 	end
-	
-	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
 	
 	if not Global.DEBUG_UI then
 		return
 	end
+	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
 	offset = 20
 	offset = offset + 20
 	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 4, xOffset + 5, offset, "left", 800, Global.FLOATING_TEXT_COL)
