@@ -13,7 +13,7 @@ local data = {
 Click the point that makes sense and then click the other point.
 
 Nothing bad will happen]],
-	background = "mainlevel",
+	background = "stonecircle",
 	defaultElement = Global.LINE,
 	chalkLimit = 1,
 	permanentLines = {

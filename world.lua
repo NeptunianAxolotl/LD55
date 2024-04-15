@@ -1,8 +1,6 @@
 
 EffectsHandler = require("effectsHandler")
-DialogueHandler = require("dialogueHandler")
 DiagramHandler = require("diagramHandler")
-ShadowHandler = require("shadowHandler")
 ShapeHandler = require("shapeHandler")
 PowerHandler = require("powerHandler")
 PlayerHandler = require("playerHandler")
@@ -16,8 +14,6 @@ Delay = require("utilities/delay")
 CameraHandler = require("cameraHandler")
 Camera = require("utilities/cameraUtilities")
 
-ChatHandler = require("chatHandler")
-DeckHandler = require("deckHandler")
 GameHandler = require("gameHandler") -- Handles the gamified parts of the game, such as score, progress and interface.
 
 local PriorityQueue = require("include/PriorityQueue")
@@ -103,9 +99,6 @@ function api.MousePressed(x, y, button)
 	
 	if api.GetGameOver() and not Global.ACT_IN_GAME_OVER then
 		return -- No doing actions
-	end
-	if DialogueHandler.MousePressedInterface(uiX, uiY, button) then
-		return
 	end
 	-- Send event to game components
 	x, y = CameraHandler.GetCameraTransform():inverse():transformPoint(x, y)
@@ -218,7 +211,6 @@ function api.Update(dt)
 	ShapeHandler.Update(dt)
 	PlayerHandler.Update(dt)
 	EnemyHandler.Update(dt)
-	ChatHandler.Update(dt)
 	EffectsHandler.Update(dt)
 	UpdateCamera(dt)
 end
@@ -268,8 +260,6 @@ function api.Draw()
 	-- Draw interface
 	GameHandler.DrawInterface(self.interfaceTransform, self.interfaceTransformTopLeft, self.interfaceTransformBottom)
 	EffectsHandler.DrawInterface()
-	DialogueHandler.DrawInterface()
-	ChatHandler.DrawInterface()
 	
 	love.graphics.replaceTransform(self.emptyTransform)
 end
@@ -291,9 +281,6 @@ function api.Initialize(cosmos, levelData, difficulty)
 	InterfaceUtil.Initialize()
 	EffectsHandler.Initialize(api)
 	
-	ChatHandler.Initialize(api)
-	DialogueHandler.Initialize(api)
-	
 	PowerHandler.Initialize(api, difficulty)
 	PlayerHandler.Initialize(api)
 	EnemyHandler.Initialize(api, difficulty)
@@ -301,7 +288,6 @@ function api.Initialize(cosmos, levelData, difficulty)
 	ShapeHandler.Initialize(api)
 	--ShadowHandler.Initialize(api)
 	
-	DeckHandler.Initialize(api)
 	GameHandler.Initialize(api, difficulty)
 	
 	CameraHandler.Initialize(api, levelData)

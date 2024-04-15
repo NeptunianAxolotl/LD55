@@ -127,7 +127,7 @@ Draw more sigils!
 			end,
 		},
 	},
-	background = "mainlevel",
+	background = "stonecircle",
 	defaultElement = Global.LINE,
 	chalkLimit = 1,
 	permanentLines = {

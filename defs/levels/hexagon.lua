@@ -11,7 +11,7 @@ local firstTutorialLine = {
 local basis = {{500, 0}, {0, 0}}
 
 local data = {
-	background = "mainlevel",
+	background = "stonecircle",
 	defaultElement = Global.LINE,
 	startingLevel = 100,
 	chalkLimit = 1,
