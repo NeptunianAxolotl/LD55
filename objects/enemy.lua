@@ -74,6 +74,8 @@ local function NewEnemy(world, enemyDef, position, size)
 	
 	function self.Destroy()
 		self.destroyed = true
+    local soundNum = math.floor(love.math.random(1,5))
+    SoundHandler.playSound("capture_"..soundNum)
 	end
 	
 	function self.Update(dt)

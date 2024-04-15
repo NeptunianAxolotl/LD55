@@ -145,10 +145,10 @@ function api.Update(dt)
     musicWasEnabled = musicEnabled
     musicWasVolume = musicVolume
     for k, v in pairs(musicBanks["A"]) do
-      v:setVolume(musicEnabled and musicWasVolume or 0)
+      musicBanks["A"][k]:setVolume(musicEnabled and musicWasVolume or 0)
     end
     for k, v in pairs(musicBanks["B"]) do
-      v:setVolume(musicEnabled and musicWasVolume or 0)
+      musicBanks["B"][k]:setVolume(musicEnabled and musicWasVolume or 0)
     end
   end
   

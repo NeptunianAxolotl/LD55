@@ -136,8 +136,10 @@ end
 local function NotifyUpgrade(element)
 	if element == "lightning" then
 		UpdateMaxShapes()
+    SoundHandler.PlaySound("grimoire_level_up")
 	elseif element == "life" then
 		PlayerHandler.UpdateMaxHealth()
+    SoundHandler.PlaySound("grimoire_level_up_2")
 	end
 end
 

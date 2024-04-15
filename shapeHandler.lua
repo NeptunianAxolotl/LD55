@@ -10,9 +10,13 @@ function api.AddShape(shapeDef, vertices, edges, definingLines)
 	IterableMap.Add(self.shapes, self.nextShapeID, new)
 	self.nextShapeID = self.nextShapeID + 1
 	self.shapesCreated = self.shapesCreated + 1
+  
+  local soundNum = math.floor(love.math.random(1,8))
+  SoundHandler.PlaySound("draw_"..soundNum)
 	
 	if api.GetShapeTypeCount(shapeDef.name) > PowerHandler.GetMaxShapesType(shapeDef.name) then
 		api.DestroyOldestShape(shapeDef.name)
+    SoundHandler.PlaySound("shape_vanish")
 	end
 end
 
