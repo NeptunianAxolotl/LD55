@@ -13,6 +13,10 @@ function api.GetVectorToPlayer(pos)
 	return util.UnitTowards(pos, self.playerPos)
 end
 
+function api.GetPlayerPos()
+	return self.playerPos
+end
+
 local function CheckForDamage()
 	local enemy = EnemyHandler.GetClosestEnemy(self.playerPos, self.playerRadius)
 	if not enemy then

@@ -42,6 +42,10 @@ function api.GetPlayerHitLeeway()
 	return 0.3
 end
 
+function api.GetSpawnAffinityRadius()
+	return Global.WORLD_RADIUS*0.9
+end
+
 --------------------------------------------------
 -- Progression and UI
 --------------------------------------------------

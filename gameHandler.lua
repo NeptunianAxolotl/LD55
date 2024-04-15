@@ -18,6 +18,7 @@ local elementUiDefs = {
 		image = "water_main",
 	},
 }
+
 local elementList = {
 	"water",
 	"air",
@@ -111,7 +112,7 @@ local function DrawLeftInterface()
 	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 100, "left", 280)
 	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 280)
 	
-	PrintLine("Triangles: " .. ShapeHandler.GetShapeCount("triangle"), 2, xOffset + 20, 240, "left", 280)
+	PrintLine("Triangles: " .. ShapeHandler.GetShapeTypeCount("triangle"), 2, xOffset + 20, 240, "left", 280)
 	
 	
 	local over, _, _, overType = self.world.GetGameOver()

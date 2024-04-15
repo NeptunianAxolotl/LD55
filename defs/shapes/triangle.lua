@@ -28,6 +28,7 @@ local data = {
 	powerMult = 1,
 	drainCost = 2,
 	drainForce = 0.4,
+	affinityMult = 1,
 	idleDischargeMult = 0.2,
 	pullForce = 150,
 	glowSizeMult = 1,

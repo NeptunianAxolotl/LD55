@@ -18,9 +18,15 @@ local function SpawnEnemiesUpdate(dt)
 	end
 	local size = GetSpawnSize()
 	
+	local affinityPos = ShapeHandler.GetAffinityPos()
+	local affinityRadius = PowerHandler.GetSpawnAffinityRadius()
+	local pos = util.RandomPointInAnnulus(affinityRadius, affinityRadius + 100)
+	
+	local angle = util.Angle(pos)
+	
 	self.spawnTimer = self.spawnTimer - self.spawnRate
-	local pos = util.RandomPointInAnnulus(Global.ENEMY_SPAWN_RADIUS, Global.ENEMY_SPAWN_RADIUS + 200)
-	local new = NewEnemy(self.world, EnemyDefs['water'], pos, size)
+	
+	local new = NewEnemy(self.world, EnemyDefs.defs[enemyType], pos, size)
 	
 	IterableMap.Add(self.enemies, new)
 end

@@ -14,6 +14,7 @@ local data = {
 	powerMult = 3,
 	drainCost = 1,
 	drainForce = 2,
+	affinityMult = 10,
 	idleDischargeMult = 0.15,
 	glowSizeMult = 1.8,
 	init = function (self)

@@ -37,6 +37,10 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		self.def.init(self)
 	end
 	
+	function self.GetAffinityWeight()
+		return self.magnitude*self.def.affinityMult
+	end
+	
 	function self.PowerProp()
 		return math.max(0, self.power / self.maxPower)
 	end

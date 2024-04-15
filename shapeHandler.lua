@@ -61,6 +61,13 @@ function api.ShapeAt(shapeType, vertices)
 	return IterableMap.GetFirstSatisfies(self.shapes, ShapeMatches, shapeType, compareVertices, compareN)
 end
 
+function api.GetAffinityPos()
+	if api.GetShapeCount() then
+		return {0, 0}
+	end
+	
+end
+
 function api.GetCompareVertices(vertices)
 	local minVertex = 1
 	for i = 1, #vertices do
@@ -132,8 +139,12 @@ local function NameMatches(shape, name)
 	return shape.def.name == name
 end
 
-function api.GetShapeCount(name)
+function api.GetShapeTypeCount(name)
 	return IterableMap.FilterCount(self.shapes, NameMatches, name)
+end
+
+function api.GetShapeCount()
+	return IterableMap.Count(self.shapes)
 end
 
 function api.Initialize(world, levelData)
