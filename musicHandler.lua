@@ -1,4 +1,5 @@
 -- Custom music handler because Beacon515L is a madman
+local tensionEnemyCountDivsor = 5
 
 local loopDefs = {
     ["A"] =
@@ -58,6 +59,11 @@ local musicBanks = {
 
 local bgmTimer = 0
 
+local musicEnabled = true
+local musicWasEnabled = true
+local musicVolume = 1
+local musicWasVolume = 1
+
 function loadSounds()
   for k, v in pairs(loopDefs) do
       musicBanks["A"][k] = love.audio.newSource(v["path"],"static")
@@ -83,14 +89,32 @@ end
 
 function api.StopCurrentTrack(delay)
 	-- implement as mute, not stop
+  musicEnabled = false
 end
 
-function api.SetCurrentTrackFadeTime(fadeTime)
-	-- implement as volume manipulation, not stop
+function api.StartCurrentTrack(delay)
+  musicEnabled = true
+end
+
+function api.setBGMTension(value)
+  bgmTension = value
 end
 
 function api.Update(dt)
 	bgmTimer = bgmTimer - dt
+  musicVolume = cosmos.GetMusicVolume()
+  bgmTension = EnemyHandler.CountEnemies() / tensionEnemyCountDivsor
+  if musicEnabled ~= musicWasEnabled or musicVolume ~= musicWasVolume then
+    musicWasEnabled = musicEnabled
+    musicWasVolume = musicVolume
+    for k, v in pairs(musicBanks["A"]) do
+      v.setVolume(musicEnabled and musicWasVolume or 0)
+    end
+    for k, v in pairs(musicBanks["B"]) do
+      v.setVolume(musicEnabled and musicWasVolume or 0)
+    end
+  end
+  
   if bgmTimer < 0 then
     bgmTimer = 0
   end

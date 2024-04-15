@@ -20,6 +20,8 @@ function api.ToggleMusic()
 	self.musicEnabled = not self.musicEnabled
 	if not self.musicEnabled then
 		MusicHandler.StopCurrentTrack()
+  else
+    MusicHandler.StartCurrentTrack()
 	end
 end
 
