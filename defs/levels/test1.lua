@@ -25,10 +25,19 @@ local data = {
 		{
 			points = firstTutorialLine,
 			pointsIfSelected = firstTutorialLine,
-			text = "Click on the points for lines",
+			text = "Click one flashing point then the other to inscribe a line",
 			noEnemySpawn = true,
 			progressFunc = function (self, dt)
+				self.tutorialLinger = 0
 				return SkipTutorial() or DiagramHandler.ElementExists(firstTutorialLine, Global.LINE)
+			end,
+		},
+		{
+			text = "Great",
+			noEnemySpawn = true,
+			progressClick = true,
+			progressFunc = function (self, dt)
+				return SkipTutorial()
 			end,
 		},
 		{
@@ -39,6 +48,7 @@ local data = {
 			pointsIfSelected = {
 				{237.92103356828, -86.694769114262},
 			},
+			text = "Click the flashing points to make a line",
 			noEnemySpawn = true,
 			progressFunc = function (self, dt)
 				return SkipTutorial() or DiagramHandler.PointExists(secondTutorialPoint)
@@ -57,11 +67,7 @@ local data = {
 			},
 			noEnemySpawn = true,
 			progressFunc = function (self, dt)
-				if SkipTutorial() or ShapeHandler.ShapeAt("square", secondTutorialSquare) then
-					self.tutorialLinger = 0
-					return true
-				end
-				return false
+				return SkipTutorial() or ShapeHandler.ShapeAt("square", secondTutorialSquare)
 			end,
 		},
 	},
@@ -76,8 +82,8 @@ local data = {
 		true,
 		true,
 	},
-	playerPos = {420, 60},
-	cameraPos = {450, -180},
+	playerPos = {320, 0},
+	cameraPos = {450, -200},
 	lines = {
 		util.RotateLineAroundOrigin(baseLine, -0.5),
 		util.RotateLineAroundOrigin(baseLine, -4.45),

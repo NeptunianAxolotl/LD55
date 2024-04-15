@@ -152,6 +152,14 @@ function api.MousePressed(x, y)
 	if self.hovered then
 		HandleHoverClick()
 	end
+	local tutorial = api.GetTutorial()
+	if tutorial and tutorial.progressClick then
+		self.tutorialStage = self.tutorialStage + 1
+		if not self.tutorial[self.tutorialStage] then
+			self.tutorial = false
+			self.tutorialStage = false
+		end
+	end
 end
 
 function api.KeyPressed(key, scancode, isRepeat)
@@ -180,11 +188,14 @@ local function UpdateTutorial(dt)
 	if not tutorial then
 		return
 	end
-	if tutorial.progressFunc(self, dt) then
+	while tutorial.progressFunc(self, dt) do
 		self.tutorialStage = self.tutorialStage + 1
 		if not self.tutorial[self.tutorialStage] then
+			self.tutorial = false
+			self.tutorialStage = false
 			return
 		end
+		tutorial = api.GetTutorial()
 	end
 end
 
@@ -206,6 +217,18 @@ local function PrintLine(text, size, x, y, align, width)
 		return y + 25
 	end
 	return y + 60
+end
+
+local function DrawFloatingStuff()
+	local over, _, _, overType = self.world.GetGameOver()
+	if over then
+		PrintLine(overType or "Game Over", 0, 1000, 400, "center", 250)
+	end
+	
+	local tutorial = api.GetTutorial()
+	if tutorial then
+		PrintLine(tutorial.text, 1, 500, 60, "center", 1000)
+	end
 end
 
 local function DrawLeftInterface()
@@ -241,11 +264,6 @@ local function DrawLeftInterface()
 			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 800)
 		end
 		offset = offset + 30
-	end
-	
-	local over, _, _, overType = self.world.GetGameOver()
-	if over then
-		PrintLine(overType or "Game Over", 0, 1000, 400, "center", 250)
 	end
 	
 	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
@@ -402,6 +420,7 @@ function api.DrawInterface(transMid, transTopLeft, transBottom)
 	if self.menuOpen then
 		DrawMainMenu()
 	end
+	DrawFloatingStuff()
 end
 
 function api.Initialize(world, difficulty)

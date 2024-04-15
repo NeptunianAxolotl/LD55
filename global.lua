@@ -22,7 +22,7 @@ local globals = {
 	TEXT_DISABLE_COL    = {0.5, 0.5, 0.5},
 	TEXT_FLASH_COL      = {0.73, 0.73, 0.75},
 	TEXT_HIGHLIGHT_COL  = {0.73, 0.73, 0.75},
-	TEXT_COL            = {0.73, 0.73, 0.75},
+	TEXT_COL            = {0.83, 0.83, 0.87},
 	
 	BUTTON_FLASH_PERIOD = 0.6,
 	
@@ -54,7 +54,7 @@ local globals = {
 	RANDOM_TESTING_ELEMENTS = 0,
 	
 	MASTER_VOLUME = 1,
-	MUSIC_VOLUME = 0.7,
+	MUSIC_VOLUME = 0.55,
 	DEFAULT_MUSIC_DURATION = 174.69,
 	CROSSFADE_TIME = 0,
 	
