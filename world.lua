@@ -197,6 +197,7 @@ end
 function api.Update(dt)
 	GameHandler.Update(dt)
 	InterfaceUtil.Update(dt)
+	PowerHandler.Update(dt)
 	if api.GetPaused() then
 		UpdateCamera(dt)
 		return
@@ -206,7 +207,6 @@ function api.Update(dt)
 	Delay.Update(dt)
 	--ShadowHandler.Update(api)
 
-	PowerHandler.Update(api)
 	DiagramHandler.Update(dt)
 	ShapeHandler.Update(dt)
 	PlayerHandler.Update(dt)

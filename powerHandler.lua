@@ -8,6 +8,31 @@ local world
 
 
 --------------------------------------------------
+-- Helpers
+--------------------------------------------------
+
+local function UpdateAutomaticUpgrade()
+	for i = 1, #EnemyDefs.order do
+		local name = EnemyDefs.order[i]
+		if api.IsAutomatic(name) and api.CanUpgradeElement(name) then
+			api.UpgradeElement(name)
+			return
+		end
+	end
+end
+
+local function UpdateMaxShapes()
+	local total = 0
+	for i = 1, #ShapeDefs.shapeNames do
+		local name = ShapeDefs.shapeNames[i]
+		self.currentMaxShapes[name] = math.floor(self.baseMaxShapes[name] + (self.level.lightning - 1)*self.maxShapesPerLevel[name])
+		total = total + self.currentMaxShapes[name]
+	end
+	self.totalMaxShapes = total
+end
+
+
+--------------------------------------------------
 -- API
 --------------------------------------------------
 
@@ -63,20 +88,6 @@ function api.GetMaxShapesType(name)
 	return self.currentMaxShapes[name]
 end
 
---------------------------------------------------
--- Helpers
---------------------------------------------------
-
-local function UpdateMaxShapes()
-	local total = 0
-	for i = 1, #ShapeDefs.shapeNames do
-		local name = ShapeDefs.shapeNames[i]
-		self.currentMaxShapes[name] = math.floor(self.baseMaxShapes[name] + (self.level.lightning - 1)*self.maxShapesPerLevel[name])
-		total = total + self.currentMaxShapes[name]
-	end
-	self.totalMaxShapes = total
-end
-
 
 --------------------------------------------------
 -- Progression and UI
@@ -113,6 +124,7 @@ end
 
 function api.AddProgress(element, gained)
 	self.progress[element] = self.progress[element] + util.Round(gained)
+	UpdateAutomaticUpgrade()
 end
 
 function api.IsAutomatic(element)
@@ -149,8 +161,8 @@ end
 --------------------------------------------------
 
 function api.Update(dt)
+	UpdateAutomaticUpgrade()
 end
-
 
 function api.Initialize(world)
 	self = {
