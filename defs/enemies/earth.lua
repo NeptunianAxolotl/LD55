@@ -5,6 +5,7 @@ local data = {
 	maxEnergy = 3,
 	baseRadius = 25,
 	baseDamage = 10,
+	weightMult = 1,
 	init = function (self)
 		self.animSpeed = 0.9 + math.random()*0.2
 		self.animation = math.random()

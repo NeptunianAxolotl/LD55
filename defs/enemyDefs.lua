@@ -5,7 +5,7 @@ for name, def in pairs(enemies) do
 	def.name = name
 end
 
-local elementList = {
+local elementOrderAroundCircle = {
 	"lightning",
 	"air",
 	"ice",
@@ -18,7 +18,7 @@ local elementList = {
 
 local data = {
 	defs = enemies,
-	order = elementList,
+	order = elementOrderAroundCircle,
 }
 
 return data

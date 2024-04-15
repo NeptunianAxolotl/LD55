@@ -17,6 +17,55 @@ local elementUiDefs = {
 		end,
 		image = "water_main",
 	},
+	air = {
+		humanName = "Air",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "air_3",
+	},
+	earth = {
+		humanName = "Earth",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "earth",
+	},
+	fire = {
+		humanName = "Fire",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "fire_1",
+	},
+	life = {
+		humanName = "Life",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "life_main",
+	},
+	ice = {
+		humanName = "Ice",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "ice",
+	},
+	lightning = {
+		humanName = "Lightning",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "lightning_2",
+	},
+	chalk = {
+		humanName = "Chalk",
+		descFunc = function ()
+			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+		end,
+		image = "chalk",
+	},
 }
 
 local elementList = {
@@ -30,12 +79,17 @@ local elementList = {
 	"chalk",
 }
 
+
 --------------------------------------------------
 -- Updating
 --------------------------------------------------
 
 function api.AddScore(score)
-	self.score = self.score + score
+	self.score = self.score +  util.Round(score)
+end
+
+function api.PanelOpen()
+	return self.menuOpen or self.powersOpen
 end
 
 --------------------------------------------------
@@ -45,10 +99,10 @@ end
 local function HandleHoverClick()
 	if self.hovered == "Grimoire" then
 		self.powersOpen = not self.powersOpen
-		self.world.SetMenuState(self.menuOpen or self.powersOpen)
+		self.world.SetMenuState(api.PanelOpen())
 	elseif self.hovered == "Menu" then
 		self.menuOpen = not self.menuOpen
-		self.world.SetMenuState(self.menuOpen or self.powersOpen)
+		self.world.SetMenuState(api.PanelOpen())
 	elseif self.hovered == "Auto" then
 		PowerHandler.ToggleAutomatic(self.hoveredElement)
 	elseif self.hovered == "Consume" then
@@ -56,14 +110,20 @@ local function HandleHoverClick()
 	end
 end
 
-function api.ToggleMenu()
-	--self.menuOpen = not self.menuOpen
-	--world.SetMenuState(self.menuOpen)
-end
-
 function api.MousePressed(x, y)
 	if self.hovered then
 		HandleHoverClick()
+	end
+end
+
+function api.KeyPressed(key, scancode, isRepeat)
+	if key == "escape" or key == "p" or key == "m" then
+		self.menuOpen = not self.menuOpen
+		self.world.SetMenuState(api.PanelOpen())
+	end
+	if key == "tab" or key == "c" then
+		self.powersOpen = not self.powersOpen
+		self.world.SetMenuState(api.PanelOpen())
 	end
 end
 
@@ -107,9 +167,9 @@ local function DrawLeftInterface()
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 280)
-	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 280)
-	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 100, "left", 280)
+	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800)
+	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800)
+	PrintLine("Chalk: " .. chalkRemaining, 2, xOffset + 20, 100, "left", 800)
 	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 280)
 	
 	PrintLine("Triangles: " .. ShapeHandler.GetShapeTypeCount("triangle"), 2, xOffset + 20, 240, "left", 280)
@@ -129,12 +189,12 @@ local function DrawElementArea(x, y, element, mousePos)
 	love.graphics.setColor(Global.TEXT_MENU_COL[1], Global.TEXT_MENU_COL[2], Global.TEXT_MENU_COL[3], 1)
 	Font.SetSize(2)
 	love.graphics.printf(def.humanName .. " Level " .. PowerHandler.GetLevel(element), x + 12, y + 8, 500, "left")
-	Font.SetSize(3)
+	Font.SetSize(4)
 	love.graphics.printf(def.descFunc(), x + 12, y + 48, 500, "left")
 	Font.SetSize(3)
 	love.graphics.printf(PowerHandler.GetProgress(element) .. "/" .. PowerHandler.GetRequirement(element), x + 120, y + 135 + offset, 500, "left")
 	
-	Resources.DrawImage(def.image, x + 60, y + 120 + offset, 0, 1, 1.45)
+	Resources.DrawImage(def.image, x + 60, y + 120 + offset, 0, 1, 1.4)
 	
 	local upgrade = InterfaceUtil.DrawButton(x + 120, y + 85 + offset, 140, 46, mousePos, "Consume", not PowerHandler.CanUpgradeElement(element), false, false, 3, 6, 4)
 	local automatic = InterfaceUtil.DrawButton(x + 280, y + 85 + offset, 90, 46, mousePos, "Auto", not PowerHandler.IsAutomatic(element), false, true, 3, 6, 4)
@@ -197,8 +257,8 @@ end
 local function BottomInterface(transBottom)
 	local mousePos = self.world.GetMousePositionInterface(transBottom)
 	
-	self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything(), false, 2, 12)
-	self.hovered = InterfaceUtil.DrawButton(1710, 1010, 180, 70, mousePos, "Menu", false, PowerHandler.CanUpgradeAnything(), false, 2, 12) or self.hovered
+	self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything() and not api.PanelOpen(), false, 2, 12)
+	self.hovered = InterfaceUtil.DrawButton(1710, 1010, 180, 70, mousePos, "Menu", false, false, false, 2, 12) or self.hovered
 	
 	if PlayerHandler.GetHealthProp() < 1 then
 		InterfaceUtil.DrawBar({0.3, 1, 0.3}, {0.3, 0.3, 0.3}, PlayerHandler.GetHealthProp(), false, false, {600, 1020}, {800, 60})
@@ -235,7 +295,7 @@ function api.Initialize(world)
 		powersOpen = false,
 	}
 	
-	self.world.SetMenuState(self.menuOpen or self.powersOpen)
+	self.world.SetMenuState(api.PanelOpen())
 end
 
 return api

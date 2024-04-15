@@ -8,7 +8,7 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 	local dist = math.sqrt(distSq)
 	local towards = util.UnitTowards(enemy.pos, self.midPoint)
 	local distFactor = math.min(0.73, (self.effectRange - dist)/self.effectRange)
-	local force = distFactor*self.def.pullForce*(0.8*self.PowerProp() + 0.2)
+	local force = distFactor*self.def.pullForce*(0.8*self.PowerProp() + 0.2)/enemy.GetWeight()
 	enemy.pos = util.Add(enemy.pos, util.Mult(force*dt, towards))
 	
 	if distFactor >= 0.72 then
@@ -16,7 +16,8 @@ local function PullEnemies(enemyID, enemy, index, self, dt)
 		local prop = enemy.DrainEnergy(self.magnitude*dt*self.def.drainForce)
 		self.power = self.power - self.def.drainCost*dt*prop*energyFactor
 		if enemy.EnergyProp() == 0 and not enemy.destroyed then
-			GameHandler.AddScore(1)
+			GameHandler.AddScore(enemy.size)
+			PowerHandler.AddProgress(enemy.def.name, enemy.size)
 			enemy.Destroy()
 		end
 	end

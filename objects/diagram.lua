@@ -531,6 +531,20 @@ local function NewDiagram(levelData, world)
 		UpdateFadeAndDestroy(self, self.circles, dt)
 	end
 	
+	function self.CheckElementTypeSwitch(selectedPoint, hoveredPoint, elementType)
+		if not (selectedPoint and hoveredPoint) then
+			return elementType
+		end
+		if ElementAlreadyExists(self, GetNewElement(selectedPoint, hoveredPoint, elementType), elementType) then
+			if elementType == Global.LINE then
+				return Global.CIRCLE
+			elseif elementType == Global.CIRCLE then
+				return Global.LINE
+			end
+		end
+		return elementType
+	end
+	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
 		drawQueue:push({y=10; f=function()
 			love.graphics.setLineWidth(4)

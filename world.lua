@@ -75,19 +75,13 @@ end
 --------------------------------------------------
 
 function api.KeyPressed(key, scancode, isRepeat)
-	if key == "escape" then
-		api.ToggleMenu()
-	end
-	if key == "p" then
-		api.ToggleMenu()
+	if GameHandler.KeyPressed and GameHandler.KeyPressed(key, scancode, isRepeat) then
+		return
 	end
 	if api.GetGameOver() and not Global.ACT_IN_GAME_OVER then
 		return -- No doing actions
 	end
 	if DiagramHandler.KeyPressed(key, scancode, isRepeat) then
-		return
-	end
-	if GameHandler.KeyPressed and GameHandler.KeyPressed(key, scancode, isRepeat) then
 		return
 	end
 end
@@ -202,6 +196,7 @@ end
 
 function api.Update(dt)
 	GameHandler.Update(dt)
+	InterfaceUtil.Update(dt)
 	if api.GetPaused() then
 		UpdateCamera(dt)
 		return
@@ -209,7 +204,6 @@ function api.Update(dt)
 	
 	self.lifetime = self.lifetime + dt
 	Delay.Update(dt)
-	InterfaceUtil.Update(dt)
 	--ShadowHandler.Update(api)
 
 	PowerHandler.Update(api)

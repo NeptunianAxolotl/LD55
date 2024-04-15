@@ -7,9 +7,9 @@ local function NewEnemy(world, enemyDef, position, size)
 	self.pos = position
 	self.velocity = {0, 0}
 	self.def = enemyDef
-	self.size = size
-	self.drawSizeMult = math.sqrt(size)
-	self.energy = self.def.maxEnergy * size
+	self.size = size * (0.9 + math.random()*0.2)
+	self.drawSizeMult = math.sqrt(self.size)
+	self.energy = self.def.maxEnergy * self.size
 	self.maxEnergy = self.energy
 	self.destroyed = false
 	
@@ -22,6 +22,10 @@ local function NewEnemy(world, enemyDef, position, size)
 			return 0
 		end
 		return self.drawSizeMult * self.def.baseRadius
+	end
+	
+	function self.GetWeight()
+		return self.size * self.def.weightMult
 	end
 	
 	function self.EnergyProp()

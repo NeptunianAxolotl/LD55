@@ -142,7 +142,7 @@ end
 
 function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, canHoverDisabled, fontSize, fontOffset, borderThickness)
 	local hovered = ((not disabled) or canHoverDisabled) and util.PosInRectangle(mousePos, x, y, width, height)
-	borderThickness = borderThickness or 8
+	borderThickness = borderThickness or 6
 	
 	if disabled and not hovered then
 		love.graphics.setColor(Global.PANEL_DISABLE_COL[1], Global.PANEL_DISABLE_COL[2], Global.PANEL_DISABLE_COL[3], 1)
@@ -183,12 +183,13 @@ function api.DrawButton(x, y, width, height, mousePos, text, disabled, flash, ca
 	return hovered and text
 end
 
-function api.DrawPanel(x, y, width, height)
+function api.DrawPanel(x, y, width, height, borderThickness)
+	borderThickness = borderThickness or 8
 	love.graphics.setColor(Global.MENU_COL[1], Global.MENU_COL[2], Global.MENU_COL[3], 0.8)
-	love.graphics.setLineWidth(4)
+	love.graphics.setLineWidth(borderThickness*0.5)
 	love.graphics.rectangle("fill", x, y, width, height, 8, 8, 16)
 	love.graphics.setColor(Global.MENU_OUTLINE_COL[1], Global.MENU_OUTLINE_COL[2], Global.MENU_OUTLINE_COL[3], 0.8)
-	love.graphics.setLineWidth(10)
+	love.graphics.setLineWidth(borderThickness)
 	love.graphics.rectangle("line", x, y, width, height, 8, 8, 16)
 end
 

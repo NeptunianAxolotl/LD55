@@ -1,4 +1,5 @@
 
+local EnemyDefs = require("defs/enemyDefs")
 MusicHandler = require("musicHandler")
 
 local self = {}
@@ -58,15 +59,21 @@ end
 -- Progression and UI
 --------------------------------------------------
 
-function api.CanUpgradeAnything()
-	return false -- If I have enough gathered elements
-end
-
 function api.CanUpgradeElement(element)
 	if not (element and self.progress[element]) then
 		return
 	end
 	return api.GetProgress(element) >= api.GetRequirement(element)
+end
+
+function api.CanUpgradeAnything()
+	for i = 1, #EnemyDefs.order do
+		local name = EnemyDefs.order[i]
+		if api.CanUpgradeElement(name) then
+			return true
+		end
+	end
+	return false
 end
 
 function api.GetLevel(element)
@@ -81,6 +88,10 @@ function api.GetProgress(element)
 	return self.progress[element]
 end
 
+function api.AddProgress(element, gained)
+	self.progress[element] = self.progress[element] + util.Round(gained)
+end
+
 function api.IsAutomatic(element)
 	return self.autoUpgrade[element]
 end
@@ -89,8 +100,10 @@ function api.UpgradeElement(element)
 	if not api.CanUpgradeElement(element) then
 		return
 	end
-	self.progress[element] = self.progress[element] - api.GetRequirement(element)
-	self.level[element] = self.level[element] + 1
+	while api.CanUpgradeElement(element) do
+		self.progress[element] = self.progress[element] - api.GetRequirement(element)
+		self.level[element] = self.level[element] + 1
+	end
 	for name, _ in pairs(self.progress) do
 		if name ~= element then
 			self.progress[name] = 0

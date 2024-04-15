@@ -13,7 +13,8 @@ local function ProcessLines(lines)
 end
 
 local function TryToPlaceElement(u, v)
-	local success = self.currentDiagram.AddElement(u, v, self.elementType)
+	local elementSwitch = self.currentDiagram.CheckElementTypeSwitch(self.selectedPoint, self.hoveredPoint, self.elementType)
+	local success = self.currentDiagram.AddElement(u, v, elementSwitch)
 	if not success then
 		return
 	end
@@ -103,7 +104,8 @@ end
 
 function api.Draw(drawQueue)
 	if self.currentDiagram then
-		self.currentDiagram.Draw(drawQueue, self.selectedPoint, self.hoveredPoint, self.elementType)
+		local elementSwitch = self.currentDiagram.CheckElementTypeSwitch(self.selectedPoint, self.hoveredPoint, self.elementType)
+		self.currentDiagram.Draw(drawQueue, self.selectedPoint, self.hoveredPoint, elementSwitch)
 	end
 	drawQueue:push({y=0; f=function()
 		Resources.DrawImage("stonecircle", 0, 0)
