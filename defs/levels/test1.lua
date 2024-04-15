@@ -16,6 +16,9 @@ local secondTutorialSquare = {
 	{669.88245634869, -10.691263620614},
 }
 
+local firstCircle = {669.88245634869, -10.691263620614, 438.59685773817}
+local secondCircle = {313.92453906203, -518.65619189465, 438.59685773817}
+
 local function SkipTutorial()
 	return ShapeHandler.TotalShapesCreated() > 4
 end
@@ -25,7 +28,8 @@ local data = {
 		{
 			points = firstTutorialLine,
 			pointsIfSelected = firstTutorialLine,
-			text = "Click one flashing point then the other to inscribe a line",
+			text = [[Click one flashing point then the other
+to inscribe a line]],
 			noEnemySpawn = true,
 			progressFunc = function (self, dt)
 				self.tutorialLinger = 0
@@ -33,7 +37,8 @@ local data = {
 			end,
 		},
 		{
-			text = "Great",
+			text = [[Excellent, that line created a triangle sigil
+(click to continue)]],
 			noEnemySpawn = true,
 			progressClick = true,
 			progressFunc = function (self, dt)
@@ -41,20 +46,43 @@ local data = {
 			end,
 		},
 		{
+			text = [[Only triangles with equal side lengths are sigils
+(click to continue)]],
+			noEnemySpawn = true,
+			progressClick = true,
+			progressFunc = function (self, dt)
+				return SkipTutorial()
+			end,
+		},
+		{
+			text = [[Now inscribe a circle clicking a flash point then clicking the corner of the triangle]],
 			points = {
-				{313.92453906203, -518.65619189465},
 				{669.88245634869, -10.691263620614},
 			},
 			pointsIfSelected = {
 				{237.92103356828, -86.694769114262},
 			},
-			text = "Click the flashing points to make a line",
 			noEnemySpawn = true,
 			progressFunc = function (self, dt)
-				return SkipTutorial() or DiagramHandler.PointExists(secondTutorialPoint)
+				return SkipTutorial() or DiagramHandler.ElementExists(firstCircle, Global.CIRCLE)
 			end,
 		},
 		{
+			text = [[Now inscribe a second circle]],
+			points = {
+				{313.92453906203, -518.65619189465},
+			},
+			pointsIfSelected = {
+				{237.92103356828, -86.694769114262},
+			},
+			noEnemySpawn = true,
+			progressFunc = function (self, dt)
+				return SkipTutorial() or DiagramHandler.ElementExists(secondCircle, Global.CIRCLE)
+			end,
+		},
+		{
+			text = [[Outstanding, now complete the square by linking up these three points]],
+			noEnemySpawn = true,
 			points = {
 				{745.88596184244, -442.652686401},
 				{313.92453906203, -518.65619189465},
@@ -65,9 +93,27 @@ local data = {
 				{313.92453906203, -518.65619189465},
 				{669.88245634869, -10.691263620614},
 			},
-			noEnemySpawn = true,
 			progressFunc = function (self, dt)
 				return SkipTutorial() or ShapeHandler.ShapeAt("square", secondTutorialSquare)
+			end,
+		},
+		{
+			text = [[The summoning has begun. Triangles absorb spirits.
+Squares weaken them so they are easier to absorb.
+(click to continue)]],
+			noEnemySpawn = true,
+			progressClick = true,
+			progressFunc = function (self, dt)
+				return SkipTutorial()
+			end,
+		},
+		{
+			text = [[Lines and circles may only be inscribed from existing points.
+Press Space to toggle between them. The spirits are coming!
+(click to continue)]],
+			progressClick = true,
+			progressFunc = function (self, dt)
+				return SkipTutorial()
 			end,
 		},
 	},

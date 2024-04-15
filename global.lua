@@ -23,6 +23,7 @@ local globals = {
 	TEXT_FLASH_COL      = {0.73, 0.73, 0.75},
 	TEXT_HIGHLIGHT_COL  = {0.73, 0.73, 0.75},
 	TEXT_COL            = {0.83, 0.83, 0.87},
+	FLOATING_TEXT_COL   = {0, 0, 0},
 	
 	BUTTON_FLASH_PERIOD = 0.6,
 	
@@ -54,7 +55,7 @@ local globals = {
 	RANDOM_TESTING_ELEMENTS = 0,
 	
 	MASTER_VOLUME = 1,
-	MUSIC_VOLUME = 0.55,
+	MUSIC_VOLUME = 0.4,
 	DEFAULT_MUSIC_DURATION = 174.69,
 	CROSSFADE_TIME = 0,
 	
@@ -86,11 +87,11 @@ local globals = {
 	GAME_SPEED = false,
 	
 	DEBUG_PRINT_LINE      = false,
-	DEBUG_PRINT_CIRCLE    = false,
+	DEBUG_PRINT_CIRCLE    = true,
 	DEBUG_SHAPES          = false,
 	DEBUG_CIRCLE_POINTS   = false,
-	DEBUG_PRINT_CLICK_POS = true,
-	DEBUG_PRINT_POINT     = true,
+	DEBUG_PRINT_CLICK_POS = false,
+	DEBUG_PRINT_POINT     = false,
 	DEBUG_POINT_INTERSECT = false,
 	PRINT_SHAPE_FOUND     = false,
 	DEBUG_SPECIAL_ANGLES  = false,

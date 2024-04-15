@@ -203,9 +203,10 @@ end
 -- Draw
 --------------------------------------------------
 
-local function PrintLine(text, size, x, y, align, width)
+local function PrintLine(text, size, x, y, align, width, col)
 	Font.SetSize(size)
-	love.graphics.setColor(Global.TEXT_COL[1], Global.TEXT_COL[2], Global.TEXT_COL[3], 1)
+	col = col or Global.TEXT_COL
+	love.graphics.setColor(col[1], col[2], col[3], 1)
 	love.graphics.printf(text, x, y, width or 240, align or "left")
 	if size == 1 then
 		return y + 60
@@ -222,12 +223,12 @@ end
 local function DrawFloatingStuff()
 	local over, _, _, overType = self.world.GetGameOver()
 	if over then
-		PrintLine(overType or "Game Over", 0, 1000, 400, "center", 250)
+		PrintLine(overType or "Game Over", 0, 500, 400, "center", 1000, Global.FLOATING_TEXT_COL)
 	end
 	
 	local tutorial = api.GetTutorial()
 	if tutorial then
-		PrintLine(tutorial.text, 1, 500, 60, "center", 1000)
+		PrintLine(tutorial.text, 1, 300, 60, "center", 1400, Global.FLOATING_TEXT_COL)
 	end
 end
 
@@ -251,9 +252,9 @@ local function DrawLeftInterface()
 	local tool = (DiagramHandler.GetTool() == Global.LINE and "Line") or "Circle"
 	
 	local windowX, windowY = love.window.getMode()
-	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800)
-	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800)
-	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 800)
+	PrintLine("Score: " .. self.score, 2, xOffset + 20, 20, "left", 800, Global.FLOATING_TEXT_COL)
+	PrintLine("Tool: " .. tool, 2, xOffset + 20, 60, "left", 800, Global.FLOATING_TEXT_COL)
+	PrintLine("Enemies: " .. EnemyHandler.CountEnemies(), 2, xOffset + 20, 160, "left", 800, Global.FLOATING_TEXT_COL)
 	
 	local offset = 240
 	for i = 1, #ShapeDefs.shapeNames do
@@ -261,18 +262,18 @@ local function DrawLeftInterface()
 		local maximum = math.floor(PowerHandler.GetMaxShapesType(name))
 		if maximum > 0 then
 			local count = math.floor(ShapeHandler.GetShapeTypeCount(name))
-			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 800)
+			PrintLine(ShapeDefs.collectiveHumanName[name] .. ": " .. count .. " / " .. maximum, 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
 		end
 		offset = offset + 30
 	end
 	
 	local rate, size, lifetime = EnemyHandler.GetSpawnParameters()
 	offset = offset + 30
-	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 20, offset, "left", 800)
+	PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
 	offset = offset + 30
-	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 2, xOffset + 20, offset, "left", 800)
+	PrintLine("Enemy Rate: " .. string.format("%0.2f", rate), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
 	offset = offset + 30
-	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 2, xOffset + 20, offset, "left", 800)
+	PrintLine("Enemy Size: " .. string.format("%0.2f", size), 2, xOffset + 20, offset, "left", 800, Global.FLOATING_TEXT_COL)
 	offset = offset + 30
 	
 	
