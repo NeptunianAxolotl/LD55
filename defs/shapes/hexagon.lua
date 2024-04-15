@@ -15,7 +15,7 @@ local data = {
 	update = function (self, dt)
 		self.power = self.power - 2*dt*Global.SHAPE_IDLE_DRAIN_MULT
 	end,
-	color = {0.9, 0.9, 0.5},
+	color = {1, 182/255, 12/255},
 }
 
 local vertRadius = 1

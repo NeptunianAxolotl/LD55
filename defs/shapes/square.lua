@@ -25,7 +25,7 @@ local data = {
 		local enemies = EnemyHandler.GetEnemies()
 		IterableMap.Apply(enemies, PullEnemies, self, dt)
 	end,
-	color = {0.9, 0.4, 0.8},
+	color = {209/255, 50/255, 174/255},
 }
 
 function data.ExpectedLines(origin, u, v)
