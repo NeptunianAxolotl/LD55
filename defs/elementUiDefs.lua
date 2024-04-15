@@ -9,14 +9,14 @@ local elementUiDefs = {
 		descFunc = function ()
 			return "Regenerate " .. util.Round(10*PowerHandler.GetPlayerHealthRegen()) .. " health every 10 seconds"
 		end,
-		image = "water_main",
+		image = "water_icon",
 	},
 	air = {
 		humanName = "Air",
 		descFunc = function ()
 			return "Move " .. PercentInc(PowerHandler.GetPlayerSpeed() / Global.PLAYER_SPEED) .. "% faster"
 		end,
-		image = "air_3",
+		image = "air_icon",
 	},
 	earth = {
 		humanName = "Earth",
@@ -30,14 +30,14 @@ local elementUiDefs = {
 		descFunc = function ()
 			return "Sigils are " .. PercentInc(PowerHandler.GetShapePower() / Global.BASE_SHAPE_POWER) .. "% more powerful"
 		end,
-		image = "fire_1",
+		image = "fire_icon",
 	},
 	life = {
 		humanName = "Life",
 		descFunc = function ()
 			return "Maximum health is " .. util.Round(PowerHandler.GetPlayerMaxHealth())
 		end,
-		image = "life_main",
+		image = "life_icon",
 	},
 	ice = {
 		humanName = "Ice",
@@ -51,7 +51,7 @@ local elementUiDefs = {
 		descFunc = function ()
 			return "Sustain more sigils and unlocks new ones"
 		end,
-		image = "lightning_2",
+		image = "lightning_icon",
 	},
 	chalk = {
 		humanName = "Chalk",
