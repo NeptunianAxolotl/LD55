@@ -103,7 +103,7 @@ end
 function api.Update(dt)
 	bgmTimer = bgmTimer - dt
   musicVolume = cosmos.GetMusicVolume()
-  bgmTension = EnemyHandler.CountEnemies() / tensionEnemyCountDivsor
+  bgmTension = EnemyHandler.CountEnemies() / tensionEnemyCountDivsor * (1 - (ShapeHandler.GetShapeCount() / PowerHandler.GetMaxShapes()) * 0.4)
   if musicEnabled ~= musicWasEnabled or musicVolume ~= musicWasVolume then
     musicWasEnabled = musicEnabled
     musicWasVolume = musicVolume
