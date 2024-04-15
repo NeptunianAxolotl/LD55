@@ -1,88 +1,10 @@
 
 local ShapeDefs = require("defs/shapeDefs")
+local ElementUiDefs = require("defs/elementUiDefs")
 
 local self = {}
 local api = {}
 local world
-
---------------------------------------------------
--- Definitions
---------------------------------------------------
-
-local function PercentInc(value)
-	return util.Round(100*(value - 1))
-end
-
-local elementUiDefs = {
-	water = {
-		humanName = "Water",
-		descFunc = function ()
-			return "Regenerate " .. util.Round(10*PowerHandler.GetPlayerHealthRegen()) .. " health every 10 seconds"
-		end,
-		image = "water_main",
-	},
-	air = {
-		humanName = "Air",
-		descFunc = function ()
-			return "Move " .. PercentInc(PowerHandler.GetPlayerSpeed() / Global.PLAYER_SPEED) .. "% faster"
-		end,
-		image = "air_3",
-	},
-	earth = {
-		humanName = "Earth",
-		descFunc = function ()
-			return "Sustain " .. math.floor(PowerHandler.GetSafeLineCapacity()) .. " lines, excess fade after " .. util.Round(PowerHandler.GetLineFadeTime()) .. "s"
-		end,
-		image = "earth",
-	},
-	fire = {
-		humanName = "Fire",
-		descFunc = function ()
-			return "Sigils are " .. PercentInc(PowerHandler.GetShapePower() / Global.BASE_SHAPE_POWER) .. "% more powerful"
-		end,
-		image = "fire_1",
-	},
-	life = {
-		humanName = "Life",
-		descFunc = function ()
-			return "Maximum health is " .. util.Round(PowerHandler.GetPlayerMaxHealth())
-		end,
-		image = "life_main",
-	},
-	ice = {
-		humanName = "Ice",
-		descFunc = function ()
-			return "Spirits moves " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
-		end,
-		image = "ice",
-	},
-	lightning = {
-		humanName = "Lightning",
-		descFunc = function ()
-			return "Sustain more sigils and unlocks new ones"
-		end,
-		image = "lightning_2",
-	},
-	chalk = {
-		humanName = "Chalk",
-		descFunc = function ()
-			return "Draw from " .. PercentInc(PowerHandler.GetDrawRange() / Global.BASE_DRAW_RANGE) .. "% further away"
-		end,
-		image = "chalk",
-	},
-}
-
-local elementList = {
-	"earth",
-	"chalk",
-	"life",
-	"fire",
-	"water",
-	"lightning",
-	"ice",
-	"air",
-}
-
 
 --------------------------------------------------
 -- Updating
@@ -312,7 +234,7 @@ local function DrawLeftInterface()
 end
 
 local function DrawElementArea(x, y, element, mousePos)
-	local def = elementUiDefs[element] or elementUiDefs['water']
+	local def = ElementUiDefs.def[element] or ElementUiDefs.def['water']
 	local offset = 4
 
 	--InterfaceUtil.DrawPanel(x + 5, y + 5, 415, 175)
@@ -353,8 +275,8 @@ local function DrawPowerMenu()
 	local elementXOffset = overWidth/3
 	local elementY = 150
 	local elementYOffset = 190
-	for i = 1, #elementList do
-		DrawElementArea(elementX, elementY, elementList[i], mousePos)
+	for i = 1, #ElementUiDefs.uiOrder do
+		DrawElementArea(elementX, elementY, ElementUiDefs.uiOrder[i], mousePos)
 		if i%2 == 1 then
 			elementX = elementX + elementXOffset
 		else

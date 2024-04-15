@@ -62,7 +62,6 @@ function api.Update(dt)
 	local wantedSpeed = maxSpeed
 	local dist = util.DistVectors(self.playerPos, mousePos) - 50
 	wantedSpeed = math.max(0, math.min(dist*10, wantedSpeed))
-	
 	local wantedVelocity = util.Mult(wantedSpeed, util.UnitTowards(self.playerPos, mousePos))
 	if dist > 0 then
 		self.playerRotation = util.Angle(wantedVelocity)
