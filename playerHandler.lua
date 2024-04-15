@@ -51,7 +51,8 @@ end
 
 function api.Update(dt)
 	local mousePos = self.world.GetMousePosition()
-	local wantedSpeed = PowerHandler.GetPlayerSpeed() * PowerHandler.GetGeneralSpeedModifier()
+	local maxSpeed = PowerHandler.GetPlayerSpeed() * PowerHandler.GetGeneralSpeedModifier()
+	local wantedSpeed = maxSpeed
 	local dist = util.DistVectors(self.playerPos, mousePos) - 50
 	wantedSpeed = math.max(0, math.min(dist*10, wantedSpeed))
 	
@@ -73,10 +74,17 @@ function api.Update(dt)
 	
 	self.playerSpeed = util.Average(self.playerSpeed, wantedVelocity, 0.6)
 	self.playerPos = util.Add(util.Mult(dt, self.playerSpeed), self.playerPos)
+	local worldDistance = util.AbsVal(self.playerPos)
+	if worldDistance > Global.PLAYER_MOVE_RADIUS then
+		local factor = (worldDistance - Global.PLAYER_MOVE_RADIUS)/50
+		local pushDir = util.UnitTowards(self.playerPos, {0, 0})
+		pushDir = util.SetLength(factor*maxSpeed*dt , pushDir)
+		self.playerPos = util.Add(pushDir, self.playerPos)
+	end
 end
 
 function api.Draw(drawQueue)
-	drawQueue:push({y=50; f=function()
+	drawQueue:push({y=40; f=function()
 		Resources.DrawImage("wizard_base", self.playerPos[1], self.playerPos[2], self.playerRotation + math.pi/2)
 		local hoveredPoint = DiagramHandler.GetHoveredPoint()
 		if hoveredPoint and not api.InSelectRange(hoveredPoint) then
