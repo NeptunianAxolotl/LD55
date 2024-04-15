@@ -9,74 +9,78 @@ local world
 -- Definitions
 --------------------------------------------------
 
+local function PercentInc(value)
+	return math.floor(100*(value - 1))
+end
+
 local elementUiDefs = {
 	water = {
 		humanName = "Water",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Regenerate " .. math.floor(10*PowerHandler.GetPlayerHealthRegen()) .. " health every 10 seconds"
 		end,
 		image = "water_main",
 	},
 	air = {
 		humanName = "Air",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Move " .. PercentInc(PowerHandler.GetPlayerSpeed() / Global.PLAYER_SPEED) .. "% faster"
 		end,
 		image = "air_3",
 	},
 	earth = {
 		humanName = "Earth",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Maintain " .. math.floor(PowerHandler.GetSafeLineCapacity()) .. " lines, then fade after " .. math.floor(PowerHandler.GetLineFadeTime()) .. "s"
 		end,
 		image = "earth",
 	},
 	fire = {
 		humanName = "Fire",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Sigils are " .. PercentInc(PowerHandler.GetShapePower() / Global.BASE_SHAPE_POWER) .. "% more powerful"
 		end,
 		image = "fire_1",
 	},
 	life = {
 		humanName = "Life",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Maximum health is " .. math.floor(PowerHandler.GetPlayerMaxHealth())
 		end,
 		image = "life_main",
 	},
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Everything moves at " .. math.floor(100*PowerHandler.GetGeneralSpeedModifier()) .. "% speed"
 		end,
 		image = "ice",
 	},
 	lightning = {
 		humanName = "Lightning",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Maintain " .. math.floor(100*PowerHandler.GetMaxShapesMult()) .. "% more Sigils"
 		end,
 		image = "lightning_2",
 	},
 	chalk = {
 		humanName = "Chalk",
 		descFunc = function ()
-			return "Life regeneration " .. PowerHandler.GetPlayerHealthRegen() .. " and stuff"
+			return "Draw from " .. PercentInc(PowerHandler.GetDrawRange() / Global.BASE_DRAW_RANGE) .. "% further away"
 		end,
 		image = "chalk",
 	},
 }
 
 local elementList = {
-	"water",
-	"air",
 	"earth",
-	"fire",
-	"life",
-	"ice",
-	"lightning",
 	"chalk",
+	"life",
+	"fire",
+	"water",
+	"lightning",
+	"ice",
+	"air",
 }
 
 

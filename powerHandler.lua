@@ -20,15 +20,15 @@ function api.GetLineFadeTime()
 end
 
 function api.GetPlayerSpeed()
-	return (self.power.speed*1.5 + 10) * Global.PLAYER_SPEED
+	return (self.power.speed*0.1 + 1) * Global.PLAYER_SPEED
 end
 
 function api.GetDrawRange()
-	return 430
+	return Global.BASE_DRAW_RANGE
 end
 
 function api.GetShapePower()
-	return 10 + self.power.shapePower
+	return Global.BASE_SHAPE_POWER + self.power.shapePower
 end
 
 function api.GetPlayerMaxHealth()
@@ -39,12 +39,20 @@ function api.GetPlayerHealthRegen()
 	return 2 + self.power.regen
 end
 
+function api.GetGeneralSpeedModifier()
+	return 1
+end
+
 function api.GetPlayerHitLeeway()
 	return 0.3
 end
 
 function api.GetSpawnAffinityRadius()
 	return Global.AFFINITY_RADIUS
+end
+
+function api.GetMaxShapesMult()
+	return 0
 end
 
 function api.GetMaxShapes()
