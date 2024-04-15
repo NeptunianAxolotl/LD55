@@ -59,11 +59,11 @@ local function HandleHoverClick()
 		PowerHandler.UpgradeElement(self.hoveredElement)
 	elseif self.hovered == "Toggle Music" then
 		self.world.GetCosmos().ToggleMusic()
-	elseif self.hovered == "Music Lounder" then
+	elseif self.hovered == "Music Louder" then
 		self.world.GetCosmos().MusicVolumeChange(3/2)
 	elseif self.hovered == "Music Softer" then
 		self.world.GetCosmos().MusicVolumeChange(2/3)
-	elseif self.hovered == "Effects Lounder" then
+	elseif self.hovered == "Effects Louder" then
 		self.world.GetCosmos().EffectsVolumeChange(7/6)
 	elseif self.hovered == "Effects Softer" then
 		self.world.GetCosmos().EffectsVolumeChange(6/7)
@@ -372,11 +372,11 @@ local function DrawMainMenu()
 	local offset = overY + 20
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Toggle Music", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
-	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Music Lounder", false, false, false, 3, 8, 4) or self.hovered
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Music Louder", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Music Softer", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
-	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Effects Lounder", false, false, false, 3, 8, 4) or self.hovered
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Effects Louder", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Effects Softer", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
