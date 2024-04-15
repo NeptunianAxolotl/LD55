@@ -22,7 +22,7 @@ Nothing bad will happen]],
 		true,
 	},
 	playerPos = {420, 60},
-	cameraPos = {200, -100},
+	cameraPos = {450, -180},
 	lines = {
 		util.RotateLineAroundOrigin(baseLine, -0.5),
 		util.RotateLineAroundOrigin(baseLine, -4.45),
