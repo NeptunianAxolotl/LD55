@@ -14,21 +14,20 @@ end
 local function GetSpawnPosAndType()
 	local affinityPos = ShapeHandler.GetAffinityPos()
 	local affinityRadius = PowerHandler.GetSpawnAffinityRadius()
-	local pos = util.RandomPointInAnnulus(affinityRadius, affinityRadius + 100)
+	local pos = util.Add(affinityPos, util.RandomPointInAnnulus(affinityRadius, affinityRadius + 100))
 	local angle = util.Angle(pos)
 	
 	local octant = math.max(1, math.min(8, math.floor(angle*8/(2*math.pi) + 1)))
 	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS * 0.5, pos)
 	pos = util.Add(pos, util.RandomPointInCircle(Global.ENEMY_SPAWN_WIGGLE))
 	pos = util.SetLength(Global.ENEMY_SPAWN_RADIUS, pos)
-	print("octant", octant, EnemyDefs.order[octant])
 	return pos, EnemyDefs.order[octant]
 end
 
 local function SpawnEnemy()
 	local size = GetSpawnSize()
 	local pos, enemyType = GetSpawnPosAndType()
-	print("enemyType", enemyType)
+	--print("enemyType", enemyType)
 	local new = NewEnemy(self.world, EnemyDefs.defs[enemyType], pos, size)
 	
 	IterableMap.Add(self.enemies, new)

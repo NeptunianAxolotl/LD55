@@ -97,9 +97,9 @@ function api.Initialize(world, levelData)
 	})
 	
 	local cameraPos = world.GetLevelData().cameraPos
-	local posTL = util.Add({-500, -500}, cameraPos)
-	local posBR = util.Add({500, 500}, cameraPos)
-	
+	local posTL = util.Add({-500*Global.ZOOM_OUT, -500*Global.ZOOM_OUT}, cameraPos)
+	local posBR = util.Add({500*Global.ZOOM_OUT, 500*Global.ZOOM_OUT}, cameraPos)
+
 	local cameraX, cameraY, cameraScale = Camera.UpdateCameraToViewPoints(false, 
 		{
 			{pos = posTL, xOff = 20, yOff = 20},

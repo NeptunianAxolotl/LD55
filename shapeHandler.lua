@@ -78,11 +78,29 @@ function api.DestroyOldestShape(shapeType)
 	IterableMap.Remove(self.shapes, shape.iterableMapKey)
 end
 
-function api.GetAffinityPos()
-	if api.GetShapeCount() then
-		return {0, 0}
+local function GetCachedAffinityPos()
+	if not IterableMap.IsStale(self.shapes) then
+		return self.affinityPos
 	end
-	
+	IterableMap.ResetStale(self.shapes)
+	if api.GetShapeCount() == 0 then
+		self.affinityPos = {0, 0}
+		return self.affinityPos
+	end
+	self.posAcc = {0, 0}
+	self.affinityAcc = 0
+	IterableMap.ApplySelf(self.shapes, "ContributeSpawnAffinity", self)
+	if self.affinityAcc == 0 then
+		self.affinityPos = {0, 0}
+		return self.affinityPos
+	end
+	self.affinityPos = util.Mult(1/self.affinityAcc, self.posAcc)
+	print(self.affinityPos[1], self.affinityPos[2])
+	return self.affinityPos
+end
+
+function api.GetAffinityPos()
+	return GetCachedAffinityPos()
 end
 
 function api.GetCompareVertices(vertices)
@@ -169,6 +187,7 @@ function api.Initialize(world, levelData)
 		world = world,
 		shapes = IterableMap.New(),
 		nextShapeID = 0,
+		affinityPos = {0, 0},
 	}
 end
 

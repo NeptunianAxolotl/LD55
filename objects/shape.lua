@@ -37,8 +37,10 @@ local function NewShape(world, shapeID, shapeDef, vertices, edges, definingLines
 		self.def.init(self)
 	end
 	
-	function self.GetAffinityWeight()
-		return self.magnitude*self.def.affinityMult
+	function self.ContributeSpawnAffinity(handler)
+		local affinity = self.magnitude*self.def.affinityMult
+		handler.posAcc = util.Add(handler.posAcc, util.Mult(affinity, self.midPoint))
+		handler.affinityAcc = handler.affinityAcc + affinity
 	end
 	
 	function self.PowerProp()

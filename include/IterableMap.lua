@@ -10,6 +10,7 @@ function IterableMap.New()
 		unusedKey = 1,
 		keyByIndex = {},
 		nextCounter = 0,
+		stale = true,
 	}
 	return mapData
 end
@@ -42,6 +43,7 @@ function IterableMap.Add(self, key, data)
 	self.keyByIndex[self.indexMax] = key
 	self.dataByKey[key] = data
 	self.indexByKey[key] = self.indexMax
+	self.stale = true
 	return key
 end
 
@@ -57,6 +59,7 @@ function IterableMap.Remove(self, key)
 	self.indexByKey[key] = nil
 	self.dataByKey[key] = nil
 	self.indexMax = self.indexMax - 1
+	self.stale = true
 	return true
 end
 
@@ -69,6 +72,7 @@ function IterableMap.ReplaceKey(self, oldKey, newKey)
 	self.dataByKey[newKey] = self.dataByKey[oldKey]
 	self.indexByKey[oldKey] = nil
 	self.dataByKey[oldKey] = nil
+	self.stale = true
 	return true
 end
 
@@ -287,6 +291,14 @@ end
 
 function IterableMap.Print(self)
 	util.PrintTable(self.dataByKey)
+end
+
+function IterableMap.IsStale(self)
+	return self.stale
+end
+
+function IterableMap.ResetStale(self)
+	self.stale = false
 end
 
 return IterableMap

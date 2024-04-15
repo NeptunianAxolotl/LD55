@@ -43,7 +43,7 @@ function api.GetPlayerHitLeeway()
 end
 
 function api.GetSpawnAffinityRadius()
-	return Global.WORLD_RADIUS*0.9
+	return Global.AFFINITY_RADIUS
 end
 
 function api.GetMaxShapes()
