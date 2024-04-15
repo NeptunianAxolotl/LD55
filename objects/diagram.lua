@@ -200,12 +200,12 @@ local function AddIntersectionPoint(self, newElement, otherElement, pointPos)
 	if not inBounds then
 		return
 	end
-	if Global.DEBUG_PRINT_POINT then
-		print("point {" .. pointPos[1] .. ", " .. pointPos[2] .. "}, ")
-	end
 	if not alreadyExists then
 		otherElement.points[#otherElement.points + 1] = point
 		point.elements[#point.elements + 1] = otherElement
+		if Global.DEBUG_PRINT_POINT then
+			print("point {" .. pointPos[1] .. ", " .. pointPos[2] .. "}, ")
+		end
 	end
 	if (not alreadyExists) or (not IsInElements(point.elements, newElement.id)) then
 		newElement.points[#newElement.points + 1] = point
@@ -504,6 +504,18 @@ local function SetElementColor(element, fadeTime, hoveredPoint)
 	love.graphics.setColor(col[1], col[2], col[3], GetElementOpacity(element, fadeTime))
 end
 
+local function IsPointInListOfPoints(pointList, point)
+	if not point then
+		return false
+	end
+	for i = 1, #pointList do
+		if util.Eq(point, pointList[i]) then
+			return true
+		end
+	end
+	return false
+end
+
 local function NewDiagram(levelData, world)
 	local self = {}
 	
@@ -512,6 +524,7 @@ local function NewDiagram(levelData, world)
 	self.circles = {}
 	self.newestElementCounter = 0
 	self.newID = 0
+	self.animTimer = 0
 	
 	for i = 1, #levelData.lines do
 		AddLine(self, levelData.lines[i], levelData.permanentLines[i])
@@ -535,6 +548,7 @@ local function NewDiagram(levelData, world)
 	function self.Update(dt)
 		UpdateFadeAndDestroy(self, self.lines, dt)
 		UpdateFadeAndDestroy(self, self.circles, dt)
+		self.animTimer = (self.animTimer + dt*1.6)%1
 	end
 	
 	function self.CheckElementTypeSwitch(selectedPoint, hoveredPoint, elementType)
@@ -549,6 +563,14 @@ local function NewDiagram(levelData, world)
 			end
 		end
 		return elementType
+	end
+	
+	function self.ElementExists(element, elementType)
+		return ElementAlreadyExists(self, element, elementType)
+	end
+	
+	function self.PointExists(pos)
+		return GetPointAtPos(self, pos)
 	end
 	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
@@ -611,6 +633,20 @@ local function NewDiagram(levelData, world)
 					end
 				else
 					love.graphics.circle('fill', point[1], point[2], 6)
+				end
+			end
+			
+			local tutorial = GameHandler.GetTutorial()
+			if tutorial then
+				love.graphics.setLineWidth(4)
+				love.graphics.setColor(Global.POINT_TUTORIAL_COL[1], Global.POINT_TUTORIAL_COL[2], Global.POINT_TUTORIAL_COL[3], 1)
+				local radius = 25 + 10*math.sin(self.animTimer*2*math.pi)
+				
+				local toDraw = (IsPointInListOfPoints(tutorial.points, selectedPoint) and tutorial.pointsIfSelected) or tutorial.points
+				for i = 1, #toDraw do
+					if not util.Eq(selectedPoint,toDraw[i]) then
+						love.graphics.circle('line', toDraw[i][1], toDraw[i][2], radius, 32)
+					end
 				end
 			end
 		end})

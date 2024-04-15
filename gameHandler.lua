@@ -133,6 +133,27 @@ function api.KeyPressed(key, scancode, isRepeat)
 	end
 end
 
+function api.GetTutorial()
+	if not self.tutorialStage then
+		return
+	end
+	local tutorial = self.tutorial[self.tutorialStage]
+	return tutorial
+end
+
+local function UpdateTutorial(dt)
+	local tutorial = api.GetTutorial()
+	if not tutorial then
+		return
+	end
+	if tutorial.progressFunc(self, dt) then
+		self.tutorialStage = self.tutorialStage + 1
+		if not self.tutorial[self.tutorialStage] then
+			return
+		end
+	end
+end
+
 --------------------------------------------------
 -- Draw
 --------------------------------------------------
@@ -284,6 +305,7 @@ end
 --------------------------------------------------
 
 function api.Update(dt)
+	UpdateTutorial(dt)
 end
 
 function api.DrawInterface(transMid, transTopLeft, transBottom)
@@ -301,13 +323,16 @@ function api.DrawInterface(transMid, transTopLeft, transBottom)
 end
 
 function api.Initialize(world)
+	local levelData = world.GetLevelData()
 	self = {
 		world = world,
 		score = 0,
 		hovered = false,
 		menuOpen = false,
 		powersOpen = false,
-		noGrimoire = world.GetLevelData().noGrimoire,
+		noGrimoire = levelData.noGrimoire,
+		tutorial = levelData.tutorial,
+		tutorialStage = levelData.tutorial and 1,
 	}
 	
 	self.world.SetMenuState(api.PanelOpen())

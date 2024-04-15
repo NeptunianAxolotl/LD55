@@ -3,13 +3,57 @@ local offset = 5 + 1/3
 local baseLine = {{-1689 - offset, 100}, {-1689 - offset, 200}}
 local baseCircle = {-1650 - offset, 0, 260}
 
+local firstTutorialLine = {
+	{194.04038921205, 162.69827460784},
+	{237.92103356828, -86.694769114262},
+}
+
+local secondTutorialPoint = {745.88596184244, -442.652686401}
+local secondTutorialSquare = {
+	{745.88596184244, -442.652686401},
+	{313.92453906203, -518.65619189465},
+	{237.92103356828, -86.694769114262},
+	{669.88245634869, -10.691263620614},
+}
+
 local data = {
-	humanName = "Make a Triangle",
-	description = [[Do it.
-
-Click the point that makes sense and then click the other point.
-
-Nothing bad will happen]],
+	tutorial = {
+		{
+			points = firstTutorialLine,
+			pointsIfSelected = firstTutorialLine,
+			text = "Click on the points for lines",
+			progressFunc = function (self, dt)
+				return DiagramHandler.ElementExists(firstTutorialLine, Global.LINE)
+			end,
+		},
+		{
+			points = {
+				{313.92453906203, -518.65619189465},
+				{669.88245634869, -10.691263620614},
+			},
+			pointsIfSelected = {
+				{237.92103356828, -86.694769114262},
+			},
+			progressFunc = function (self, dt)
+				return DiagramHandler.PointExists(secondTutorialPoint)
+			end,
+		},
+		{
+			points = {
+				{745.88596184244, -442.652686401},
+				{313.92453906203, -518.65619189465},
+				{669.88245634869, -10.691263620614},
+			},
+			pointsIfSelected = {
+				{745.88596184244, -442.652686401},
+				{313.92453906203, -518.65619189465},
+				{669.88245634869, -10.691263620614},
+			},
+			progressFunc = function (self, dt)
+				return ShapeHandler.ShapeAt("square", secondTutorialSquare)
+			end,
+		},
+	},
 	background = "mainlevel",
 	defaultElement = Global.LINE,
 	chalkLimit = 1,
@@ -22,7 +66,7 @@ Nothing bad will happen]],
 		true,
 	},
 	playerPos = {420, 60},
-	cameraPos = {450, -180},
+	cameraPos = {450, -110},
 	lines = {
 		util.RotateLineAroundOrigin(baseLine, -0.5),
 		util.RotateLineAroundOrigin(baseLine, -4.45),

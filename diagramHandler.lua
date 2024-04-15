@@ -32,6 +32,14 @@ function api.CheckVictory()
 	end
 end
 
+function api.ElementExists(element, elementType)
+	return self.currentDiagram.ElementExists(element, elementType)
+end
+
+function api.PointExists(point)
+	return self.currentDiagram.PointExists(point)
+end
+
 function api.RespondToRemovedShape(edges, shapeId)
 	if self.currentDiagram then
 		self.currentDiagram.RespondToRemovedShape(edges, shapeId)

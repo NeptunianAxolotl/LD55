@@ -6,6 +6,7 @@ local function NewEnemy(world, enemyDef, position, size)
 	
 	self.pos = position
 	self.velocity = {0, 0}
+	self.push = false
 	self.def = enemyDef
 	self.size = size * (0.9 + math.random()*0.2)
 	self.drawSizeMult = math.sqrt(self.size)
@@ -41,14 +42,19 @@ local function NewEnemy(world, enemyDef, position, size)
 	
 	function self.PushFrom(circle)
 		local distSq = util.DistSqVectors(circle, self.pos)
-		local range = circle[3] + 1.2
+		local range = circle[3] + Global.PUSH_RANGE_EXTRA
 		if distSq > range*range then
 			return
 		end
 		local dist = math.sqrt(distSq)
-		local factor = math.max(0.2, math.min(0.6, (dist / range)))
+		local factor = math.max(0.35, math.min(0.75, (1 - dist / range)))
 		local towards = util.UnitTowards(circle, self.pos)
-		self.velocity = util.Add(self.velocity, util.SetLength(Global.CIRCLE_PUSH_FORCE * factor / self.GetWeight(), towards))
+		local force = Global.CIRCLE_PUSH_FORCE * factor / self.GetWeight()
+		if self.push then
+			self.push = util.Add(self.push, util.SetLength(force, towards))
+		else
+			self.push = util.SetLength(force, towards)
+		end
 	end
 	
 	function self.DrainEnergy(energy, minProp)
@@ -82,6 +88,13 @@ local function NewEnemy(world, enemyDef, position, size)
 			distanceMult = 1 + (distanceMult - Global.WORLD_RADIUS) / Global.SPEEDY_ELEMENT_RADIUS
 		end
 		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetGeneralSpeedModifier() * distanceMult, self.velocity))
+		if self.push then
+			self.pos = util.Add(self.pos, util.Mult(dt, self.push))
+			self.push = util.Mult(1 - dt*Global.CIRCLE_PUSH_EXPONENT, self.push)
+			if util.AbsValSq(self.push) < 50 then
+				self.push = false
+			end
+		end
 	end
 	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
