@@ -1,6 +1,7 @@
 
 local EnemyDefs = require("defs/enemyDefs")
 local ShapeDefs = require("defs/shapeDefs")
+local ElementUiDefs = require("defs/elementUiDefs")
 
 local self = {}
 local api = {}
@@ -136,10 +137,16 @@ end
 local function NotifyUpgrade(element)
 	if element == "lightning" then
 		UpdateMaxShapes()
-    SoundHandler.PlaySound("grimoire_level_up")
+		SoundHandler.PlaySound("grimoire_level_up")
 	elseif element == "life" then
 		PlayerHandler.UpdateMaxHealth()
-    SoundHandler.PlaySound("grimoire_level_up_2")
+		SoundHandler.PlaySound("grimoire_level_up_2")
+	end
+	if not self.world.GetPaused() then
+		EffectsHandler.SpawnEffect("mult_popup", util.Add({0, -100}, PlayerHandler.GetPlayerPos()), {
+			text = ElementUiDefs.def[element].humanName .. " Level " .. self.level[element],
+			velocity = {0, -2}
+		})
 	end
 end
 
