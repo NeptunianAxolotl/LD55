@@ -102,7 +102,7 @@ function api.Update(dt)
 	if not GameHandler.IsGameOver() then
 		self.lifetime = self.lifetime + dt
 	end
-	self.spawnFrequency = math.min(3, self.spawnFrequency*(1 + 0.0004*dt) + 0.0003*dt)
+	self.spawnFrequency = math.min(3, self.spawnFrequency*(1 + 0.0004*dt) + 0.00035*dt)
 	self.spawnSize = self.spawnSize + 0.0011*dt
 end
 
