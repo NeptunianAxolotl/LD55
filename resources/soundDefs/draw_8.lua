@@ -1,4 +1,4 @@
 return {
-	file = "effects/draw_8.lua",
+	file = "effects/draw_8.ogg",
 	volMult = 0.4,
 }
