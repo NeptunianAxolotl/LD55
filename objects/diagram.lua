@@ -493,10 +493,10 @@ local function GetElementOpacity(element, fadeTime)
 		return element.destroyTimer * 0.55
 	end
 	if not element.fade then
-		return 0.85
+		return 0.75
 	end
 	local prop = 1 - math.pow(1 - (element.fade / fadeTime), 1.8)
-	return prop * 0.55 + (1 - prop) * 0.9
+	return prop * 0.55 + (1 - prop) * 0.75
 end
 
 local function SetElementColor(element, fadeTime, hoveredPoint)

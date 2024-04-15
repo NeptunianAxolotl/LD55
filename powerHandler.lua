@@ -38,11 +38,11 @@ end
 --------------------------------------------------
 
 function api.GetSafeLineCapacity()
-	return self.level.earth + 8 + math.max(0, self.level.earth - 4)
+	return util.Round(self.level.earth + 7 + 0.5*math.max(0, self.level.earth - 4))
 end
 
 function api.GetLineFadeTime()
-	return self.level.earth + 6
+	return self.level.earth + 4
 end
 
 function api.GetPlayerSpeed()
@@ -126,7 +126,7 @@ function api.GetLevel(element)
 end
 
 function api.GetRequirement(element)
-	return api.GetLevel(element)
+	return 1 + api.GetLevel(element)
 end
 
 function api.GetProgress(element)

@@ -1,6 +1,7 @@
 
 local ShapeDefs = require("defs/shapeDefs")
 local ElementUiDefs = require("defs/elementUiDefs")
+local HintDefs = require("defs/hints")
 
 local self = {}
 local api = {}
@@ -18,6 +19,21 @@ function api.PanelOpen()
 	return self.menuOpen or self.powersOpen
 end
 
+local function GetNewHint()
+	if not self.powersOpen then
+		return
+	end
+	if not self.hintsLooped then
+		self.hintIndex = self.hintIndex + 1
+		if self.hintIndex > #HintDefs then
+			self.hintsLooped = true
+		end
+	end
+	if self.hintsLooped then
+		self.hintIndex = math.floor(math.random()*(#HintDefs)) + 1
+	end
+end
+
 --------------------------------------------------
 -- API
 --------------------------------------------------
@@ -28,6 +44,7 @@ local function HandleHoverClick()
 	end
 	if self.hovered == "Grimoire" then
 		self.powersOpen = not self.powersOpen
+		GetNewHint()
 		self.world.SetMenuState(api.PanelOpen())
 	elseif self.hovered == "Menu" then
 		self.menuOpen = not self.menuOpen
@@ -92,6 +109,7 @@ function api.KeyPressed(key, scancode, isRepeat)
 	if key == "tab" or key == "c" then
 		if not self.noGrimoire then
 			self.powersOpen = not self.powersOpen
+			GetNewHint()
 			self.world.SetMenuState(api.PanelOpen())
 		end
 	end
@@ -284,7 +302,7 @@ local function DrawElementArea(x, y, element, mousePos)
 	
 	Resources.DrawImage(def.image, x + 60, y + 120 + offset, 0, 1, 1.4)
 	
-	local upgrade = InterfaceUtil.DrawButton(x + 120, y + 85 + offset, 140, 46, mousePos, "Consume", not PowerHandler.CanUpgradeElement(element), false, Global.FREE_UPGRADES, 3, 6, 4)
+	local upgrade = InterfaceUtil.DrawButton(x + 120, y + 85 + offset, 140, 46, mousePos, "Consume", not PowerHandler.CanUpgradeElement(element), PowerHandler.CanUpgradeElement(element), Global.FREE_UPGRADES, 3, 6, 4)
 	local automatic = InterfaceUtil.DrawButton(x + 280, y + 85 + offset, 90, 46, mousePos, "Auto", not PowerHandler.IsAutomatic(element), false, true, 3, 6, 4)
 	if upgrade or automatic then
 		self.hovered = upgrade or automatic
@@ -322,11 +340,13 @@ local function DrawPowerMenu()
 	end
 	
 	local octaX = overX + overWidth/6
-	local octaY = 386
+	local octaY = 406
 	
 	Font.SetSize(2)
-	PrintLine("Elemental Affinity", 1, overX, octaY - 240, "center", overWidth/3, Global.TEXT_MENU_COL)
+	PrintLine("Elemental Affinity", 1, overX, octaY - 260, "center", overWidth/3, Global.TEXT_MENU_COL)
 	Resources.DrawImage("bookback", octaX, octaY, 0, 1, 1)
+	
+	PrintLine(HintDefs[self.hintIndex] or "", 3, overX + 40, octaY + 210, "left", overWidth/3 - 80, Global.TEXT_MENU_COL)
 	
 	ShapeHandler.DrawInBook(octaX, octaY)
 	local affinityPos = util.Add({octaX, octaY}, util.Mult(Global.BOOK_SCALE, ShapeHandler.GetAffinityPos()))
@@ -443,6 +463,8 @@ function api.Initialize(world, difficulty)
 		hovered = false,
 		menuOpen = false,
 		powersOpen = false,
+		hintsLooped = false,
+		hintIndex = 0,
 		noGrimoire = levelData.noGrimoire,
 		noWin = levelData.noGrimoire,
 		tutorial = difficulty <= 1.2 and levelData.tutorial,

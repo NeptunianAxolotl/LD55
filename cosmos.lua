@@ -114,6 +114,10 @@ end
 --------------------------------------------------
 
 function api.KeyPressed(key, scancode, isRepeat)
+	if key == "n" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
+		api.SwitchLevel(true)
+		return true
+	end
 	if key == "r" and (love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl")) then
 		api.RestartWorld()
 		return true

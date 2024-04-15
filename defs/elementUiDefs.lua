@@ -42,7 +42,7 @@ local elementUiDefs = {
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Spirits moves " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
+			return "Elementals move " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
 		end,
 		image = "ice",
 	},

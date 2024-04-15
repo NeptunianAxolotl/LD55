@@ -99,7 +99,7 @@ It is time to begin the summoning.
 			end,
 		},
 		{
-			text = [[The summoning has begun. Triangles absorb spirits.
+			text = [[The summoning has begun. Triangles absorb elementals.
 Squares weaken them so they are easier to absorb.
 (click to continue)]],
 			noEnemySpawn = true,
@@ -118,7 +118,7 @@ Press Space to toggle between the two.
 			end,
 		},
 		{
-			text = [[The spirits are coming! Sigils are temporary!
+			text = [[The elementals are coming! Sigils are temporary!
 Draw more sigils!
 (click to continue)]],
 			progressClick = true,
