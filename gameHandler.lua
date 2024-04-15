@@ -150,14 +150,18 @@ local function DrawFlyingEnemies(transBottom)
 	local endPos = {1480 + 180/2, 1010 + 70/2}
 	while i <= #self.flyingEnemies do
 		local data = self.flyingEnemies[i]
-		if self.animDt - data.startTime > flyTime then
-			self.flyingEnemies[i] = self.flyingEnemies[#self.flyingEnemies[i]]
-			self.flyingEnemies[#self.flyingEnemies] = nil
+		if data then
+			if self.animDt - data.startTime > flyTime then
+				self.flyingEnemies[i] = self.flyingEnemies[#self.flyingEnemies]
+				self.flyingEnemies[#self.flyingEnemies] = nil
+			else
+				local prop = util.SmoothZeroToOne((self.animDt - data.startTime) / flyTime, 4)
+				local startPos = self.world.ScreenToInterface(self.world.WorldToScreen(data.pos), transBottom)
+				local drawPos = util.Average(startPos, endPos, prop)
+				Resources.DrawImage(ElementUiDefs.def[data.enemyType].image, drawPos[1], drawPos[2], 0, 0.45, data.size * (1 - prop) * 0.9 + 0.1)
+				i = i + 1
+			end
 		else
-			local prop = util.SmoothZeroToOne((self.animDt - data.startTime) / flyTime, 4)
-			local startPos = self.world.ScreenToInterface(self.world.WorldToScreen(data.pos), transBottom)
-			local drawPos = util.Average(startPos, endPos, prop)
-			Resources.DrawImage(ElementUiDefs.def[data.enemyType].image, drawPos[1], drawPos[2], 0, 0.45, data.size)
 			i = i + 1
 		end
 	end

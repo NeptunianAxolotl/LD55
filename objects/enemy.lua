@@ -39,6 +39,7 @@ local function NewEnemy(world, enemyDef, position, size)
 	
 	function self.DealPlayerDamage()
 		PlayerHandler.DealDamage((self.size + 0.5*math.max(0, self.size - 1))*self.def.baseDamage*(self.EnergyProp()*0.66 + 0.34))
+		self.attackDelay = PowerHandler.GetEnemyAttackLeeway()
 	end
 	
 	function self.PushFrom(circle)
@@ -83,6 +84,12 @@ local function NewEnemy(world, enemyDef, position, size)
 	function self.Update(dt)
 		if self.destroyed then
 			return true
+		end
+		if self.attackDelay then
+			self.attackDelay = self.attackDelay - dt
+			if self.attackDelay < 0 then
+				self.attackDelay = false
+			end
 		end
 		self.def.update(self, dt)
 		self.speedMult = self.speedMult + dt*Global.SPEED_RAMP_UP

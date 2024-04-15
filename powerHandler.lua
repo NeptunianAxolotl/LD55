@@ -73,11 +73,11 @@ function api.GetEnemySpeedModifier()
 end
 
 function api.GetPlayerHitLeeway()
-	return 0.2
+	return 0.15
 end
 
-function api.GetEnemyHitLeeway()
-	return 1.4
+function api.GetEnemyAttackLeeway()
+	return 1.2
 end
 
 function api.GetPlayerRegenDelay()

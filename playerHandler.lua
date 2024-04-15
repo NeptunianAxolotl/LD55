@@ -21,8 +21,12 @@ function api.GetPlayerPos()
 	return self.playerPos
 end
 
+local function CanShoot(self)
+	return not self.attackDelay
+end
+
 local function CheckForDamage()
-	local enemy = EnemyHandler.GetClosestEnemy(self.playerPos, self.playerRadius)
+	local enemy = EnemyHandler.GetClosestEnemy(self.playerPos, self.playerRadius, CanShoot)
 	if not enemy then
 		return
 	end
@@ -51,6 +55,7 @@ function api.DealDamage(damage)
 		return
 	end
 	self.hitLeeway = PowerHandler.GetPlayerHitLeeway()
+	self.regenDelay = PowerHandler.GetPlayerRegenDelay()
 	self.health = self.health - damage
 
 	local soundNum = math.floor(math.random()*4) + 1
@@ -76,13 +81,16 @@ function api.Update(dt)
 	local over, _, gameLost, overType = self.world.GetGameOver()
 	if not gameLost then
 		if self.health < PowerHandler.GetPlayerMaxHealth() then
-			if self.hitLeeway <= 0 then
+			if self.regenDelay <= 0 then
 				self.health = self.health + PowerHandler.GetPlayerHealthRegen()*dt
 			end
 		end
 	end
 	if self.hitLeeway > 0 then
 		self.hitLeeway = math.max(self.hitLeeway - dt, 0)
+	end
+	if self.regenDelay > 0 then
+		self.regenDelay = math.max(self.regenDelay - dt, 0)
 	end
 	
 	self.playerSpeed = util.Average(self.playerSpeed, wantedVelocity, 0.6)
@@ -123,6 +131,7 @@ function api.Initialize(world)
 		playerRadius = 25,
 		animationTimer = 0,
 		hitLeeway = 0,
+		regenDelay = 0,
 		health = PowerHandler.GetPlayerMaxHealth(),
 		world = world
 	}
