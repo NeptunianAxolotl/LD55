@@ -308,6 +308,7 @@ local function AddCircle(self, newCircle, isPermanent)
 		end
 	end
 	self.circles[#self.circles + 1] = newElement
+	EnemyHandler.PushEnemiesFrom(newCircle)
 end
 
 local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)

@@ -5,6 +5,9 @@ local baseCircle = {-1650 - offset, 0, 260}
 
 local data = {
 	humanName = "Make a Triangle",
+	noGrimoire = true,
+	startingLevel = 100,
+	noEnemies = true,
 	description = [[Do it.
 
 Click the point that makes sense and then click the other point.

@@ -75,7 +75,14 @@ function api.CountEnemies()
 	return IterableMap.Count(self.enemies)
 end
 
+function api.PushEnemiesFrom(circle)
+	IterableMap.ApplySelf(self.enemies, "PushFrom", circle)
+end
+
 function api.Update(dt)
+	if self.noEnemies then
+		return
+	end
 	SpawnEnemiesUpdate(dt)
 	IterableMap.ApplySelf(self.enemies, "Update", dt)
 	self.spawnRate = self.spawnRate - 0.008*self.spawnRate*dt
@@ -93,6 +100,7 @@ function api.Initialize(world, levelIndex, mapDataOverride)
 		spawnRate = 8,
 		spawnSize = 0.3,
 		spawnTimer = 0,
+		noEnemies = world.GetLevelData().noEnemies,
 	}
 end
 
