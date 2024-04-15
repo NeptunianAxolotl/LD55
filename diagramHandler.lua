@@ -13,6 +13,9 @@ local function ProcessLines(lines)
 end
 
 local function TryToPlaceElement(u, v)
+	if util.DistSqVectors(u, v) < 100 then
+		return
+	end
 	local elementSwitch = self.currentDiagram.CheckElementTypeSwitch(self.selectedPoint, self.hoveredPoint, self.elementType)
 	local success = self.currentDiagram.AddElement(u, v, elementSwitch)
 	if not success then
