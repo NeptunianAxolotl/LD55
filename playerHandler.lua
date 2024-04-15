@@ -9,8 +9,12 @@ function api.GetDistanceSqToPlayer(pos)
 	return util.DistSqVectors(pos, self.playerPos)
 end
 
-function api.GetVectorToPlayer(pos)
-	return util.UnitTowards(pos, self.playerPos)
+function api.GetVectorToPlayer(pos, extraRadius)
+	local playerPos = self.playerPos
+	if extraRadius then
+		playerPos = util.Add(playerPos, util.RandomPointInCircle(extraRadius))
+	end
+	return util.UnitTowards(pos, playerPos)
 end
 
 function api.GetPlayerPos()

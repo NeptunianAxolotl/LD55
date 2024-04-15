@@ -141,6 +141,38 @@ function api.IsGameOver()
 end
 
 --------------------------------------------------
+-- Flying Stuff
+--------------------------------------------------
+
+local function DrawFlyingEnemies(transBottom)
+	local i = 1
+	local flyTime = 1.1
+	local endPos = {1480 + 180/2, 1010 + 70/2}
+	while i <= #self.flyingEnemies do
+		local data = self.flyingEnemies[i]
+		if self.animDt - data.startTime > flyTime then
+			self.flyingEnemies[i] = self.flyingEnemies[#self.flyingEnemies[i]]
+			self.flyingEnemies[#self.flyingEnemies] = nil
+		else
+			local prop = util.SmoothZeroToOne((self.animDt - data.startTime) / flyTime, 4)
+			local startPos = self.world.ScreenToInterface(self.world.WorldToScreen(data.pos), transBottom)
+			local drawPos = util.Average(startPos, endPos, prop)
+			Resources.DrawImage(ElementUiDefs.def[data.enemyType].image, drawPos[1], drawPos[2], 0, 0.45, data.size)
+			i = i + 1
+		end
+	end
+end
+
+function api.AddFlyingEnemy(pos, size, enemyType)
+	self.flyingEnemies[#self.flyingEnemies + 1] = {
+		pos = pos,
+		size = size,
+		enemyType = enemyType,
+		startTime = self.animDt,
+	}
+end
+
+--------------------------------------------------
 -- Draw
 --------------------------------------------------
 
@@ -300,7 +332,7 @@ local function DrawPowerMenu()
 	love.graphics.circle('fill', affinityPos[1], affinityPos[2], 5)
 	love.graphics.setColor(Global.AFFINITY_COLOR[1], Global.AFFINITY_COLOR[2], Global.AFFINITY_COLOR[3], 0.2)
 	love.graphics.circle('fill', affinityPos[1], affinityPos[2], affinityRadius, 64)
-					
+	
 --		love.graphics.printf([[
 --'p' to unpause
 --'ctrl+m' to toggle music
@@ -360,6 +392,8 @@ end
 local function BottomInterface(transBottom)
 	local mousePos = self.world.GetMousePositionInterface(transBottom)
 	
+	DrawFlyingEnemies(transBottom)
+	
 	self.hovered = false
 	if not self.noGrimoire then
 		self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything() and not api.PanelOpen(), false, 2, 12)
@@ -372,26 +406,19 @@ local function BottomInterface(transBottom)
 end
 
 --------------------------------------------------
--- Flying Stuff
---------------------------------------------------
-
-function api.AddFlyingEnemy(pos, size, enemyType)
-
-end
-
---------------------------------------------------
 -- Updating
 --------------------------------------------------
 
 function api.Update(dt)
+	self.animDt = self.animDt + dt
 	UpdateTutorial(dt)
 end
 
 function api.DrawInterface(transMid, transTopLeft, transBottom)
-	love.graphics.replaceTransform(transTopLeft)
-	DrawLeftInterface()
 	love.graphics.replaceTransform(transBottom)
 	BottomInterface(transBottom)
+	love.graphics.replaceTransform(transTopLeft)
+	DrawLeftInterface()
 	love.graphics.replaceTransform(transMid)
 	DrawFloatingStuff()
 	if self.powersOpen then
@@ -405,8 +432,10 @@ end
 function api.Initialize(world, difficulty)
 	local levelData = world.GetLevelData()
 	self = {
+		flyingEnemies = {},
 		world = world,
 		score = 0,
+		animDt = 0,
 		hovered = false,
 		menuOpen = false,
 		powersOpen = false,

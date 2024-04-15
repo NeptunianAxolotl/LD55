@@ -73,7 +73,15 @@ function api.GetEnemySpeedModifier()
 end
 
 function api.GetPlayerHitLeeway()
-	return 0.8
+	return 0.2
+end
+
+function api.GetEnemyHitLeeway()
+	return 1.4
+end
+
+function api.GetPlayerRegenDelay()
+	return 1.5
 end
 
 function api.GetSpawnAffinityRadius()

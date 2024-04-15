@@ -77,6 +77,7 @@ local function NewEnemy(world, enemyDef, position, size)
 		self.destroyed = true
 		local soundNum = math.floor(math.random()*5) + 1
 		SoundHandler.PlaySound("capture_"..soundNum)
+		GameHandler.AddFlyingEnemy(self.pos, self.size, self.def.name)
 	end
 	
 	function self.Update(dt)

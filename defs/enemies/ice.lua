@@ -16,7 +16,7 @@ local data = {
 		self.flipAnim = (self.flipAnim + dt*self.animSpeed*3.5)%1
 		if self.animation >= 1 then
 			if not GameHandler.IsGameOver() then
-				self.wantedDir = PlayerHandler.GetVectorToPlayer(self.pos)
+				self.wantedDir = PlayerHandler.GetVectorToPlayer(self.pos, 150 * self.speedMult)
 			end
 			self.animation = self.animation - 1
 		end
