@@ -126,8 +126,10 @@ function api.KeyPressed(key, scancode, isRepeat)
 		self.world.SetMenuState(api.PanelOpen())
 	end
 	if key == "tab" or key == "c" then
-		self.powersOpen = not self.powersOpen
-		self.world.SetMenuState(api.PanelOpen())
+		if not self.noGrimoire then
+			self.powersOpen = not self.powersOpen
+			self.world.SetMenuState(api.PanelOpen())
+		end
 	end
 end
 
@@ -267,8 +269,9 @@ end
 
 local function BottomInterface(transBottom)
 	local mousePos = self.world.GetMousePositionInterface(transBottom)
-	
-	self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything() and not api.PanelOpen(), false, 2, 12)
+	if not self.noGrimoire then
+		self.hovered = InterfaceUtil.DrawButton(1480, 1010, 180, 70, mousePos, "Grimoire", false, PowerHandler.CanUpgradeAnything() and not api.PanelOpen(), false, 2, 12)
+	end
 	self.hovered = InterfaceUtil.DrawButton(1710, 1010, 180, 70, mousePos, "Menu", false, false, false, 2, 12) or self.hovered
 	
 	if PlayerHandler.GetHealthProp() < 1 then
@@ -304,6 +307,7 @@ function api.Initialize(world)
 		hovered = false,
 		menuOpen = false,
 		powersOpen = false,
+		noGrimoire = world.GetLevelData().noGrimoire,
 	}
 	
 	self.world.SetMenuState(api.PanelOpen())

@@ -37,7 +37,7 @@ end
 --------------------------------------------------
 
 function api.GetSafeLineCapacity()
-	return self.level.earth + 6 + math.max(0, self.level.earth - 4)
+	return self.level.earth + 8 + math.max(0, self.level.earth - 4)
 end
 
 function api.GetLineFadeTime()
@@ -180,6 +180,7 @@ function api.Update(dt)
 end
 
 function api.Initialize(world)
+	local startingLevel = world.GetLevelData().startingLevel or 1
 	self = {
 		world = world,
 		baseMaxShapes = {
@@ -195,14 +196,14 @@ function api.Initialize(world)
 			octagon = 0.125001,
 		},
 		level = {
-			water = 1,
-			air = 1,
-			earth = 1,
-			fire = 1,
-			life = 1,
+			water = startingLevel,
+			air = startingLevel,
+			earth = startingLevel,
+			fire = startingLevel,
+			life = startingLevel,
 			ice = 1,
-			lightning = 1,
-			chalk = 1,
+			lightning = startingLevel,
+			chalk = startingLevel,
 		},
 		progress = {
 			water = 0,

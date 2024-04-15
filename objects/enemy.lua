@@ -39,6 +39,18 @@ local function NewEnemy(world, enemyDef, position, size)
 		PlayerHandler.DealDamage(self.size*self.def.baseDamage*(self.EnergyProp()*0.66 + 0.34))
 	end
 	
+	function self.PushFrom(circle)
+		local distSq = util.DistSqVectors(circle, self.pos)
+		local range = circle[3] + 1.2
+		if distSq > range*range then
+			return
+		end
+		local dist = math.sqrt(distSq)
+		local factor = math.max(0.2, math.min(0.6, (dist / range)))
+		local towards = util.UnitTowards(circle, self.pos)
+		self.velocity = util.Add(self.velocity, util.SetLength(Global.CIRCLE_PUSH_FORCE * factor / self.GetWeight(), towards))
+	end
+	
 	function self.DrainEnergy(energy, minProp)
 		if self.destroyed then
 			return 0
@@ -63,7 +75,13 @@ local function NewEnemy(world, enemyDef, position, size)
 			return true
 		end
 		self.def.update(self, dt)
-		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetGeneralSpeedModifier(), self.velocity))
+		local distanceMult = util.AbsVal(self.pos)
+		if distanceMult < Global.WORLD_RADIUS then
+			distanceMult = 1
+		else
+			distanceMult = 1 + (distanceMult - Global.WORLD_RADIUS) / Global.SPEEDY_ELEMENT_RADIUS
+		end
+		self.pos = util.Add(self.pos, util.Mult(dt * PowerHandler.GetGeneralSpeedModifier() * distanceMult, self.velocity))
 	end
 	
 	function self.Draw(drawQueue, selectedPoint, hoveredPoint, elementType)
