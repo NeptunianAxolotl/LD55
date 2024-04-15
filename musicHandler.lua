@@ -22,6 +22,27 @@ local loopDefs = {
         ["tensionLow"] = 2,
         ["tensionHigh"] = 3,
         ["duration"] = 12
+    },
+    ["D"] =
+      {
+        ["path"] = "resources/sounds/music/LD55_-_LOOP_D.ogg",
+        ["tensionLow"] = 3,
+        ["tensionHigh"] = 4,
+        ["duration"] = 9
+    },
+      ["E"] =
+      {
+        ["path"] = "resources/sounds/music/LD55_-_LOOP_E.ogg",
+        ["tensionLow"] = 4,
+        ["tensionHigh"] = 5,
+        ["duration"] = 12
+    },
+    ["F"] =
+      {
+        ["path"] = "resources/sounds/music/LD55_-_LOOP_F.ogg",
+        ["tensionLow"] = 5,
+        ["tensionHigh"] = 6,
+        ["duration"] = 27
     }
   }
   
@@ -37,6 +58,18 @@ local loopDefs = {
       },
       ["CA"] = {
         ["path"] = "resources/sounds/music/LD55_-_C_TO_A.ogg",
+        ["duration"] = 6.0
+      },
+      ["DE"] = {
+        ["path"] = "resources/sounds/music/LD55_-_D_TO_E.ogg",
+        ["duration"] = 4.5
+      },
+      ["EF"] = {
+        ["path"] = "resources/sounds/music/LD55_-_E_TO_F.ogg",
+        ["duration"] = 12.0
+      },
+      ["FA"] = {
+        ["path"] = "resources/sounds/music/LD55_-_F_TO_A.ogg",
         ["duration"] = 6.0
         }
   }
@@ -134,6 +167,8 @@ function api.Update(dt)
     elseif bgmTension < loopDefs[activeTrack]["tensionLow"] then
         if activeTrack == "B" or activeTrack == "C" then
           cueTrack("CA");
+        elseif activeTrack == "F" then
+        cueTrack("FA");
         else 
           cueTrack(activeTrack);
         end
@@ -142,6 +177,12 @@ function api.Update(dt)
         cueTrack("AB");
     elseif activeTrack == "B" then
         cueTrack("BC");
+        elseif activeTrack == "C" then
+        cueTrack("DE");
+    elseif activeTrack == "D" then
+        cueTrack("DE");
+    elseif activeTrack == "E" then
+        cueTrack("EF");
     else 
         cueTrack(activeTrack);
     end
