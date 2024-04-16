@@ -5,7 +5,7 @@ return {
 	alphaScale = true,
 	duration = 2.8,
 	alphaBuffer = 0.6,
-	textWidth = 800,
+	textWidth = 1600,
 	textHeight = 10,
 	inFront = 100,
 	color = Global.FLOATING_TEXT_COL,

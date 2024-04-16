@@ -100,9 +100,22 @@ end
 
 function api.TakeScreenshot()
 	love.filesystem.createDirectory("screenshots")
+	local name = "screenshots/screenshot_" .. math.floor(math.random()*100000) .. "_.png"
 	print("working", love.filesystem.getWorkingDirectory())
 	print("save", love.filesystem.getSaveDirectory())
-	love.graphics.captureScreenshot("screenshots/screenshot_" .. math.floor(math.random()*100000) .. "_.png")
+	print("name", name)
+	love.graphics.captureScreenshot(name)
+	if EffectsHandler and PlayerHandler then
+		Delay.Add(1, function ()
+			local pos = PlayerHandler and PlayerHandler.GetPlayerPos()
+			if pos then
+				EffectsHandler.SpawnEffect("mult_popup", util.Add({0, -100}, pos), {
+					text = "Screenshot saved to " .. love.filesystem.getSaveDirectory() .. "/" .. name,
+					velocity = {0, -2}
+				})
+			end
+		end)
+	end
 end
 
 function api.GetRealTime()

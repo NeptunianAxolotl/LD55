@@ -92,6 +92,6 @@ function love.load(arg)
 	Resources.LoadResources()
 	Cosmos.Initialize()
 	
-	love.filesystem.setIdentity("RegularRailway", true)
+	love.filesystem.setIdentity(Global.SAVE_DIR_NAME, true)
 	love.window.maximize() -- Do not fullscreen since we lack an exit button.
 end
