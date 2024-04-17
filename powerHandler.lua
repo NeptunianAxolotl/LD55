@@ -199,8 +199,9 @@ end
 
 function api.Initialize(world, difficulty)
 	local startingLevel = world.GetLevelData().startingLevel or 1
+	baseLevelRequirement = math.floor(difficulty / 2 + 0.25)
 	self = {
-		baseLevelRequirement = (difficulty > 1.2 and 1) or 0,
+		baseLevelRequirement = baseLevelRequirement,
 		world = world,
 		baseMaxShapes = {
 			triangle = 6,

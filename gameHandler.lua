@@ -73,16 +73,16 @@ local function HandleHoverClick()
 		self.world.GetCosmos().ScrollSpeedChange(7/6)
 	elseif self.hovered == "Scroll Speed Down" then
 		self.world.GetCosmos().ScrollSpeedChange(6/7)
-	elseif self.hovered == "Switch to Sandbox" then
+	elseif self.hovered == "Sandbox" then
 		self.world.GetCosmos().SwitchLevel(true)
-	elseif self.hovered == "Switch to Base" then
+	elseif self.hovered == "The Summoning" then
 		self.world.GetCosmos().SetDifficulty(1)
 		self.world.GetCosmos().SwitchLevel(false)
-	elseif self.hovered == "Switch to Hard" then
-		self.world.GetCosmos().SetDifficulty(Global.HARD_DIFFICULTY)
+	elseif self.hovered == "Hard Mode" or self.hovered == "Increase Difficulty" then
+		self.world.GetCosmos().SetDifficulty(self.difficulty + 1)
 		self.world.GetCosmos().SwitchLevel(false)
-	elseif self.hovered == "Switch to Hardest" then
-		self.world.GetCosmos().SetDifficulty(Global.HARDER_DIFFICULTY)
+	elseif self.hovered == "Decrease Difficulty" then
+		self.world.GetCosmos().SetDifficulty(math.max(1, self.difficulty - 1))
 		self.world.GetCosmos().SwitchLevel(false)
 	elseif self.hovered == "Restart" then
 		self.world.Restart()
@@ -262,6 +262,10 @@ local function DrawLeftInterface()
 		local lifetime = EnemyHandler.GetSpawnParameters()
 		PrintLine("Game Time: " .. util.SecondsToString(lifetime), 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
 		offset = offset - 40
+		if self.difficulty > 1 then
+			PrintLine("Difficulty Level: " .. self.difficulty, 2, xOffset + 24, offset, "left", 800, Global.FLOATING_TEXT_COL)
+			offset = offset - 40
+		end
 	end
 	
 	if not api.GetTutorial() then
@@ -368,9 +372,13 @@ local function DrawMainMenu()
 	local mousePos = self.world.GetMousePositionInterface()
 	local windowX, windowY = 2000, 1100
 	local overX = windowX*0.84
-	local overWidth = windowX*0.16
+	local overWidth = windowX*0.157
 	local overY = windowY*0.1
 	local overHeight = windowY*0.7
+	if self.difficulty > 1 then
+		overY = windowY*0.06
+		overHeight = windowY*0.75
+	end
 	InterfaceUtil.DrawPanel(overX, overY, overWidth, overHeight*1.12)
 	
 	local offset = overY + 20
@@ -393,15 +401,23 @@ local function DrawMainMenu()
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Scroll Speed Down", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
 	
+	
 	offset = offset + 20
-	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Sandbox", false, false, false, 3, 8, 4) or self.hovered
+	PrintLine("New Game", 2, overX + 20, offset, "center", 270, Global.TEXT_MENU_COL)
 	offset = offset + 55
-	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Base", false, false, false, 3, 8, 4) or self.hovered
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Sandbox", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
-	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Hard", false, false, false, 3, 8, 4) or self.hovered
+	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "The Summoning", false, false, false, 3, 8, 4) or self.hovered
 	offset = offset + 55
-	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Switch to Hardest", false, false, false, 3, 8, 4) or self.hovered
-	offset = offset + 55
+	if self.difficulty > 1 then
+		self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Increase Difficulty", false, false, false, 3, 8, 4) or self.hovered
+		offset = offset + 55
+		self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Decrease Difficulty", false, false, false, 3, 8, 4) or self.hovered
+		offset = offset + 55
+	else
+		self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Hard Mode", false, false, false, 3, 8, 4) or self.hovered
+		offset = offset + 55
+	end
 	
 	local offset = overY + overHeight*1.12 - 20 - 45
 	self.hovered = InterfaceUtil.DrawButton(overX + 20, offset, 270, 45, mousePos, "Quit", false, false, false, 3, 8, 4) or self.hovered
@@ -468,6 +484,7 @@ function api.Initialize(world, difficulty)
 		noWin = levelData.noGrimoire,
 		tutorial = difficulty <= 1.2 and levelData.tutorial,
 		tutorialStage = difficulty <= 1.2 and levelData.tutorial and 1,
+		difficulty = difficulty,
 	}
 	
 	self.world.SetMenuState(api.PanelOpen())

@@ -34,7 +34,7 @@ local function SpawnEnemy()
 end
 
 local function SpawnEnemiesUpdate(dt)
-	self.spawnTimer = self.spawnTimer + dt * Global.ENEMY_SPAWN_MULT * self.difficulty * ((4 + ShapeHandler.GetShapeCount()) / 8)
+	self.spawnTimer = self.spawnTimer + dt * Global.ENEMY_SPAWN_MULT * self.spawnMult * ((4 + ShapeHandler.GetShapeCount()) / 8)
 	self.spawnTimer = self.spawnTimer + dt * 4 * math.sqrt(ShapeHandler.GetShapeTypeCount("hexagon"))
 	self.spawnTimer = self.spawnTimer + dt * 18 * ShapeHandler.GetShapeTypeCount("octagon")
 	if Global.TEST_ENEMIES then
@@ -111,6 +111,11 @@ function api.Draw(drawQueue)
 end
 
 function api.Initialize(world, difficulty)
+	local spawnMult = 1
+	if difficulty > 1.5 then
+		spawnMult = math.max(1, math.pow(difficulty, Global.DIFFICULTY_SPAWN_POWER) * Global.DIFFICULTY_SPAWN_FACTOR + Global.DIFFICULTY_SPAWN_OFFSET)
+		print("spawnMult", spawnMult)
+	end
 	self = {
 		world = world,
 		lifetime = 0,
@@ -119,7 +124,7 @@ function api.Initialize(world, difficulty)
 		spawnSize = 0.7,
 		spawnTimer = 0,
 		noEnemies = world.GetLevelData().noEnemies,
-		difficulty = difficulty,
+		spawnMult = spawnMult,
 	}
 end
 
