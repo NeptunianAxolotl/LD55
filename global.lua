@@ -36,6 +36,7 @@ local globals = {
 	PLAYER_ANIM = 0.3,
 	EFFECT_DEPTH = 45,
 	SAVE_DIR_NAME = "EuclidsElementals",
+	WINDOW_TITLE = "Euclid's Elementals",
 	
 	SHAPE_LINE_FADE_MULT = 0.1,
 	SHAPE_LINE_ORPHAN_FADE_MULT = 2,
