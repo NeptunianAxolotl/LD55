@@ -89,11 +89,14 @@ local function HandleHoverClick()
 	elseif self.hovered == "Quit" then
 		love.event.quit()
 	end
+	if self.hovered then
+		return true
+	end
 end
 
 function api.MousePressed(x, y)
 	if self.hovered then
-		HandleHoverClick()
+		return HandleHoverClick()
 	end
 	local tutorial = api.GetTutorial()
 	if tutorial and tutorial.progressClick then
