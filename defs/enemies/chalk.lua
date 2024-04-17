@@ -9,9 +9,11 @@ local data = {
 	init = function (self)
 		self.animSpeed = 0.9 + math.random()*0.2
 		self.animation = math.random()
+		self.animRot = math.random()
 	end,
 	update = function (self, dt)
 		self.animation = self.animation + dt*self.animSpeed
+		self.animRot = (self.animRot + dt*self.animSpeed*0.7)%1
 		if self.animation >= 1 then
 			if not GameHandler.IsGameOver() then
 				self.wantedDir = PlayerHandler.GetVectorToPlayer(self.pos, 150 * (self.speedMult - 1))
@@ -25,7 +27,7 @@ local data = {
 		end
 	end,
 	draw = function (self, drawQueue)
-		local anim = self.animation*math.pi*2
+		local anim = self.animRot*math.pi*2
 		local scale = self.drawSizeMult
 		Resources.DrawImage("chalk", self.pos[1], self.pos[2], anim, self.EnergyProp()*0.95 + 0.5, scale)
 	end,
