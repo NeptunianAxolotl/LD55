@@ -14,7 +14,7 @@ Elemental affinity determines which type of elementals are summoned.]],
 Hexagons focus your affinity and summon a burst of elementals. Use them to boost your abilities, but be careful!]],
 	[[Sigils lose power over time, and fade rapidly while actively draining essence from nearby elementals.
 
-Larger sigils last longer, as do sigils created by a mage more versed in Fire.]],
+Larger sigils last longer, as do sigils created by a wizard better versed in Fire.]],
 	[[Squares are powerful, but cannot fully absorb elementals.
 
 Triangles are weaker, but are the only basic sigil capable of full absorption.
