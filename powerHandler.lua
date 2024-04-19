@@ -45,10 +45,6 @@ function api.GetLineFadeTime()
 	return self.level.earth + 4
 end
 
-function api.GetPlayerSpeed()
-	return ((self.level.air - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, self.level.air - 4) + 1) * Global.PLAYER_SPEED
-end
-
 function api.GetDrawRange()
 	if self.level.chalk == 2 then
 		return Global.BASE_DRAW_RANGE*1.22
@@ -68,8 +64,40 @@ function api.GetPlayerHealthRegen()
 	return 2 + 0.5*(self.level.water - 1) + 0.5*math.max(0, self.level.water - 3) + 1.5*math.max(0, self.level.water - 6)
 end
 
+local function GetElementSpeedModifier(level)
+	return ((level - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, level - 4) + 1)
+end
+
+function api.GetRawAirSpeed()
+	return GetElementSpeedModifier(self.level.air)
+end
+
+function api.GetRawIceSpeed()
+	return GetElementSpeedModifier(self.level.ice)
+end
+
+function api.UseMixedSpeed()
+	return self.useMixedSpeedMod
+end
+
+function api.GetPlayerSpeed()
+	if not self.useMixedSpeedMod then
+		local modifier = GetElementSpeedModifier(self.level.air)
+		return modifier * Global.PLAYER_SPEED
+	end
+	local upMod = GetElementSpeedModifier(self.level.air)
+	local downMod = GetElementSpeedModifier(self.level.ice)
+	return (0.5 + 0.5 / downMod) * upMod * Global.PLAYER_SPEED
+end
+
 function api.GetEnemySpeedModifier()
-	return 1 / ((self.level.ice - 1)*Global.SPEED_SCALING + Global.SPEED_SCALING*0.5*math.max(0, self.level.ice - 4) + 1)
+	if not self.useMixedSpeedMod then
+		local modifier = GetElementSpeedModifier(self.level.ice)
+		return 1 / modifier
+	end
+	local upMod = GetElementSpeedModifier(self.level.air)
+	local downMod = GetElementSpeedModifier(self.level.ice)
+	return (0.5 + 0.5 * upMod) / downMod
 end
 
 function api.GetPlayerHitLeeway()
@@ -202,6 +230,7 @@ function api.Initialize(world, difficulty)
 	baseLevelRequirement = math.floor(difficulty / 2 + 0.25)
 	self = {
 		baseLevelRequirement = baseLevelRequirement,
+		useMixedSpeedMod = difficulty >= 3,
 		world = world,
 		baseMaxShapes = {
 			triangle = 6,

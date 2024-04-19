@@ -14,7 +14,17 @@ local elementUiDefs = {
 	air = {
 		humanName = "Air",
 		descFunc = function ()
-			return "Move " .. PercentInc(PowerHandler.GetPlayerSpeed() / Global.PLAYER_SPEED) .. "% faster"
+			if not PowerHandler.UseMixedSpeed() then
+				return "Move " .. PercentInc(PowerHandler.GetPlayerSpeed() / Global.PLAYER_SPEED) .. "% faster"
+			end
+			local upMod = PowerHandler.GetRawAirSpeed()
+			return "Move " .. PercentInc(upMod) .. "% faster, elementals are " .. PercentInc(0.5 + 0.5 * upMod) .. "% faster"
+		end,
+		bottomText = function ()
+			if not PowerHandler.UseMixedSpeed() then
+				return false
+			end
+			return "Your speed: " .. util.Round(PowerHandler.GetPlayerSpeed() * 100 / Global.PLAYER_SPEED) .. "%"
 		end,
 		image = "air_icon",
 	},
@@ -42,7 +52,17 @@ local elementUiDefs = {
 	ice = {
 		humanName = "Ice",
 		descFunc = function ()
-			return "Elementals move " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
+			if not PowerHandler.UseMixedSpeed() then
+				return "Elementals move " .. PercentInc(1 / PowerHandler.GetEnemySpeedModifier()) .. "% slower"
+			end
+			local downMod = PowerHandler.GetRawIceSpeed()
+			return "Slow elementals by " .. PercentInc(downMod) .. "%, you by " .. PercentInc(1 / (0.5 + 0.5 / downMod)) .. "%"
+		end,
+		bottomText = function ()
+			if not PowerHandler.UseMixedSpeed() then
+				return false
+			end
+			return "Elemental speed: " .. util.Round(PowerHandler.GetEnemySpeedModifier() * 100) .. "%"
 		end,
 		image = "ice",
 	},

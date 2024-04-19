@@ -297,6 +297,9 @@ local function DrawElementArea(x, y, element, mousePos)
 	love.graphics.printf(def.humanName .. " Level " .. PowerHandler.GetLevel(element), x + 12, y + 8, 500, "left")
 	Font.SetSize(4)
 	love.graphics.printf(def.descFunc(), x + 12, y + 48, 500, "left")
+	if def.bottomText and def.bottomText() then
+		love.graphics.printf(def.bottomText(), x + 120, y + 165, 500, "left")
+	end
 	Font.SetSize(3)
 	love.graphics.printf(PowerHandler.GetProgress(element) .. "/" .. PowerHandler.GetRequirement(element), x + 120, y + 135 + offset, 500, "left")
 	
