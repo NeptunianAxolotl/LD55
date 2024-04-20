@@ -311,6 +311,14 @@ local function AddCircle(self, newCircle, isPermanent)
 	EnemyHandler.PushEnemiesFrom(newCircle)
 end
 
+local function PrintAtPoint(vertices, text)
+	local pos = util.AverageMulti(vertices)
+	EffectsHandler.SpawnEffect("mult_popup", pos, {
+		text = text,
+		velocity = {0, 0}
+	})
+end
+
 local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 	if PowerHandler.GetMaxShapesType(shape.name) <= 0 then
 		return false
@@ -330,6 +338,7 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 	if ShapeHandler.ShapePartialAt(shape.name, vertices) then
 		if Global.PRINT_SHAPE_FOUND then
 			print("Found duplicate")
+			PrintAtPoint(vertices, "D")
 		end
 		return false
 	end
@@ -341,11 +350,19 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 			prev = #vertices
 		end
 		local edge = {vertices[prev], vertices[i]}
-		if lengthSq and not util.ApproxEqNumber(util.LineLengthSq(edge), lengthSq) then
+		if lengthSq and not util.ExtremelyApproxEqNumber(util.LineLengthSq(edge), lengthSq) then
+			if Global.PRINT_SHAPE_FOUND then
+				print("Bad Length", lengthSq - util.LineLengthSq(edge))
+				PrintAtPoint(vertices, "B")
+			end
 			return false -- How did we get here? I saw an isosceles triangle once.
 		else
 			lengthSq = util.LineLengthSq(edge)
 			if lengthSq < 1 then
+				if Global.PRINT_SHAPE_FOUND then
+					print("Length < 1")
+					PrintAtPoint(vertices, "<1")
+				end
 				return false -- ???
 			end
 		end
