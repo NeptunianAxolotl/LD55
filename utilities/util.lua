@@ -23,6 +23,10 @@ function util.GradientPoints(u, v)
 	return (v[2] - u[2]) / (v[1] - u[1])
 end
 
+function util.ExtremelyApproxEqNumber(n1, n2)
+	return n1 and n2 and n1 - n2 < 10 and n2 - n1 < 10
+end
+
 function util.VeryApproxEqNumber(n1, n2)
 	return n1 and n2 and n1 - n2 < 0.01 and n2 - n1 < 0.01
 end
@@ -36,7 +40,7 @@ function util.VeryApproxEq(u, v)
 end
 
 function util.ExtremelyApproxEq(u, v)
-	return u and v and u[1] - v[1] < 1 and v[1] - u[1] < 1 and u[2] - v[2] < 1 and v[2] - u[2] < 1
+	return u and v and u[1] - v[1] < 10 and v[1] - u[1] < 10 and u[2] - v[2] < 10 and v[2] - u[2] < 10
 end
 
 function util.Eq(u, v)

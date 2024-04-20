@@ -350,7 +350,7 @@ local function MatchPotentialShape(self, shape, corner, mainVector, otherVector)
 			prev = #vertices
 		end
 		local edge = {vertices[prev], vertices[i]}
-		if lengthSq and not util.ExtremelyApproxEq(util.LineLengthSq(edge), lengthSq) then
+		if lengthSq and not util.ExtremelyApproxEqNumber(util.LineLengthSq(edge), lengthSq) then
 			if Global.PRINT_SHAPE_FOUND then
 				print("Bad Length", lengthSq - util.LineLengthSq(edge))
 				PrintAtPoint(vertices, "B")
