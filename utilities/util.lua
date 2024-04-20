@@ -36,7 +36,7 @@ function util.VeryApproxEq(u, v)
 end
 
 function util.ExtremelyApproxEq(u, v)
-	return u and v and u[1] - v[1] < 10 and v[1] - u[1] < 10 and u[2] - v[2] < 10 and v[2] - u[2] < 10
+	return u and v and u[1] - v[1] < 1 and v[1] - u[1] < 1 and u[2] - v[2] < 1 and v[2] - u[2] < 1
 end
 
 function util.Eq(u, v)
